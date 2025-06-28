@@ -1,0 +1,431 @@
+
+Rank	Player	Wins	Losses	yElo
+1	Carlos Alcaraz	42	5	2300.5
+2	Lorenzo Musetti	25	8	2132.1
+3	Jannik Sinner	19	3	2109.8
+4	Alexander Bublik	27	16	2078.5
+5	Jack Draper	28	8	2070.3
+6	Tommy Paul	25	9	2067.2
+7	Novak Djokovic	21	8	2050.1
+8	Casper Ruud	25	8	2044.8
+9	Alexander Zverev	35	13	2030.5
+10	Arthur Fils	21	10	2013.4
+11	Jiri Lehecka	24	13	2002.2
+12	Alex De Minaur	27	12	1934.8
+13	Matteo Berrettini	13	10	1933.4
+14	Daniil Medvedev	23	13	1930.6
+15	Flavio Cobolli	20	16	1929.6
+16	Tallon Griekspoor	23	13	1927.7
+17	Holger Rune	22	13	1926.1
+18	Hubert Hurkacz	15	11	1920.5
+19	Gabriel Diallo	25	17	1919.9
+20	Taylor Fritz	21	11	1914.8
+21	Francisco Cerundolo	27	14	1904.4
+22	Alejandro Davidovich Fokina	23	14	1885.5
+23	Karen Khachanov	18	15	1884.6
+24	Filip Misolic	33	11	1884.0
+25	Cameron Norrie	21	17	1883.6
+26	Jakub Mensik	24	13	1880.7
+27	Joao Fonseca	25	10	1877.9
+28	Stefanos Tsitsipas	19	12	1866.3
+29	Ben Shelton	19	13	1861.3
+30	Borna Coric	26	9	1847.2
+31	Corentin Moutet	18	15	1846.1
+32	Tomas Machac	18	11	1841.4
+33	Fabian Marozsan	18	15	1839.4
+34	Sebastian Ofner	18	9	1838.6
+35	Andrey Rublev	18	14	1837.4
+36	Laslo Djere	22	11	1836.2
+37	Roberto Bautista Agut	10	16	1831.2
+38	Jacob Fearnley	24	15	1827.8
+39	Grigor Dimitrov	14	10	1821.4
+40	Brandon Nakashima	20	18	1821.0
+41	Matteo Arnaldi	15	14	1820.8
+42	Gael Monfils	17	10	1819.1
+43	Frances Tiafoe	17	14	1816.5
+44	Daniel Altmaier	23	21	1809.0
+45	Dino Prizmic	16	6	1804.4
+46	Alexei Popyrin	12	15	1803.8
+47	Jaume Munar	15	15	1802.5
+48	Sebastian Korda	11	10	1802.4
+49	Mariano Navone	17	17	1800.0
+50	Alex Michelsen	20	15	1798.5
+51	Alexandre Muller	19	16	1798.1
+52	Felix Auger Aliassime	23	15	1795.1
+53	Marton Fucsovics	27	13	1789.0
+54	Quentin Halys	16	16	1788.9
+55	Zsombor Piros	26	9	1783.9
+56	Ethan Quinn	28	16	1782.7
+57	Zizou Bergs	23	15	1781.3
+58	Nuno Borges	22	19	1774.8
+59	Carlos Taberner	27	13	1773.2
+60	Kei Nishikori	13	10	1771.2
+61	Marin Cilic	19	10	1769.7
+62	Otto Virtanen	14	16	1769.2
+63	Marcos Giron	14	14	1765.9
+64	Cristian Garin	29	13	1762.6
+65	Vit Kopriva	26	12	1761.2
+66	Colton Smith	21	8	1759.5
+67	Denis Shapovalov	15	13	1759.2
+68	Reilly Opelka	21	16	1758.3
+69	Ugo Humbert	15	12	1755.4
+70	Jason Kubler	14	6	1754.9
+71	Tomas Martin Etcheverry	16	20	1754.9
+72	Giovanni Mpetshi Perricard	13	13	1745.9
+73	Andrea Pellegrino	17	10	1743.9
+74	Matteo Gigante	19	13	1743.8
+75	Hamad Medjedovic	19	10	1741.0
+76	Thanasi Kokkinakis	3	1	1739.8
+77	Camilo Ugo Carabelli	25	16	1729.1
+78	Chun Hsin Tseng	24	17	1727.5
+79	Francisco Comesana	18	15	1724.7
+80	Jordan Thompson	8	9	1724.5
+81	Patrick Kypson	14	4	1722.5
+82	Luciano Darderi	17	18	1717.9
+83	Yannick Hanfmann	15	15	1717.6
+84	Juan Manuel Cerundolo	25	17	1716.8
+85	Mackenzie Mcdonald	22	15	1715.5
+86	Titouan Droguet	18	10	1715.0
+87	Hugo Dellien	26	15	1713.2
+88	Arthur Rinderknech	11	21	1713.1
+89	Damir Dzumhur	26	19	1711.3
+90	Miomir Kecmanovic	18	17	1709.7
+91	Raphael Collignon	19	10	1707.9
+92	Ignacio Buse	17	14	1706.9
+93	Vilius Gaubas	21	15	1704.3
+94	David Goffin	8	12	1702.9
+95	Guy Den Ouden	15	7	1697.4
+96	Alejandro Tabilo	8	12	1695.0
+97	Jenson Brooksby	13	12	1690.4
+98	Dusan Lajovic	22	21	1686.6
+99	Terence Atmane	23	17	1681.5
+100	Jesper De Jong	19	19	1680.1
+101	Roman Andres Burruchaga	26	17	1679.2
+102	Tristan Schoolkate	29	18	1679.1
+103	Alex Barrena	13	1	1677.9
+104	Learner Tien	15	15	1677.7
+105	Marco Trungelliti	20	16	1672.6
+106	Lorenzo Sonego	10	15	1672.2
+107	Francesco Passaro	20	11	1670.5
+108	Yibing Wu	7	3	1669.2
+109	Nikoloz Basilashvili	20	16	1668.6
+110	Tomas Barrios Vera	27	16	1668.3
+111	Borna Gojo	11	11	1666.8
+112	Pierre Hugues Herbert	23	15	1666.0
+113	Alexander Shevchenko	19	22	1663.6
+114	Elias Ymer	15	10	1662.0
+115	Emilio Nava	36	16	1661.9
+116	Dalibor Svrcina	32	16	1658.9
+117	Shintaro Mochizuki	24	15	1658.8
+118	Pablo Llamas Ruiz	6	4	1655.9
+119	Rinky Hijikata	15	20	1653.6
+120	Richard Gasquet	6	7	1653.2
+121	Lucas Pouille	5	4	1651.6
+122	Mark Lajal	16	10	1650.6
+123	Juncheng Shang	3	2	1648.0
+124	Adam Walton	27	19	1647.7
+125	Kamil Majchrzak	21	12	1647.0
+126	Luca Nardi	21	20	1645.0
+127	Valentin Royer	36	16	1643.5
+128	Andrea Vavassori	7	4	1641.2
+129	Elmer Moller	18	16	1640.9
+130	Nerman Fatic	10	5	1640.6
+131	Nicolas Jarry	10	16	1637.7
+132	Henrique Rocha	15	14	1637.7
+133	Sebastian Baez	16	15	1637.0
+134	Martin Landaluce	17	16	1634.9
+135	Hugo Gaston	13	18	1631.6
+136	Bu Yunchaokete	11	18	1629.5
+137	Roberto Carballes Baena	9	12	1628.7
+138	Valentin Vacherot	20	14	1624.6
+139	Pablo Carreno Busta	23	17	1623.1
+140	Sandro Kopp	4	1	1623.0
+141	Lloyd Harris	8	10	1622.5
+142	Oliver Crawford	4	2	1622.4
+143	Arthur Bouquier	12	5	1618.6
+144	Dimitar Kuzmanov	20	13	1616.6
+145	Federico Cina	12	8	1615.8
+146	Luca Van Assche	20	14	1614.5
+147	Yoshihito Nishioka	9	10	1613.7
+148	Benjamin Bonzi	14	15	1609.1
+149	Yosuke Watanuki	15	12	1609.1
+150	Kyrian Jacquet	18	9	1605.3
+151	Alex Bolt	13	12	1605.1
+152	Thiago Agustin Tirante	22	16	1599.7
+153	Daniel Merida Aguilar	10	8	1599.0
+154	Zhizhen Zhang	4	9	1598.0
+155	Brandon Holt	34	16	1597.9
+156	Felipe Meligeni Alves	15	10	1597.5
+157	Aleksandar Kovacevic	23	17	1596.7
+158	Pedro Martinez	11	19	1594.6
+159	Botic Van De Zandschulp	10	15	1593.7
+160	Jerome Kym	10	10	1593.4
+161	Daniel Elahi Galan	25	17	1588.8
+162	Marko Topo	6	5	1588.3
+163	Vitaliy Sachko	16	14	1587.4
+164	Trevor Svajda	4	4	1587.3
+165	Daniel Evans	11	15	1586.8
+166	Alibek Kachmazov	15	13	1586.7
+167	Ugo Blanchet	14	13	1586.1
+168	Federico Coria	18	15	1585.4
+169	Gustavo Heide	7	7	1584.2
+170	Roman Safiullin	9	14	1583.7
+171	Giulio Zeppieri	12	11	1581.1
+172	Nicolas Moreno De Alboran	4	6	1580.8
+173	Aleksandar Vukic	10	20	1578.5
+174	Christopher Oconnell	14	18	1578.2
+175	Lukas Neumayer	21	16	1576.2
+176	Ilia Simakin	16	9	1575.7
+177	Chris Rodesch	18	12	1575.1
+178	Alexander Blockx	17	14	1575.1
+179	Clement Chidekh	14	14	1572.2
+180	Hady Habib	13	13	1570.0
+181	Liam Draxl	27	15	1569.9
+182	Stan Wawrinka	8	14	1568.9
+183	Jaime Faria	12	13	1567.7
+184	Clement Tabur	12	8	1567.0
+185	Anton Matusevich	3	1	1565.5
+186	Benjamin Hassan	17	18	1564.9
+187	Michael Mmoh	12	10	1564.7
+188	Albert Ramos	8	11	1563.6
+189	Dominik Koepfer	7	6	1561.7
+190	Joao Lucas Reis Da Silva	20	13	1560.2
+191	Kimmer Coppejans	13	11	1559.5
+192	Rodrigo Pacheco Mendez	13	14	1559.3
+193	Gastao Elias	4	6	1556.8
+194	Nishesh Basavareddy	12	13	1555.2
+195	Fajing Sun	6	6	1550.9
+196	Jack Pinnington Jones	5	5	1550.8
+197	Jurij Rodionov	20	16	1550.0
+198	Andrea Collarini	18	16	1549.5
+199	Francesco Maestrelli	13	11	1549.2
+200	Andres Martin	8	5	1546.8
+201	J J Wolf	4	4	1546.8
+202	Alex Rybakov	3	3	1545.7
+203	Facundo Diaz Acosta	4	7	1545.4
+204	Eliakim Coulibaly	10	5	1545.1
+205	Aslan Karatsev	14	8	1544.4
+206	Luka Pavlovic	14	9	1543.6
+207	Marc Andrea Huesler	14	10	1543.3
+208	Gauthier Onclin	12	13	1542.0
+209	Ryan Peniston	7	7	1541.9
+210	Geoffrey Blancaneaux	15	13	1539.3
+211	Jie Cui	9	7	1537.6
+212	Maximilian Marterer	4	4	1536.6
+213	Arthur Fery	4	3	1535.4
+214	Henry Searle	9	6	1534.9
+215	Dali Blanch	3	1	1533.3
+216	Ivan Gakhov	12	8	1532.3
+217	Harold Mayot	13	16	1532.2
+218	Pedro Rodrigues	3	1	1531.4
+219	Yusuke Takahashi	5	3	1528.9
+220	Zachary Svajda	11	15	1528.6
+221	James Trotter	12	14	1527.6
+222	Tristan Boyer	13	17	1526.9
+223	Daniel Rincon	17	15	1526.7
+224	Jan Lennard Struff	5	17	1526.4
+225	Dennis Novak	6	3	1526.0
+226	Matheus Pucinelli De Almeida	16	9	1525.4
+227	Michael Zheng	4	2	1524.9
+228	Dmitry Popko	15	15	1524.4
+229	Saba Purtseladze	5	3	1523.6
+230	James Duckworth	18	17	1523.6
+231	Murphy Cassone	19	15	1520.2
+232	Rafael Jodar	4	3	1517.1
+233	Alfredo Perez	5	5	1514.9
+234	Federico Bondioli	3	3	1513.8
+235	Billy Harris	19	25	1513.2
+236	Thiago Seyboth Wild	8	16	1512.5
+237	Pierluigi Basile	3	3	1512.3
+238	Arthur Cazaux	6	11	1511.0
+239	Dinko Dinev	3	1	1508.2
+240	Adrian Mannarino	12	24	1506.0
+241	Marat Sharipov	8	8	1505.2
+242	Rio Noguchi	16	12	1504.7
+243	Hyeon Chung	4	4	1504.2
+244	Li Tu	10	16	1503.1
+245	Petr Brunclik	3	3	1502.4
+246	Mili Poljicak	9	8	1502.1
+247	Nicolas Mejia	14	15	1501.9
+248	Lukas Klein	13	15	1501.7
+249	Stefan Kozlov	7	7	1498.4
+250	Mattia Bellucci	11	20	1497.0
+251	Rei Sakamoto	7	11	1495.7
+252	Karue Sell	8	10	1495.4
+253	Stuart Parker	6	4	1494.8
+254	Milos Karol	4	5	1494.6
+255	Constant Lestienne	14	16	1493.8
+256	Jacopo Berrettini	3	3	1493.4
+257	Justin Engel	4	11	1493.4
+258	Mikhail Kukushkin	11	14	1493.0
+259	Stefanos Sakellaridis	4	2	1492.2
+260	Calvin Hemery	14	16	1490.6
+261	Mitchell Krueger	15	17	1489.4
+262	Coleman Wong	13	15	1487.7
+263	Dan Martin	3	2	1487.6
+264	Patrick Maloney	6	7	1487.5
+265	Hynek Barton	6	9	1483.7
+266	Lautaro Midon	15	10	1483.5
+267	Arthur Gea	9	11	1483.3
+268	Robert Strombachs	5	3	1481.8
+269	Juan Manuel La Serna	3	3	1479.5
+270	Eliot Spizzirri	21	17	1478.5
+271	Raul Brancaccio	3	4	1478.1
+272	Jan Choinski	9	15	1477.8
+273	Ilya Snitari	3	2	1477.7
+274	Omar Jasika	10	9	1477.3
+275	Andres Andrade	11	12	1476.1
+276	Alexis Galarneau	19	17	1475.5
+277	Juan Pablo Varillas	15	10	1475.3
+278	Bernard Tomic	13	15	1475.2
+279	Timofey Skatov	15	17	1474.8
+280	Federico Arnaboldi	13	16	1474.7
+281	Gabriel Debru	3	3	1474.4
+282	Martin Klizan	3	4	1474.3
+283	Yasutaka Uchiyama	7	12	1471.7
+284	Petr Bar Biryukov	4	5	1471.5
+285	Mika Brunold	9	9	1470.6
+286	Sho Shimabukuro	5	9	1469.2
+287	Yu Hsiou Hsu	9	10	1469.1
+288	Viktor Durasovic	16	13	1469.1
+289	Tibo Colson	3	2	1469.0
+290	Franco Agamenone	4	4	1468.8
+291	Jay Clarke	8	9	1468.4
+292	Federico Agustin Gomez	8	16	1467.3
+293	Christopher Eubanks	11	17	1466.6
+294	Filip Cristian Jianu	14	20	1466.0
+295	Frederico Ferreira Silva	3	4	1463.8
+296	Joel Schwaerzler	9	11	1461.6
+297	Toby Samuel	3	4	1461.2
+298	Alejandro Moro Canas	13	18	1460.8
+299	Manuel Guinard	3	7	1460.2
+300	Emil Ruusuvuori	6	8	1460.1
+301	Thiago Monteiro	16	16	1459.5
+302	Javier Barranco Cosano	7	9	1458.7
+303	Hernan Casanova	8	7	1458.1
+304	Santiago Fa Rodriguez Taverna	15	11	1457.3
+305	Pavel Kotov	7	16	1456.7
+306	Miguel Tobon	3	3	1454.3
+307	Enrico Dalla Valle	10	13	1453.3
+308	Andre Ilagan	7	8	1453.1
+309	Elmar Ejupovic	3	4	1452.6
+310	Dominic Stricker	4	10	1452.5
+311	Mees Rottgering	4	6	1452.2
+312	Stefano Travaglia	3	5	1451.5
+313	Luka Mikrut	4	6	1451.1
+314	Hiroki Moriya	4	5	1449.5
+315	Norbert Gombos	8	7	1449.4
+316	Moez Echargui	4	3	1449.1
+317	Kilian Feldbausch	4	6	1447.1
+318	Remy Bertola	6	12	1446.3
+319	Pol Martin Tiffon	9	11	1445.7
+320	Johannus Monday	8	10	1445.6
+321	Nicolai Budkov Kjaer	10	13	1445.1
+322	Juan Pablo Ficovich	21	18	1443.5
+323	Giles Hussey	7	5	1443.4
+324	Ricardas Berankis	10	9	1442.2
+325	Andrej Martin	5	5	1442.1
+326	Bernabe Zapata Miralles	4	10	1440.7
+327	Jakub Paul	7	9	1439.4
+328	Maximus Jones	12	11	1438.2
+329	Eduardo Ribeiro	4	3	1437.7
+330	Patrick Zahraj	9	11	1437.4
+331	Hugo Grenier	15	18	1436.9
+332	Daniel Michalski	6	6	1436.2
+333	Michael Geerts	13	12	1435.5
+334	Alvaro Guillen Meza	15	13	1434.2
+335	Khumoun Sultanov	11	13	1433.9
+336	Christoph Negritu	7	8	1433.0
+337	Max Hans Rehberg	8	9	1431.3
+338	Franco Roncadelli	10	8	1431.1
+339	Blake Ellis	5	6	1430.8
+340	Gianluca Mager	4	5	1429.8
+341	Max Wiskandt	5	8	1428.4
+342	Beibit Zhukayev	11	15	1428.0
+343	Roberto Cid	5	4	1427.6
+344	Diego Dedura Palomero	3	9	1427.5
+345	Mathys Erhard	11	12	1427.2
+346	Lorenzo Giustino	4	8	1424.1
+347	Gregoire Barrere	7	12	1422.7
+348	Florent Bax	5	4	1422.2
+349	Philip Henning	7	7	1420.1
+350	Matteo Martineau	13	15	1418.5
+351	James Mccabe	15	18	1417.0
+352	Maximilian Neuchrist	6	7	1416.5
+353	Genaro Alberto Olivieri	14	16	1416.5
+354	Alexander Ritschard	4	7	1414.9
+355	Maxim Mrva	7	7	1414.6
+356	Aziz Dougaz	13	17	1408.8
+357	Facundo Mena	12	17	1408.3
+358	Oriol Roca Batalla	6	12	1407.9
+359	Tyler Zink	5	7	1406.1
+360	Maxime Chazal	3	7	1405.9
+361	Yi Zhou	3	7	1405.1
+362	Fabio Fognini	4	13	1403.2
+363	Alexey Vatutin	5	9	1403.2
+364	Sascha Gueymard Wayenburg	10	13	1403.2
+365	Pedro Cachin	4	9	1402.0
+366	Oleksandr Ovcharenko	3	5	1401.4
+367	Adria Soriano Barrera	4	5	1398.2
+368	Sumit Nagal	9	16	1397.6
+369	Matej Dodig	4	9	1396.5
+370	Gonzalo Villanueva	10	10	1394.8
+371	Yuta Shimizu	10	11	1393.6
+372	Edas Butvilas	9	13	1392.8
+373	Giovanni Fonio	3	8	1392.6
+374	Enzo Couacaud	6	9	1391.8
+375	Adrian Andreev	3	7	1390.1
+376	Adolfo Daniel Vallejo	12	16	1388.7
+377	Valerio Aboian	3	4	1388.6
+378	Neil Oberleitner	4	7	1387.8
+379	Marco Cecchinato	7	9	1387.5
+380	Zdenek Kolar	3	7	1386.6
+381	Daniel Dutra Da Silva	5	11	1385.8
+382	Daniil Glinka	4	4	1385.7
+383	Charles Broom	3	7	1384.9
+384	Jelle Sels	5	10	1381.3
+385	Tung Lin Wu	6	12	1380.0
+386	August Holmgren	5	12	1372.6
+387	Nikolas Sanchez Izquierdo	5	7	1372.0
+388	Denis Yevseyev	10	19	1371.6
+389	Corentin Denolly	7	13	1370.1
+390	Carlos Sanchez Jover	4	7	1367.8
+391	Murkel Alejandro Dellien Velasco	15	17	1366.9
+392	Moerani Bouzige	5	7	1364.2
+393	Marek Gengel	7	8	1363.4
+394	Gonzalo Bueno	14	14	1363.4
+395	Juan Alejandro Hernandez Serrano	5	8	1362.9
+396	Matias Soto	10	11	1359.7
+397	Facundo Bagnis	3	4	1356.7
+398	Tom Paris	5	7	1356.0
+399	Christian Langmo	4	7	1355.2
+400	Duje Ajdukovic	7	14	1355.0
+401	Rodrigo Alujas 	3	5	1346.6
+402	Antoine Escoffier	6	14	1346.3
+403	Pedro Boscardin Dias	10	11	1345.3
+404	Max Houkes	9	12	1345.0
+405	Lukas Pokorny	6	9	1342.2
+406	Mariano Kestelboim	5	7	1341.7
+407	Henri Squire	9	19	1341.1
+408	Lucas Poullain	3	6	1339.2
+409	Radu Albot	6	17	1337.8
+410	Abedallah Shelbayh	5	13	1333.3
+411	Conner Huertas Del Pino	5	7	1333.0
+412	Ergi Kirkin	8	11	1330.7
+413	Aleksandre Bakshi	3	6	1327.7
+414	Rudolf Molleker	3	6	1326.8
+415	Pedro Sakamoto	7	9	1324.1
+416	Guido Ivan Justo	6	9	1321.3
+417	Juan Carlos Prado Angelo	7	13	1317.5
+418	Nicolas Kicker	7	8	1315.6
+419	Masamichi Imamura	3	7	1309.9
+420	Nicolas Alvarez Varona	7	11	1307.6
+421	Luciano Emanuel Ambrogi	3	7	1306.7
+422	Taro Daniel	4	17	1296.5
+423	Juan Bautista Torres	7	15	1287.2
+424	Benoit Paire	4	11	1279.3
+425	Robin Bertrand	5	10	1277.8
+426	Jozef Kovalik	4	15	1271.8
+427	Renzo Olivo	8	15	1255.3
+428	Maxime Janvier	4	14	1248.8
+429	Mateus Alves	4	12	1237.0
