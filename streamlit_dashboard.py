@@ -183,6 +183,10 @@ def display_match_simulation(db: Dict[str, any]):
     if 'global_weights' in st.session_state:
         st.info("Using global Elo weights from the 'Elo Weights' tab.")
         simulator = EloMatchSimulator(weights=st.session_state.global_weights)
+        
+        # Show current form parameters
+        weights = st.session_state.global_weights
+        st.info(f"Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
     else:
         st.warning("No global weights set. Using default weights. Set weights in the 'Elo Weights' tab.")
         simulator = create_match_simulator()
@@ -300,19 +304,17 @@ def display_elo_weights_config():
     st.write('Configure the weights for different Elo rating types in match simulation.')
     
     # Get current weights from session state or use defaults
-    if 'preset_elo' in st.session_state:
-        # Use preset values if available
+    if 'preset_elo' in st.session_state and 'preset_used' not in st.session_state:
+        # Use preset values if available and not yet used
         elo_default = st.session_state.preset_elo
         helo_default = st.session_state.preset_helo
         celo_default = st.session_state.preset_celo
         gelo_default = st.session_state.preset_gelo
         yelo_default = st.session_state.preset_yelo
-        # Clear preset values after using them
-        del st.session_state.preset_elo
-        del st.session_state.preset_helo
-        del st.session_state.preset_celo
-        del st.session_state.preset_gelo
-        del st.session_state.preset_yelo
+        form_k_default = st.session_state.preset_form_k
+        form_alpha_default = st.session_state.preset_form_alpha
+        # Mark preset as used
+        st.session_state.preset_used = True
     elif 'global_weights' in st.session_state:
         current_weights = st.session_state.global_weights
         elo_default = current_weights.elo_weight
@@ -320,12 +322,16 @@ def display_elo_weights_config():
         celo_default = current_weights.celo_weight
         gelo_default = current_weights.gelo_weight
         yelo_default = current_weights.yelo_weight
+        form_k_default = current_weights.form_k
+        form_alpha_default = current_weights.form_alpha
     else:
         elo_default = 0.4
         helo_default = 0.2
         celo_default = 0.2
         gelo_default = 0.1
         yelo_default = 0.1
+        form_k_default = 0.1
+        form_alpha_default = 0.7
     
     # Weight configuration
     st.subheader('Weight Configuration')
@@ -342,14 +348,44 @@ def display_elo_weights_config():
         gelo_weight = st.slider('Grass Court Elo Weight', 0.0, 1.0, gelo_default, 0.05, key="gelo_weight")
         yelo_weight = st.slider('Year-to-Date Elo Weight', 0.0, 1.0, yelo_default, 0.05, key="yelo_weight")
     
+    # Form configuration
+    st.subheader('Form Configuration')
+    st.write('Configure form-based probability calculation.')
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        form_k = st.slider('Form Steepness (k)', 0.01, 0.5, form_k_default, 0.01, 
+                          help="Controls how steeply form differences affect probability. Higher values = more impact.",
+                          key="form_k_slider")
+    
+    with col2:
+        form_alpha = st.slider('Form Weight (α)', 0.0, 1.0, form_alpha_default, 0.05,
+                              help="Weight for blending standard Elo (α) vs form probability (1-α). α=1.0 = Elo only, α=0.0 = Form only.",
+                              key="form_alpha_slider")
+    
     # Calculate total weight
     total_weight = elo_weight + helo_weight + celo_weight + gelo_weight + yelo_weight
     
     # Display total weight
     if abs(total_weight - 1.0) < 0.01:
         st.success(f'✅ Total Weight: {total_weight:.2f}')
+        # Automatically save weights when they sum to 1.0
+        weights = EloWeights(
+            elo_weight=elo_weight,
+            helo_weight=helo_weight,
+            celo_weight=celo_weight,
+            gelo_weight=gelo_weight,
+            yelo_weight=yelo_weight,
+            form_k=form_k,
+            form_alpha=form_alpha
+        )
+        st.session_state.global_weights = weights
+        st.success('✅ Weights automatically saved! These weights will be used in all simulators.')
+        st.info('💡 Changes are saved automatically when weights sum to 1.0. No need to click any buttons!')
     else:
         st.error(f'❌ Total Weight: {total_weight:.2f} (must be 1.0)')
+        st.warning('Weights will be saved automatically when they sum to 1.0.')
     
     # Preset configurations
     st.subheader('Preset Configurations')
@@ -357,54 +393,52 @@ def display_elo_weights_config():
     
     with col1:
         if st.button('Hard Court Focus'):
+            # Clear any existing preset usage flag
+            if 'preset_used' in st.session_state:
+                del st.session_state.preset_used
             # Store preset values in different session state keys
             st.session_state.preset_elo = 0.3
             st.session_state.preset_helo = 0.4
             st.session_state.preset_celo = 0.1
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
+            st.session_state.preset_form_k = 0.1
+            st.session_state.preset_form_alpha = 0.7
             st.rerun()
     
     with col2:
         if st.button('Clay Court Focus'):
+            # Clear any existing preset usage flag
+            if 'preset_used' in st.session_state:
+                del st.session_state.preset_used
             st.session_state.preset_elo = 0.3
             st.session_state.preset_helo = 0.1
             st.session_state.preset_celo = 0.4
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
+            st.session_state.preset_form_k = 0.1
+            st.session_state.preset_form_alpha = 0.7
             st.rerun()
     
     with col3:
         if st.button('Grass Court Focus'):
+            # Clear any existing preset usage flag
+            if 'preset_used' in st.session_state:
+                del st.session_state.preset_used
             st.session_state.preset_elo = 0.3
             st.session_state.preset_helo = 0.1
             st.session_state.preset_celo = 0.1
             st.session_state.preset_gelo = 0.4
             st.session_state.preset_yelo = 0.1
+            st.session_state.preset_form_k = 0.1
+            st.session_state.preset_form_alpha = 0.7
             st.rerun()
-    
-    # Apply weights button
-    if st.button('Apply Weights', type='primary'):
-        if abs(total_weight - 1.0) < 0.01:
-            weights = EloWeights(
-                elo_weight=elo_weight,
-                helo_weight=helo_weight,
-                celo_weight=celo_weight,
-                gelo_weight=gelo_weight,
-                yelo_weight=yelo_weight
-            )
-            st.session_state.global_weights = weights
-            st.success('✅ Weights applied successfully! These weights will be used in all simulators.')
-            return weights
-        else:
-            st.error('❌ Weights must sum to 1.0. Please adjust the weights.')
-            return None
-    
+
     # Show current weights if available
     if 'global_weights' in st.session_state:
         st.subheader('Current Global Weights')
         weights = st.session_state.global_weights
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Overall Elo", f"{weights.elo_weight:.2f}")
             st.metric("Hard Elo", f"{weights.helo_weight:.2f}")
@@ -412,8 +446,9 @@ def display_elo_weights_config():
         with col2:
             st.metric("Grass Elo", f"{weights.gelo_weight:.2f}")
             st.metric("Year-to-date Elo", f"{weights.yelo_weight:.2f}")
-    
-    return None
+        with col3:
+            st.metric("Form Steepness (k)", f"{weights.form_k:.3f}")
+            st.metric("Form Weight (α)", f"{weights.form_alpha:.2f}")
 
 
 def display_explorer():
@@ -433,7 +468,8 @@ def display_explorer():
             if 'global_weights' in st.session_state:
                 try:
                     sim.set_custom_weights(st.session_state.global_weights)
-                    st.info("Using global Elo weights.")
+                    weights = st.session_state.global_weights
+                    st.info(f"Using global Elo weights. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
                 except AttributeError as e:
                     st.error(f"Error setting custom weights: {e}")
                     st.warning("Continuing with default weights.")
@@ -500,7 +536,8 @@ def display_single_tournament():
     
     # Add global weights option
     if 'global_weights' in st.session_state:
-        st.info("Global Elo weights are available and will be used.")
+        weights = st.session_state.global_weights
+        st.info(f"Global Elo weights are available and will be used. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
     
     if st.button('Run Single Tournament Simulation'):
         # Setup and simulate tournament
@@ -762,12 +799,11 @@ def main():
         if not db:
             st.error("Failed to load database. Please check the data files.")
             return
+        
         display_match_simulation(db)
     
     elif page == 'Elo Weights':
-        global_weights = display_elo_weights_config()
-        if global_weights:
-            st.session_state.global_weights = global_weights
+        display_elo_weights_config()
     
     elif page == 'Single Tournament':
         display_single_tournament()

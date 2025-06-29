@@ -85,27 +85,73 @@ class EloMatchSimulator:
         
         return weighted_sum
     
-    def calculate_win_probability(self, player1: Player, player2: Player) -> float:
+    def calculate_form_probability(self, player1: Player, player2: Player) -> float:
         """
-        Calculate the probability that player1 beats player2 using Elo formula.
+        Calculate form-based win probability using the formula:
+        P_form = 1 / (1 + e^(-k * (form_player1 - form_player2)))
         
         Args:
             player1: First player
             player2: Second player
             
         Returns:
-            Probability that player1 wins (0.0 to 1.0)
+            Form-based probability that player1 wins (0.0 to 1.0)
+        """
+        # Get form values, default to 0 if not available
+        form1 = getattr(player1, 'form', 0.0) or 0.0
+        form2 = getattr(player2, 'form', 0.0) or 0.0
+        
+        # Calculate form difference
+        form_diff = form1 - form2
+        
+        # Apply form formula: P_form = 1 / (1 + e^(-k * form_diff))
+        form_probability = 1 / (1 + math.exp(-self.weights.form_k * form_diff))
+        
+        return form_probability
+    
+    def _calculate_standard_probability(self, player1: Player, player2: Player) -> float:
+        """
+        Calculate standard Elo-based win probability (without form blending).
+        
+        Args:
+            player1: First player
+            player2: Second player
+            
+        Returns:
+            Standard Elo probability that player1 wins (0.0 to 1.0)
         """
         rating1 = self.calculate_weighted_rating(player1)
         rating2 = self.calculate_weighted_rating(player2)
-        
-        # Calculate rating difference
         rating_diff = rating2 - rating1
+        return 1 / (1 + math.pow(10, rating_diff / 400))
+    
+    def calculate_win_probability(self, player1: Player, player2: Player) -> float:
+        """
+        Calculate the probability that player1 beats player2 using blended Elo and form probabilities.
         
-        # Apply Elo formula: P(A beats B) = 1 / (1 + 10^((B_rating - A_rating) / 400))
-        win_probability = 1 / (1 + math.pow(10, rating_diff / 400))
+        Formula: P_new = α * P_standard + (1-α) * P_form
         
-        return win_probability
+        Args:
+            player1: First player
+            player2: Second player
+            
+        Returns:
+            Blended probability that player1 wins (0.0 to 1.0)
+        """
+        # Calculate standard Elo-based probability
+        rating1 = self.calculate_weighted_rating(player1)
+        rating2 = self.calculate_weighted_rating(player2)
+        rating_diff = rating2 - rating1
+        p_standard = 1 / (1 + math.pow(10, rating_diff / 400))
+        
+        # Calculate form-based probability
+        p_form = self.calculate_form_probability(player1, player2)
+        
+        # Blend probabilities: P_new = α * P_standard + (1-α) * P_form
+        p_blended = (self.weights.form_alpha * p_standard + 
+                    (1 - self.weights.form_alpha) * p_form)
+        
+        return p_blended
     
     def simulate_match(self, player1: Player, player2: Player) -> Tuple[Player, Player, Dict]:
         """
@@ -122,6 +168,12 @@ class EloMatchSimulator:
         p1_win_prob = self.calculate_win_probability(player1, player2)
         p2_win_prob = 1 - p1_win_prob
         
+        # Calculate individual components for match details
+        p1_standard = self._calculate_standard_probability(player1, player2)
+        p1_form = self.calculate_form_probability(player1, player2)
+        p2_standard = 1 - p1_standard
+        p2_form = 1 - p1_form
+        
         # Determine winner based on probabilities
         if random.random() < p1_win_prob:
             winner, loser = player1, player2
@@ -137,7 +189,17 @@ class EloMatchSimulator:
             'winner_probability': winner_prob,
             'rating_difference': self.calculate_weighted_rating(player2) - self.calculate_weighted_rating(player1),
             'weighted_rating_player1': self.calculate_weighted_rating(player1),
-            'weighted_rating_player2': self.calculate_weighted_rating(player2)
+            'weighted_rating_player2': self.calculate_weighted_rating(player2),
+            # Form-related details
+            'player1_standard_probability': p1_standard,
+            'player2_standard_probability': p2_standard,
+            'player1_form_probability': p1_form,
+            'player2_form_probability': p2_form,
+            'player1_form': getattr(player1, 'form', None),
+            'player2_form': getattr(player2, 'form', None),
+            'form_difference': (getattr(player1, 'form', 0.0) or 0.0) - (getattr(player2, 'form', 0.0) or 0.0),
+            'form_weight_alpha': self.weights.form_alpha,
+            'form_steepness_k': self.weights.form_k
         }
         
         return winner, loser, match_details
@@ -158,28 +220,36 @@ class EloMatchSimulator:
                 helo_weight=0.4,  # Higher weight for hard court
                 celo_weight=0.1,
                 gelo_weight=0.1,
-                yelo_weight=0.1
+                yelo_weight=0.1,
+                form_k=0.1,
+                form_alpha=0.7
             ),
             'clay': EloWeights(
                 elo_weight=0.3,
                 helo_weight=0.1,
                 celo_weight=0.4,  # Higher weight for clay court
                 gelo_weight=0.1,
-                yelo_weight=0.1
+                yelo_weight=0.1,
+                form_k=0.1,
+                form_alpha=0.7
             ),
             'grass': EloWeights(
                 elo_weight=0.3,
                 helo_weight=0.1,
                 celo_weight=0.1,
                 gelo_weight=0.4,  # Higher weight for grass court
-                yelo_weight=0.1
+                yelo_weight=0.1,
+                form_k=0.1,
+                form_alpha=0.7
             ),
             'overall': EloWeights(
                 elo_weight=0.4,
                 helo_weight=0.2,
                 celo_weight=0.2,
                 gelo_weight=0.1,
-                yelo_weight=0.1
+                yelo_weight=0.1,
+                form_k=0.1,
+                form_alpha=0.7
             )
         }
         
