@@ -30,7 +30,8 @@ class Round(Enum):
     R4 = "R4"    # Round 4 (previously QF)
     QF = "QF"    # Quarter Finals (previously SF)
     SF = "SF"    # Semi Finals (previously F)
-    F = "F"      # Final (previously W)
+    F = "F"      # Final (previously F)
+    W = "W"      # Winner (previously F)
 
 
 @dataclass
@@ -146,9 +147,10 @@ class Match:
             Round.R3: Round.R4,
             Round.R4: Round.QF,
             Round.QF: Round.SF,
-            Round.SF: Round.F
+            Round.SF: Round.F,
+            Round.F: Round.W
         }
-        return round_progression.get(self.round, Round.F)
+        return round_progression.get(self.round, Round.W)
     
     def __str__(self) -> str:
         if self.winner:
@@ -185,8 +187,21 @@ class Tournament:
         return [p for p in self.players if not p.eliminated]
     
     def get_players_in_round(self, round: Round) -> List[Player]:
-        """Get all players who reached a specific round."""
-        return [p for p in self.players if p.current_round == round]
+        """Get all players who reached at least the specified round."""
+        # Define round hierarchy (higher index = later round)
+        round_hierarchy = {
+            Round.R1: 0,
+            Round.R2: 1,
+            Round.R3: 2,
+            Round.R4: 3,
+            Round.QF: 4,
+            Round.SF: 5,
+            Round.F: 6,
+            Round.W: 7
+        }
+        
+        target_level = round_hierarchy.get(round, 0)
+        return [p for p in self.players if round_hierarchy.get(p.current_round, 0) >= target_level]
     
     def reset(self) -> None:
         """Reset tournament state."""

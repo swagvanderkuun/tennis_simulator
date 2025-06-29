@@ -22,6 +22,8 @@ class EloWeights:
     celo_weight: float = 0.2     # Clay court Elo weight
     gelo_weight: float = 0.1     # Grass court Elo weight
     yelo_weight: float = 0.1     # Year-to-date Elo weight
+    form_k: float = 0.1          # Form steepness parameter (k)
+    form_alpha: float = 0.7      # Form weight parameter (α) - weight for standard vs form probability
     
     def __post_init__(self):
         """Validate that weights sum to 1.0"""
@@ -29,6 +31,12 @@ class EloWeights:
                        self.celo_weight + self.gelo_weight + self.yelo_weight)
         if abs(total_weight - 1.0) > 0.001:
             raise ValueError(f"Elo weights must sum to 1.0, got {total_weight}")
+        
+        # Validate form parameters
+        if self.form_k <= 0:
+            raise ValueError(f"Form steepness (k) must be positive, got {self.form_k}")
+        if not 0 <= self.form_alpha <= 1:
+            raise ValueError(f"Form weight (α) must be between 0 and 1, got {self.form_alpha}")
 
 
 class EloMatchSimulator:
@@ -206,6 +214,9 @@ def create_match_simulator(weights: Optional[EloWeights] = None, surface: Option
         raise ValueError("Cannot specify both weights and surface")
     
     if surface:
-        return EloMatchSimulator(weights=EloMatchSimulator().get_surface_specific_weights(surface))
+        # Create a temporary instance to get surface-specific weights
+        temp_sim = EloMatchSimulator()
+        surface_weights = temp_sim.get_surface_specific_weights(surface)
+        return EloMatchSimulator(weights=surface_weights)
     else:
         return EloMatchSimulator(weights=weights) 

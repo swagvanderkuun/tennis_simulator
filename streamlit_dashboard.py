@@ -11,6 +11,7 @@ import sys
 import os
 from typing import Dict, List, Optional
 import random
+import plotly.graph_objects as go
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
@@ -68,7 +69,7 @@ def load_static_database(gender: str) -> Dict[str, any]:
 
 def create_player_from_static_data(name: str, data: any) -> Player:
     """Create Player object from static database data"""
-    return Player(
+    player = Player(
         name=name,
         country="N/A",  # Static DB doesn't have country
         seeding=None,
@@ -81,6 +82,12 @@ def create_player_from_static_data(name: str, data: any) -> Player:
         atp_rank=data.ranking if hasattr(data, 'ranking') else None,
         wta_rank=data.ranking if hasattr(data, 'ranking') else None
     )
+    
+    # Add form attribute if available
+    if hasattr(data, 'form'):
+        player.form = data.form
+    
+    return player
 
 
 def display_database_overview(db: Dict[str, any], gender: str):
@@ -98,6 +105,7 @@ def display_database_overview(db: Dict[str, any], gender: str):
             'cElo': data.celo,
             'gElo': data.gelo,
             'yElo': data.yelo,
+            'Form': data.form if hasattr(data, 'form') else None,
             'Ranking': data.ranking if hasattr(data, 'ranking') else None
         })
     
@@ -211,6 +219,7 @@ def display_match_simulation(db: Dict[str, any]):
             st.markdown(f"cElo: {player1.celo:.1f}")
             st.markdown(f"gElo: {player1.gelo:.1f}")
             st.markdown(f"yElo: {player1.yelo:.1f}")
+            st.markdown(f"Form: {player1.form:.1f}" if hasattr(player1, 'form') and player1.form is not None else "Form: N/A")
         
         with col2:
             st.markdown(f"**{player2.name}**")
@@ -220,6 +229,7 @@ def display_match_simulation(db: Dict[str, any]):
             st.markdown(f"cElo: {player2.celo:.1f}")
             st.markdown(f"gElo: {player2.gelo:.1f}")
             st.markdown(f"yElo: {player2.yelo:.1f}")
+            st.markdown(f"Form: {player2.form:.1f}" if hasattr(player2, 'form') and player2.form is not None else "Form: N/A")
         
         # Calculate win probability
         win_prob = simulator.calculate_win_probability(player1, player2)
@@ -285,38 +295,125 @@ def display_match_simulation(db: Dict[str, any]):
 
 
 def display_elo_weights_config():
-    """Display Elo weights configuration that can be reused across all simulators"""
-    st.subheader("⚖️ Elo Weights Configuration")
-    st.markdown("Configure custom weights for Elo ratings. These weights will be used across all simulators.")
+    """Display Elo weights configuration interface."""
+    st.header('⚖️ Elo Weights Configuration')
+    st.write('Configure the weights for different Elo rating types in match simulation.')
+    
+    # Get current weights from session state or use defaults
+    if 'preset_elo' in st.session_state:
+        # Use preset values if available
+        elo_default = st.session_state.preset_elo
+        helo_default = st.session_state.preset_helo
+        celo_default = st.session_state.preset_celo
+        gelo_default = st.session_state.preset_gelo
+        yelo_default = st.session_state.preset_yelo
+        # Clear preset values after using them
+        del st.session_state.preset_elo
+        del st.session_state.preset_helo
+        del st.session_state.preset_celo
+        del st.session_state.preset_gelo
+        del st.session_state.preset_yelo
+    elif 'global_weights' in st.session_state:
+        current_weights = st.session_state.global_weights
+        elo_default = current_weights.elo_weight
+        helo_default = current_weights.helo_weight
+        celo_default = current_weights.celo_weight
+        gelo_default = current_weights.gelo_weight
+        yelo_default = current_weights.yelo_weight
+    else:
+        elo_default = 0.4
+        helo_default = 0.2
+        celo_default = 0.2
+        gelo_default = 0.1
+        yelo_default = 0.1
+    
+    # Weight configuration
+    st.subheader('Weight Configuration')
+    st.write('Adjust the weights for each Elo type. Weights must sum to 1.0.')
     
     col1, col2 = st.columns(2)
     
     with col1:
-        elo_weight = st.slider("Overall Elo Weight", 0.0, 1.0, 0.4, 0.05, key="global_elo")
-        helo_weight = st.slider("Hard Elo Weight", 0.0, 1.0, 0.2, 0.05, key="global_helo")
-        celo_weight = st.slider("Clay Elo Weight", 0.0, 1.0, 0.2, 0.05, key="global_celo")
+        elo_weight = st.slider('Overall Elo Weight', 0.0, 1.0, elo_default, 0.05, key="elo_weight")
+        helo_weight = st.slider('Hard Court Elo Weight', 0.0, 1.0, helo_default, 0.05, key="helo_weight")
+        celo_weight = st.slider('Clay Court Elo Weight', 0.0, 1.0, celo_default, 0.05, key="celo_weight")
     
     with col2:
-        gelo_weight = st.slider("Grass Elo Weight", 0.0, 1.0, 0.1, 0.05, key="global_gelo")
-        yelo_weight = st.slider("Year-to-date Elo Weight", 0.0, 1.0, 0.1, 0.05, key="global_yelo")
+        gelo_weight = st.slider('Grass Court Elo Weight', 0.0, 1.0, gelo_default, 0.05, key="gelo_weight")
+        yelo_weight = st.slider('Year-to-Date Elo Weight', 0.0, 1.0, yelo_default, 0.05, key="yelo_weight")
     
+    # Calculate total weight
     total_weight = elo_weight + helo_weight + celo_weight + gelo_weight + yelo_weight
     
-    if abs(total_weight - 1.0) > 0.001:
-        st.error(f"⚠️ Weights must sum to 1.0. Current sum: {total_weight:.2f}")
-        return None
+    # Display total weight
+    if abs(total_weight - 1.0) < 0.01:
+        st.success(f'✅ Total Weight: {total_weight:.2f}')
     else:
-        st.success(f"✅ Weights sum to {total_weight:.2f}")
-        
-        weights = EloWeights(
-            elo_weight=elo_weight,
-            helo_weight=helo_weight,
-            celo_weight=celo_weight,
-            gelo_weight=gelo_weight,
-            yelo_weight=yelo_weight
-        )
-        
-        return weights
+        st.error(f'❌ Total Weight: {total_weight:.2f} (must be 1.0)')
+    
+    # Preset configurations
+    st.subheader('Preset Configurations')
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button('Hard Court Focus'):
+            # Store preset values in different session state keys
+            st.session_state.preset_elo = 0.3
+            st.session_state.preset_helo = 0.4
+            st.session_state.preset_celo = 0.1
+            st.session_state.preset_gelo = 0.1
+            st.session_state.preset_yelo = 0.1
+            st.rerun()
+    
+    with col2:
+        if st.button('Clay Court Focus'):
+            st.session_state.preset_elo = 0.3
+            st.session_state.preset_helo = 0.1
+            st.session_state.preset_celo = 0.4
+            st.session_state.preset_gelo = 0.1
+            st.session_state.preset_yelo = 0.1
+            st.rerun()
+    
+    with col3:
+        if st.button('Grass Court Focus'):
+            st.session_state.preset_elo = 0.3
+            st.session_state.preset_helo = 0.1
+            st.session_state.preset_celo = 0.1
+            st.session_state.preset_gelo = 0.4
+            st.session_state.preset_yelo = 0.1
+            st.rerun()
+    
+    # Apply weights button
+    if st.button('Apply Weights', type='primary'):
+        if abs(total_weight - 1.0) < 0.01:
+            weights = EloWeights(
+                elo_weight=elo_weight,
+                helo_weight=helo_weight,
+                celo_weight=celo_weight,
+                gelo_weight=gelo_weight,
+                yelo_weight=yelo_weight
+            )
+            st.session_state.global_weights = weights
+            st.success('✅ Weights applied successfully! These weights will be used in all simulators.')
+            return weights
+        else:
+            st.error('❌ Weights must sum to 1.0. Please adjust the weights.')
+            return None
+    
+    # Show current weights if available
+    if 'global_weights' in st.session_state:
+        st.subheader('Current Global Weights')
+        weights = st.session_state.global_weights
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Overall Elo", f"{weights.elo_weight:.2f}")
+            st.metric("Hard Elo", f"{weights.helo_weight:.2f}")
+            st.metric("Clay Elo", f"{weights.celo_weight:.2f}")
+        with col2:
+            st.metric("Grass Elo", f"{weights.gelo_weight:.2f}")
+            st.metric("Year-to-date Elo", f"{weights.yelo_weight:.2f}")
+    
+    return None
 
 
 def display_explorer():
@@ -334,8 +431,15 @@ def display_explorer():
             
             # Use global weights if available
             if 'global_weights' in st.session_state:
-                sim.set_custom_weights(st.session_state.global_weights)
-                st.info("Using global Elo weights.")
+                try:
+                    sim.set_custom_weights(st.session_state.global_weights)
+                    st.info("Using global Elo weights.")
+                except AttributeError as e:
+                    st.error(f"Error setting custom weights: {e}")
+                    st.warning("Continuing with default weights.")
+                except Exception as e:
+                    st.error(f"Unexpected error setting weights: {e}")
+                    st.warning("Continuing with default weights.")
             else:
                 st.warning("No global weights set. Using default weights.")
             
@@ -360,57 +464,75 @@ def display_explorer():
             st.table(pd.DataFrame(list(semi_probs.items()), columns=["Player", "Semifinal Probability"]))
 
 
-def display_single_tournament_simulation():
-    """Display single tournament simulation"""
-    st.subheader("🏆 Single Tournament Simulation")
-    st.markdown("Simulate a single tournament and see the complete bracket with results.")
+def plot_bracket_tree(tree, x=0, y=0, x_spacing=200, y_spacing=30, level=0, positions=None, lines=None):
+    """
+    Recursively plot the bracket tree using Plotly. Returns node positions and lines for drawing.
+    """
+    if positions is None:
+        positions = []
+    if lines is None:
+        lines = []
+    # Calculate position for this node
+    node_id = len(positions)
+    positions.append({'x': x, 'y': y, 'label': tree['name'], 'winner': tree.get('winner', '')})
+    # If leaf, return
+    if not tree['children']:
+        return positions, lines
+    # For children, calculate y positions
+    n = len(tree['children'])
+    child_ys = []
+    for i, child in enumerate(tree['children']):
+        child_x = x + x_spacing
+        child_y = y + (i - (n-1)/2) * y_spacing * (2 ** (5-level))
+        child_ys.append(child_y)
+        positions, lines = plot_bracket_tree(child, child_x, child_y, x_spacing, y_spacing, level+1, positions, lines)
+        # Draw a line from this node to child
+        lines.append({'x0': x, 'y0': y, 'x1': child_x, 'y1': child_y})
+    return positions, lines
 
-    gender = st.selectbox("Select Gender:", options=["men", "women"], format_func=lambda x: x.title(), key="single_gender")
+
+def display_single_tournament():
+    st.header('🎾 Single Tournament Simulation')
+    gender = st.radio('Select gender', ['men', 'women'], horizontal=True)
+    db = populate_static_database(gender)
+    players = [p for p in db.values()]
+    match_simulator = create_match_simulator()
     
-    if st.button("Simulate Single Tournament", type="primary", key="single_btn"):
-        with st.spinner("Simulating tournament..."):
-            sim = FixedDrawEloSimulator()
-            
-            # Use global weights if available
-            if 'global_weights' in st.session_state:
+    # Add global weights option
+    if 'global_weights' in st.session_state:
+        st.info("Global Elo weights are available and will be used.")
+    
+    if st.button('Run Single Tournament Simulation'):
+        # Setup and simulate tournament
+        sim = FixedDrawEloSimulator()
+        
+        # Apply global weights if available
+        if 'global_weights' in st.session_state:
+            try:
                 sim.set_custom_weights(st.session_state.global_weights)
-                st.info("Using global Elo weights.")
-            else:
-                st.warning("No global weights set. Using default weights.")
-            
-            sim.setup_tournaments()
-            
-            if gender == "men":
-                tournament = sim.men_tournament
-                winner = sim.simulate_tournament(tournament)
-                st.success(f"🏆 **Men's Tournament Winner: {winner.name}**")
-            else:
-                tournament = sim.women_tournament
-                winner = sim.simulate_tournament(tournament)
-                st.success(f"🏆 **Women's Tournament Winner: {winner.name}**")
-            
-            # Display tournament bracket
-            st.subheader("Tournament Bracket")
-            
-            # Get all matches from the tournament
-            if tournament.matches:
-                # Group matches by round
-                matches_by_round = {}
-                for match in tournament.matches:
-                    round_name = match.round.name
-                    if round_name not in matches_by_round:
-                        matches_by_round[round_name] = []
-                    matches_by_round[round_name].append(match)
-                
-                # Display matches by round
-                for round_name in ['R64', 'R32', 'R16', 'QF', 'SF', 'F']:
-                    if round_name in matches_by_round:
-                        st.markdown(f"**{round_name}:**")
-                        for match in matches_by_round[round_name]:
-                            winner_name = match.winner.name if match.winner else "TBD"
-                            loser_name = match.loser.name if match.loser else "TBD"
-                            st.write(f"  {winner_name} def. {loser_name}")
-                        st.write("")
+            except Exception as e:
+                st.warning(f"Could not apply global weights: {e}. Using default weights.")
+        
+        sim.setup_tournaments()
+        tournament = sim.men_tournament if gender == 'men' else sim.women_tournament
+        sim.simulate_tournament(tournament)
+        winner = tournament.winner.name if tournament.winner else '?'
+        st.success(f'Winner: {winner}')
+        # Build bracket tree from matches
+        bracket_tree = sim.get_bracket_tree(tournament)
+        positions, lines = plot_bracket_tree(bracket_tree)
+        xs = [p['x'] for p in positions]
+        ys = [p['y'] for p in positions]
+        labels = [p['label'] for p in positions]
+        winners = [p['winner'] for p in positions]
+        fig = go.Figure()
+        for line in lines:
+            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='gray', width=1))
+        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', marker=dict(size=8, color='royalblue'), hovertext=winners, hoverinfo='text'))
+        fig.update_layout(height=1200, width=1600, showlegend=False, margin=dict(l=20, r=20, t=40, b=20), xaxis=dict(showticklabels=False), yaxis=dict(showticklabels=False), plot_bgcolor='white')
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.info('Click "Run Single Tournament Simulation" to generate and view the bracket.')
 
 
 def display_custom_weights():
@@ -431,6 +553,116 @@ def display_custom_weights():
             st.metric("Year-to-date Elo", f"{weights.yelo_weight:.2f}")
 
 
+def display_bracket_view():
+    st.header('🎾 Bracket View')
+    st.write('Visualize the full tournament bracket for a single simulation.')
+    gender = st.radio('Select gender', ['men', 'women'], horizontal=True)
+    if 'bracket_simulator' not in st.session_state:
+        st.session_state['bracket_simulator'] = FixedDrawEloSimulator()
+        st.session_state['bracket_simulator'].setup_tournaments()
+    sim = st.session_state['bracket_simulator']
+    if st.button('Run Single Simulation'):
+        if gender == 'men':
+            sim.simulate_tournament(sim.men_tournament)
+            bracket_tree = sim.get_bracket_tree(sim.men_tournament)
+            winner = sim.men_tournament.winner.name if sim.men_tournament.winner else '?'
+        else:
+            sim.simulate_tournament(sim.women_tournament)
+            bracket_tree = sim.get_bracket_tree(sim.women_tournament)
+            winner = sim.women_tournament.winner.name if sim.women_tournament.winner else '?'
+        # Plot bracket
+        positions, lines = plot_bracket_tree(bracket_tree)
+        xs = [p['x'] for p in positions]
+        ys = [p['y'] for p in positions]
+        labels = [p['label'] for p in positions]
+        winners = [p['winner'] for p in positions]
+        fig = go.Figure()
+        # Draw lines
+        for line in lines:
+            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='gray', width=1))
+        # Draw nodes
+        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', marker=dict(size=8, color='royalblue'), hovertext=winners, hoverinfo='text'))
+        fig.update_layout(height=1200, width=1600, showlegend=False, margin=dict(l=20, r=20, t=40, b=20), xaxis=dict(showticklabels=False), yaxis=dict(showticklabels=False), plot_bgcolor='white')
+        st.plotly_chart(fig, use_container_width=True)
+        st.success(f'Winner: {winner}')
+    else:
+        st.info('Click "Run Single Simulation" to generate and view the bracket.')
+
+
+def parse_scorito_scoring(filepath='data/import/scoring.txt'):
+    scoring = {}
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+    header = lines[0].strip().split('\t')[1:]
+    for line in lines[1:]:
+        parts = line.strip().split('\t')
+        tier = parts[0].upper()
+        points = [int(x) for x in parts[1:]]
+        scoring[tier] = points
+    return scoring, header
+
+
+def get_player_tier(player):
+    # Player.tier is a Tier enum, get its value and uppercase
+    return player.tier.value.upper()
+
+
+def get_player_round_index(player):
+    # Map round to index: R1=0, R2=1, ..., F=6
+    round_map = {
+        'R1': 0, 'R2': 1, 'R3': 2, 'R4': 3, 'QF': 4, 'SF': 5, 'F': 6
+    }
+    return round_map.get(player.current_round.value, 0)
+
+
+def display_scorito_game_analysis():
+    st.header('🎯 Scorito Game Analysis')
+    num_simulations = st.number_input('Number of simulations', min_value=100, max_value=5000, value=1000, step=100)
+    gender = st.radio('Select gender', ['men', 'women'], horizontal=True)
+    scoring, round_labels = parse_scorito_scoring()
+    db = populate_static_database(gender)
+
+    if st.button('Run Scorito Analysis'):
+        with st.spinner(f'Running {num_simulations} simulations for Scorito analysis...'):
+            sim = FixedDrawEloSimulator()
+            sim.setup_tournaments()
+            tournament = sim.men_tournament if gender == 'men' else sim.women_tournament
+
+            player_points = {p.name: [] for p in tournament.players}
+
+            for sim_idx in range(num_simulations):
+                tournament.reset()
+                sim.simulate_tournament(tournament)
+                for p in tournament.players:
+                    tier = get_player_tier(p)
+                    # Fix: Map Round.W to the same index as Round.F (both are the final round)
+                    round_to_index = {'R1': 0, 'R2': 1, 'R3': 2, 'R4': 3, 'QF': 4, 'SF': 5, 'F': 6, 'W': 6}
+                    round_index = round_to_index.get(p.current_round.value, 0)
+                    tier_scoring = scoring.get(tier, [0]*7)  # Back to 7 rounds
+                    # Fix: Use cumulative points for all rounds reached (including winner)
+                    total_points = sum(tier_scoring[:round_index + 1]) if round_index >= 0 else 0
+                    player_points[p.name].append(total_points)
+
+            avg_points = {name: sum(pts)/len(pts) if pts else 0 for name, pts in player_points.items()}
+
+            for tier in ['A', 'B', 'C', 'D']:
+                st.subheader(f'Top 6 Players - Tier {tier}')
+                tier_players = []
+                for name, data in db.items():
+                    if data.tier.upper() == tier:
+                        tier_players.append((name, avg_points.get(name, 0)))
+                if tier_players:
+                    tier_players.sort(key=lambda x: x[1], reverse=True)
+                    top_6 = tier_players[:6]
+                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in top_6]
+                    df = pd.DataFrame(data)
+                    st.table(df)
+                else:
+                    st.info(f'No players found in Tier {tier}')
+    else:
+        st.info('Click "Run Scorito Analysis" to simulate and analyze Scorito points.')
+
+
 def main():
     """Main dashboard function"""
     st.markdown('<h1 class="main-header">🎾 Tennis Simulator Dashboard</h1>', unsafe_allow_html=True)
@@ -438,29 +670,32 @@ def main():
     # Sidebar
     st.sidebar.title("🎾 Navigation")
     
-    # Gender selection
-    gender = st.sidebar.selectbox(
-        "Select Gender:",
-        options=['men', 'women'],
-        format_func=lambda x: x.title()
-    )
-    
-    # Load database
-    db = load_static_database(gender)
-    
-    if not db:
-        st.error("Failed to load database. Please check the data files.")
-        return
-    
     # Navigation
     page = st.sidebar.selectbox(
         "Select Page:",
-        options=['Database Overview', 'Player Search', 'Match Simulation', 'Elo Weights', 'Single Tournament', 'Explorer'],
+        options=[
+            'Database Overview', 'Player Search', 'Match Simulation', 'Elo Weights',
+            'Single Tournament', 'Explorer', 'Scorito Game Analysis'
+        ],
         index=0
     )
     
     # Page routing
     if page == 'Database Overview':
+        # Gender selection only for Database Overview
+        gender = st.sidebar.selectbox(
+            "Select Gender:",
+            options=['men', 'women'],
+            format_func=lambda x: x.title()
+        )
+        
+        # Load database
+        db = load_static_database(gender)
+        
+        if not db:
+            st.error("Failed to load database. Please check the data files.")
+            return
+        
         df = display_database_overview(db, gender)
         
         # Show top players
@@ -468,8 +703,36 @@ def main():
         if not df['Elo'].isna().all():
             top_players = df.nlargest(10, 'Elo')[['Name', 'Tier', 'Elo', 'Ranking']]
             st.dataframe(top_players, use_container_width=True)
+        
+        # Footer info for Database Overview
+        st.sidebar.markdown("---")
+        st.sidebar.markdown("**Database Info:**")
+        st.sidebar.markdown(f"• Gender: {gender.title()}")
+        st.sidebar.markdown(f"• Players: {len(db)}")
+        
+        # Show database stats in sidebar
+        if db:
+            tiers = [data.tier for data in db.values()]
+            tier_counts = pd.Series(tiers).value_counts().sort_index()
+            
+            st.sidebar.markdown("**Tier Distribution:**")
+            for tier, count in tier_counts.items():
+                st.sidebar.markdown(f"• Tier {tier}: {count}")
     
     elif page == 'Player Search':
+        # Gender selection for Player Search
+        gender = st.sidebar.selectbox(
+            "Select Gender:",
+            options=['men', 'women'],
+            format_func=lambda x: x.title(),
+            key="player_search_gender"
+        )
+        
+        db = load_static_database(gender)
+        if not db:
+            st.error("Failed to load database. Please check the data files.")
+            return
+        
         df = pd.DataFrame([
             {
                 'Name': name,
@@ -479,6 +742,7 @@ def main():
                 'cElo': data.celo,
                 'gElo': data.gelo,
                 'yElo': data.yelo,
+                'Form': data.form if hasattr(data, 'form') else None,
                 'Ranking': data.ranking if hasattr(data, 'ranking') else None
             }
             for name, data in db.items()
@@ -486,6 +750,18 @@ def main():
         display_player_search(df)
     
     elif page == 'Match Simulation':
+        # Gender selection for Match Simulation
+        gender = st.sidebar.selectbox(
+            "Select Gender:",
+            options=['men', 'women'],
+            format_func=lambda x: x.title(),
+            key="match_sim_gender"
+        )
+        
+        db = load_static_database(gender)
+        if not db:
+            st.error("Failed to load database. Please check the data files.")
+            return
         display_match_simulation(db)
     
     elif page == 'Elo Weights':
@@ -494,25 +770,13 @@ def main():
             st.session_state.global_weights = global_weights
     
     elif page == 'Single Tournament':
-        display_single_tournament_simulation()
+        display_single_tournament()
     
     elif page == 'Explorer':
         display_explorer()
     
-    # Footer
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("**Database Info:**")
-    st.sidebar.markdown(f"• Gender: {gender.title()}")
-    st.sidebar.markdown(f"• Players: {len(db)}")
-    
-    # Show database stats in sidebar
-    if db:
-        tiers = [data.tier for data in db.values()]
-        tier_counts = pd.Series(tiers).value_counts().sort_index()
-        
-        st.sidebar.markdown("**Tier Distribution:**")
-        for tier, count in tier_counts.items():
-            st.sidebar.markdown(f"• Tier {tier}: {count}")
+    elif page == 'Scorito Game Analysis':
+        display_scorito_game_analysis()
 
 
 if __name__ == "__main__":

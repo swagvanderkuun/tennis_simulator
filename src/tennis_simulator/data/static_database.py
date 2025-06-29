@@ -9,12 +9,14 @@ def get_file_paths(gender: str):
             'elo': 'elo_men.txt',
             'yelo': 'yelo_men.txt',
             'tier': 'data/elo/tier_men.txt',
+            'form': 'data/elo/yelo_men_form.txt',
         }
     elif gender == 'women':
         return {
             'elo': 'elo_women.txt',
             'yelo': 'yelo_women.txt',
             'tier': 'data/elo/tier_women.txt',
+            'form': 'data/elo/yelo_women_form.txt',
         }
     else:
         raise ValueError('gender must be "men" or "women"')
@@ -29,6 +31,7 @@ class PlayerData:
     gelo: Optional[float]
     yelo: Optional[float]
     ranking: Optional[int]
+    form: Optional[float]
 
 def get_player_names(gender: str) -> List[str]:
     """Extract player names from the Elo file"""
@@ -88,6 +91,31 @@ def get_player_gelo(gender: str) -> Dict[str, float]:
 def get_player_yelo(gender: str) -> Dict[str, float]:
     paths = get_file_paths(gender)
     return _extract_yelo_values(paths['yelo'])
+
+def get_player_form(gender: str) -> Dict[str, float]:
+    """Extract player form values from the form file (yElo_form2w column)"""
+    paths = get_file_paths(gender)
+    form_values = {}
+    form_file = paths['form']
+    
+    if not os.path.exists(form_file):
+        print(f"Warning: {form_file} not found")
+        return form_values
+    
+    with open(form_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('Rank'):
+                parts = line.split('\t')
+                if len(parts) >= 6:  # yElo_form2w is in column 5 (index 5)
+                    name = parts[1].strip()  # Name is in column 1
+                    try:
+                        value = float(parts[5].strip()) if parts[5].strip() else None
+                        if value is not None:
+                            form_values[name] = value
+                    except (ValueError, IndexError):
+                        continue
+    return form_values
 
 def get_player_ranking(gender: str) -> Dict[str, int]:
     paths = get_file_paths(gender)
@@ -160,6 +188,7 @@ def populate_static_database(gender: str) -> Dict[str, PlayerData]:
     celo_ratings = get_player_celo(gender)
     gelo_ratings = get_player_gelo(gender)
     yelo_ratings = get_player_yelo(gender)
+    form_values = get_player_form(gender)
     rankings = get_player_ranking(gender)
     static_db = {}
     for name in names:
@@ -171,6 +200,7 @@ def populate_static_database(gender: str) -> Dict[str, PlayerData]:
             celo=celo_ratings.get(name),
             gelo=gelo_ratings.get(name),
             yelo=yelo_ratings.get(name),
+            form=form_values.get(name),
             ranking=rankings.get(name)
         )
         static_db[name] = player_data
@@ -184,6 +214,7 @@ def print_static_database(db: Dict[str, PlayerData], limit: int = 10):
         print(f"{i+1:2d}. {name}")
         print(f"     Tier: {data.tier}")
         print(f"     Elo: {data.elo}, hElo: {data.helo}, cElo: {data.celo}, gElo: {data.gelo}, yElo: {data.yelo}")
+        print(f"     Form: {data.form}")
         print(f"     Ranking: {data.ranking}")
         print()
 

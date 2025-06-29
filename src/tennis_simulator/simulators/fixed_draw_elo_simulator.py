@@ -237,6 +237,11 @@ class FixedDrawEloSimulator:
                 match.winner = winner
                 match.loser = loser
                 tournament.matches.append(match)
+                
+                # Update player states
+                loser.eliminated = True
+                winner.current_round = self._get_next_round(round_name)
+                
                 winners.append(winner)
             current_players = winners
             if round_name == Round.F:
@@ -245,6 +250,7 @@ class FixedDrawEloSimulator:
         # Set tournament winner
         if current_players:
             tournament.winner = current_players[0]
+            tournament.winner.current_round = Round.W
             tournament.completed = True
         
         return tournament.winner
@@ -266,9 +272,10 @@ class FixedDrawEloSimulator:
             Round.R3: Round.R4,
             Round.R4: Round.QF,
             Round.QF: Round.SF,
-            Round.SF: Round.F
+            Round.SF: Round.F,
+            Round.F: Round.W
         }
-        return round_progression.get(current_round, Round.F)
+        return round_progression.get(current_round, Round.W)
     
     def run_single_simulation(self) -> Dict:
         """Run a single simulation of both tournaments."""
@@ -308,6 +315,10 @@ class FixedDrawEloSimulator:
         women_semifinalists = Counter()
         
         for _ in tqdm(range(num_simulations), desc="Simulating tournaments"):
+            # Reset tournaments for fresh simulation
+            self.men_tournament.reset()
+            self.women_tournament.reset()
+            
             result = self.run_single_simulation()
             all_results.append(result)
             
@@ -396,6 +407,105 @@ class FixedDrawEloSimulator:
         
         if tournament:
             print(f"\nTotal players in tournament: {len(tournament.players)}")
+
+    def print_full_bracket(self, tournament):
+        """
+        Print the full tournament bracket for a single simulation in a text-based tree format.
+        """
+        from collections import defaultdict
+        
+        # Organize matches by round
+        rounds = defaultdict(list)
+        for match in tournament.matches:
+            rounds[match.round].append(match)
+        
+        # Sort rounds in order
+        round_order = [
+            Round.R1, Round.R2, Round.R3, Round.R4, Round.QF, Round.SF, Round.F
+        ]
+        round_names = {
+            Round.R1: "Round 1",
+            Round.R2: "Round 2",
+            Round.R3: "Round 3",
+            Round.R4: "Round 4",
+            Round.QF: "Quarterfinals",
+            Round.SF: "Semifinals",
+            Round.F: "Final"
+        }
+        
+        # Prepare bracket lines for each round
+        bracket_lines = []
+        for rnd in round_order:
+            matches = rounds.get(rnd, [])
+            if not matches:
+                continue
+            lines = []
+            for match in matches:
+                p1 = match.player1.name
+                p2 = match.player2.name
+                winner = match.winner.name if match.winner else "?"
+                lines.append(f"{p1} vs {p2}  ->  {winner}")
+            bracket_lines.append((round_names[rnd], lines))
+        
+        # Print bracket
+        print("\n================ TOURNAMENT BRACKET ================")
+        for round_name, lines in bracket_lines:
+            print(f"\n{round_name}:")
+            print("-" * 40)
+            for line in lines:
+                print(line)
+        print("\nWinner:", tournament.winner.name if tournament.winner else "?")
+        print("===================================================\n")
+
+    def get_bracket_tree(self, tournament):
+        """
+        Return the bracket as a nested tree structure for graphical visualization.
+        Each node is a dict: { 'name': match_label, 'children': [left, right], 'round': round_name, 'winner': winner_name }
+        """
+        from collections import defaultdict, OrderedDict
+        # Organize matches by round
+        rounds = defaultdict(list)
+        for match in tournament.matches:
+            rounds[match.round].append(match)
+        # Sort rounds in order
+        round_order = [
+            Round.R1, Round.R2, Round.R3, Round.R4, Round.QF, Round.SF, Round.F
+        ]
+        # Build nodes for each match in each round
+        match_nodes = OrderedDict()
+        for rnd in round_order:
+            for match in rounds.get(rnd, []):
+                label = f"{match.player1.name} vs {match.player2.name}"
+                winner = match.winner.name if match.winner else "?"
+                match_nodes[(rnd, match.player1.name, match.player2.name)] = {
+                    'name': label,
+                    'children': [],
+                    'round': rnd,
+                    'winner': winner,
+                    'p1': match.player1.name,
+                    'p2': match.player2.name
+                }
+        # Link children: for each match in round N+1, find the two matches in round N whose winner is a player in this match
+        for i in range(1, len(round_order)):
+            this_round = round_order[i]
+            prev_round = round_order[i-1]
+            for key, node in match_nodes.items():
+                rnd, p1, p2 = key
+                if rnd != this_round:
+                    continue
+                # Find child matches in previous round whose winner is p1 or p2
+                children = []
+                for prev_key, prev_node in match_nodes.items():
+                    prnd, pp1, pp2 = prev_key
+                    if prnd != prev_round:
+                        continue
+                    if prev_node['winner'] == p1 or prev_node['winner'] == p2:
+                        children.append(prev_node)
+                node['children'] = children
+        # The root is the final match
+        final_matches = [n for k, n in match_nodes.items() if k[0] == Round.F]
+        root = final_matches[0] if final_matches else {'name': 'No final', 'children': [], 'round': Round.F, 'winner': '?'}
+        return root
 
 
 def run_fixed_draw_elo_simulation(

@@ -212,6 +212,7 @@ class StaticTournamentSimulator:
         # Set tournament winner
         if current_players:
             tournament.winner = current_players[0]
+            tournament.winner.current_round = Round.W
             tournament.completed = True
         
         return tournament.winner
