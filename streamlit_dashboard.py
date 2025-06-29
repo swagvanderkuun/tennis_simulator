@@ -90,6 +90,339 @@ def create_player_from_static_data(name: str, data: any) -> Player:
     return player
 
 
+def display_overview():
+    """Display the overview/homepage of the tennis simulator dashboard"""
+    st.markdown("""
+    # 🎾 Tennis Simulator Dashboard
+    
+    Welcome to the ultimate tennis tournament simulation platform! This dashboard provides comprehensive tools for analyzing ATP and WTA Grand Slam tournaments with advanced Elo-based match prediction and form analysis.
+    """)
+    
+    # Statistics section
+    st.markdown("""
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-number">487</div>
+            <div class="stat-label">Men's Players</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">515</div>
+            <div class="stat-label">Women's Players</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Elo Rating Types</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Preset Configurations</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Hero section with key features
+    st.markdown("""
+    ## 🚀 Key Features
+    
+    Our simulator combines cutting-edge statistical analysis with real tournament data to deliver the most accurate tennis predictions available.
+    """)
+    
+    # Feature grid
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🏆 Tournament Simulation</h3>
+        <ul>
+        <li><strong>Fixed Draw Structure:</strong> Uses real tournament draws from import data</li>
+        <li><strong>Best-of-5 for Men:</strong> Advanced probability adjustment for men's matches</li>
+        <li><strong>Best-of-3 for Women:</strong> Standard calculation for women's matches</li>
+        <li><strong>Bracket Visualization:</strong> Interactive tournament brackets with Plotly</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+        <h3>📊 Advanced Analytics</h3>
+        <ul>
+        <li><strong>Multi-Format Elo:</strong> Overall, Hard, Clay, Grass, and Year-to-date ratings</li>
+        <li><strong>Form Analysis:</strong> Recent performance metrics with configurable weights</li>
+        <li><strong>Win Probability:</strong> Blended Elo and form-based predictions</li>
+        <li><strong>Statistical Insights:</strong> Comprehensive simulation statistics</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🎯 Match Simulation</h3>
+        <ul>
+        <li><strong>Head-to-Head Analysis:</strong> Detailed player comparisons</li>
+        <li><strong>Real-time Predictions:</strong> Instant win probability calculations</li>
+        <li><strong>Multiple Simulations:</strong> Monte Carlo analysis with customizable runs</li>
+        <li><strong>Form Integration:</strong> Recent performance impact on predictions</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🎮 Scorito Game Analysis</h3>
+        <ul>
+        <li><strong>Tier-Based Scoring:</strong> A, B, C, D player tier system</li>
+        <li><strong>Point Optimization:</strong> Find the best players per tier</li>
+        <li><strong>Round-by-Round Analysis:</strong> Cumulative scoring simulation</li>
+        <li><strong>Strategic Insights:</strong> Maximize your fantasy tennis points</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Database section
+    st.markdown("---")
+    st.markdown("""
+    ## 📋 Player Database
+    
+    Access comprehensive player data for both ATP and WTA tours:
+    """)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>👥 Player Profiles</h4>
+        <ul>
+        <li><strong>487 Men's Players:</strong> Complete ATP roster</li>
+        <li><strong>515 Women's Players:</strong> Full WTA database</li>
+        <li><strong>Tier Classification:</strong> A, B, C, D performance tiers</li>
+        <li><strong>Current Rankings:</strong> ATP/WTA rankings included</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>📈 Rating Systems</h4>
+        <ul>
+        <li><strong>Overall Elo:</strong> General performance rating</li>
+        <li><strong>Surface-Specific:</strong> Hard, Clay, Grass court ratings</li>
+        <li><strong>Year-to-Date:</strong> Current season performance</li>
+        <li><strong>Form Metrics:</strong> Recent match performance data</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>🔍 Search & Filter</h4>
+        <ul>
+        <li><strong>Name Search:</strong> Quick player lookup</li>
+        <li><strong>Tier Filtering:</strong> Find players by performance tier</li>
+        <li><strong>Rating Analysis:</strong> Compare player statistics</li>
+        <li><strong>Export Options:</strong> Download player data</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Simulation capabilities
+    st.markdown("---")
+    st.markdown("""
+    ## 🎲 Simulation Capabilities
+    
+    Experience the most advanced tennis simulation technology:
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🏅 Single Tournament</h3>
+        <ul>
+        <li><strong>Real Draw Structure:</strong> Based on actual tournament brackets</li>
+        <li><strong>Instant Results:</strong> Complete tournament simulation</li>
+        <li><strong>Winner Prediction:</strong> See who emerges victorious</li>
+        <li><strong>Bracket Visualization:</strong> Beautiful interactive brackets</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🔬 Tournament Explorer</h3>
+        <ul>
+        <li><strong>1000+ Simulations:</strong> Monte Carlo analysis</li>
+        <li><strong>Probability Mapping:</strong> Win, final, semifinal probabilities</li>
+        <li><strong>Statistical Analysis:</strong> Comprehensive result breakdown</li>
+        <li><strong>Trend Identification:</strong> Discover patterns and favorites</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+        <h3>⚖️ Elo Weights Configuration</h3>
+        <ul>
+        <li><strong>Custom Weighting:</strong> Adjust Elo component importance</li>
+        <li><strong>Form Integration:</strong> Blend recent performance with ratings</li>
+        <li><strong>Surface Optimization:</strong> Fine-tune for specific courts</li>
+        <li><strong>Real-time Updates:</strong> Instant parameter adjustment</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+        <h3>🎯 Match Analysis</h3>
+        <ul>
+        <li><strong>Head-to-Head:</strong> Detailed player comparisons</li>
+        <li><strong>Probability Breakdown:</strong> Standard vs form-based predictions</li>
+        <li><strong>Multiple Runs:</strong> Statistical validation</li>
+        <li><strong>Visual Results:</strong> Charts and graphs for insights</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Technical highlights
+    st.markdown("---")
+    st.markdown("""
+    ## 🔧 Technical Excellence
+    
+    Built with cutting-edge technology for maximum accuracy:
+    """)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>🧮 Advanced Algorithms</h4>
+        <ul>
+        <li><strong>Elo Rating System:</strong> Industry-standard tennis ratings</li>
+        <li><strong>Form Analysis:</strong> Recent performance weighting</li>
+        <li><strong>Five-Set Adjustment:</strong> Men's match probability enhancement</li>
+        <li><strong>Monte Carlo Simulation:</strong> Statistical validation</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>📊 Data Integration</h4>
+        <ul>
+        <li><strong>Real Tournament Data:</strong> Actual draw structures</li>
+        <li><strong>Live Player Stats:</strong> Current rankings and ratings</li>
+        <li><strong>Form Metrics:</strong> Recent match performance</li>
+        <li><strong>Historical Analysis:</strong> Season-long performance tracking</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>🎨 User Experience</h4>
+        <ul>
+        <li><strong>Interactive Dashboard:</strong> Streamlit-powered interface</li>
+        <li><strong>Real-time Updates:</strong> Instant calculation and display</li>
+        <li><strong>Visual Analytics:</strong> Charts, graphs, and brackets</li>
+        <li><strong>Mobile Responsive:</strong> Works on all devices</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Getting started
+    st.markdown("---")
+    st.markdown("""
+    ## 🚀 Getting Started
+    
+    Ready to dive into the world of advanced tennis simulation?
+    """)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>1️⃣ Explore the Database</h4>
+        <p>Start by browsing the player database to understand the available data and player tiers.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>2️⃣ Configure Elo Weights</h4>
+        <p>Set up your preferred Elo weighting and form parameters for personalized predictions.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>3️⃣ Run Simulations</h4>
+        <p>Choose from single tournament runs, multiple simulations, or match analysis to get insights.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Navigation guide
+    st.markdown("---")
+    st.markdown("""
+    ## 🧭 Navigation Guide
+    
+    Use the sidebar to navigate between different sections of the dashboard:
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>📊 Data & Analysis</h4>
+        <ul>
+        <li><strong>Database Overview:</strong> Browse player data and statistics</li>
+        <li><strong>Player Search:</strong> Find and analyze specific players</li>
+        <li><strong>Match Simulation:</strong> Head-to-head match predictions</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="highlight-box">
+        <h4>🎲 Simulation Tools</h4>
+        <ul>
+        <li><strong>Single Tournament:</strong> Run individual tournament simulations</li>
+        <li><strong>Explorer:</strong> Multiple simulations with statistical analysis</li>
+        <li><strong>Scorito Game Analysis:</strong> Fantasy tennis point optimization</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="highlight-box">
+    <h4>⚖️ Configuration</h4>
+    <p><strong>Elo Weights:</strong> Customize the importance of different Elo rating types and form parameters. These settings apply globally to all simulations.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; color: #666; font-size: 0.9em;'>
+        <p>🎾 Built with ❤️ for tennis enthusiasts and analysts</p>
+        <p>Powered by advanced Elo ratings, form analysis, and Monte Carlo simulation</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def display_database_overview(db: Dict[str, any], gender: str):
     """Display database overview with statistics"""
     st.subheader(f"📊 {gender.title()} Database Overview")
@@ -331,13 +664,13 @@ def display_elo_weights_config():
         form_k_default = current_weights.form_k
         form_alpha_default = current_weights.form_alpha
     else:
-        elo_default = 0.4
-        helo_default = 0.2
-        celo_default = 0.2
-        gelo_default = 0.1
-        yelo_default = 0.1
-        form_k_default = 0.1
-        form_alpha_default = 0.7
+        elo_default = 0.1
+        helo_default = 0.1
+        celo_default = 0.0
+        gelo_default = 0.4
+        yelo_default = 0.4
+        form_k_default = 0.03
+        form_alpha_default = 0.9
     
     # Weight configuration
     st.subheader('Weight Configuration')
@@ -395,10 +728,25 @@ def display_elo_weights_config():
     
     # Preset configurations
     st.subheader('Preset Configurations')
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button('Hard Court Focus'):
+        if st.button('🎾 Default Preset'):
+            # Clear any existing preset usage flag
+            if 'preset_used' in st.session_state:
+                del st.session_state.preset_used
+            # Store preset values in different session state keys
+            st.session_state.preset_elo = 0.1
+            st.session_state.preset_helo = 0.1
+            st.session_state.preset_celo = 0.0
+            st.session_state.preset_gelo = 0.4
+            st.session_state.preset_yelo = 0.4
+            st.session_state.preset_form_k = 0.03
+            st.session_state.preset_form_alpha = 0.9
+            st.rerun()
+    
+    with col2:
+        if st.button('🏟️ Hard Court Focus'):
             # Clear any existing preset usage flag
             if 'preset_used' in st.session_state:
                 del st.session_state.preset_used
@@ -408,12 +756,12 @@ def display_elo_weights_config():
             st.session_state.preset_celo = 0.1
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
+            st.session_state.preset_form_k = 0.03
+            st.session_state.preset_form_alpha = 0.9
             st.rerun()
     
-    with col2:
-        if st.button('Clay Court Focus'):
+    with col3:
+        if st.button('🏖️ Clay Court Focus'):
             # Clear any existing preset usage flag
             if 'preset_used' in st.session_state:
                 del st.session_state.preset_used
@@ -422,12 +770,12 @@ def display_elo_weights_config():
             st.session_state.preset_celo = 0.4
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
+            st.session_state.preset_form_k = 0.03
+            st.session_state.preset_form_alpha = 0.9
             st.rerun()
     
-    with col3:
-        if st.button('Grass Court Focus'):
+    with col4:
+        if st.button('🌱 Grass Court Focus'):
             # Clear any existing preset usage flag
             if 'preset_used' in st.session_state:
                 del st.session_state.preset_used
@@ -436,8 +784,8 @@ def display_elo_weights_config():
             st.session_state.preset_celo = 0.1
             st.session_state.preset_gelo = 0.4
             st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
+            st.session_state.preset_form_k = 0.03
+            st.session_state.preset_form_alpha = 0.9
             st.rerun()
 
     # Show current weights if available
@@ -708,6 +1056,65 @@ def display_scorito_game_analysis():
 
 def main():
     """Main dashboard function"""
+    # Custom CSS for enhanced styling
+    st.markdown("""
+    <style>
+    .main-header {
+        background: linear-gradient(90deg, #1f77b4, #ff7f0e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+    
+    .feature-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-left: 4px solid #1f77b4;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .highlight-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border: 1px solid #2196f3;
+    }
+    
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 2rem 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        margin: 0 0.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #1f77b4;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.markdown('<h1 class="main-header">🎾 Tennis Simulator Dashboard</h1>', unsafe_allow_html=True)
     
     # Sidebar
@@ -717,14 +1124,16 @@ def main():
     page = st.sidebar.selectbox(
         "Select Page:",
         options=[
-            'Database Overview', 'Player Search', 'Match Simulation', 'Elo Weights',
-            'Single Tournament', 'Explorer', 'Scorito Game Analysis'
+            '🏠 Overview', '📊 Database Overview', '🔍 Player Search', '🎾 Match Simulation', '⚖️ Elo Weights',
+            '🏆 Single Tournament', '🔬 Explorer', '🎮 Scorito Game Analysis'
         ],
         index=0
     )
     
     # Page routing
-    if page == 'Database Overview':
+    if page == '🏠 Overview':
+        display_overview()
+    elif page == '📊 Database Overview':
         # Gender selection only for Database Overview
         gender = st.sidebar.selectbox(
             "Select Gender:",
@@ -762,7 +1171,7 @@ def main():
             for tier, count in tier_counts.items():
                 st.sidebar.markdown(f"• Tier {tier}: {count}")
     
-    elif page == 'Player Search':
+    elif page == '🔍 Player Search':
         # Gender selection for Player Search
         gender = st.sidebar.selectbox(
             "Select Gender:",
@@ -792,7 +1201,7 @@ def main():
         ])
         display_player_search(df)
     
-    elif page == 'Match Simulation':
+    elif page == '🎾 Match Simulation':
         # Gender selection for Match Simulation
         gender = st.sidebar.selectbox(
             "Select Gender:",
@@ -808,16 +1217,16 @@ def main():
         
         display_match_simulation(db, gender)
     
-    elif page == 'Elo Weights':
+    elif page == '⚖️ Elo Weights':
         display_elo_weights_config()
     
-    elif page == 'Single Tournament':
+    elif page == '🏆 Single Tournament':
         display_single_tournament()
     
-    elif page == 'Explorer':
+    elif page == '🔬 Explorer':
         display_explorer()
     
-    elif page == 'Scorito Game Analysis':
+    elif page == '🎮 Scorito Game Analysis':
         display_scorito_game_analysis()
 
 
