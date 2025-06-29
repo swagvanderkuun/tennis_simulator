@@ -4,19 +4,75 @@ from dataclasses import dataclass
 import sys
 
 def get_file_paths(gender: str):
+    """Get file paths for data files, handling both local and hosted environments"""
+    
+    # Get the current working directory
+    cwd = os.getcwd()
+    
+    # Try multiple possible base paths
+    possible_paths = [
+        cwd,  # Current working directory
+        os.path.join(cwd, 'data'),  # data subdirectory
+        os.path.join(cwd, 'src', 'tennis_simulator', 'data'),  # src structure
+        os.path.dirname(os.path.abspath(__file__)),  # Current file directory
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..'),  # Project root
+    ]
+    
+    # For hosted environments, also try the app directory
+    if 'STREAMLIT_SERVER_RUN_ON_SAVE' in os.environ or 'STREAMLIT_SERVER_HEADLESS' in os.environ:
+        possible_paths.extend([
+            '/app',  # Streamlit Cloud default
+            '/home/appuser',  # Alternative Streamlit Cloud path
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..'),  # Go up more levels
+        ])
+    
+    def find_file(filename):
+        """Find a file in the possible paths"""
+        for base_path in possible_paths:
+            file_path = os.path.join(base_path, filename)
+            if os.path.exists(file_path):
+                print(f"Found {filename} at: {file_path}")
+                return file_path
+        
+        print(f"Warning: Could not find {filename} in any of the following paths:")
+        for base_path in possible_paths:
+            print(f"  - {base_path}")
+        
+        # Try to use embedded data as fallback
+        try:
+            from .embedded_data import get_embedded_data, create_temp_file
+            
+            # Determine data type from filename
+            data_type = None
+            if 'elo_' in filename and 'form' not in filename:
+                data_type = 'elo'
+            elif 'yelo_' in filename:
+                data_type = 'yelo'
+            
+            if data_type:
+                embedded_data = get_embedded_data(gender, data_type)
+                if embedded_data:
+                    temp_path = create_temp_file(embedded_data)
+                    print(f"Using embedded data for {filename} at: {temp_path}")
+                    return temp_path
+        except ImportError:
+            print("Embedded data module not available")
+        
+        return filename  # Return original if not found
+    
     if gender == 'men':
         return {
-            'elo': 'elo_men.txt',
-            'yelo': 'yelo_men.txt',
-            'tier': 'data/elo/tier_men.txt',
-            'form': 'data/elo/yelo_men_form.txt',
+            'elo': find_file('elo_men.txt'),
+            'yelo': find_file('yelo_men.txt'),
+            'tier': find_file('data/elo/tier_men.txt'),
+            'form': find_file('data/elo/yelo_men_form.txt'),
         }
     elif gender == 'women':
         return {
-            'elo': 'elo_women.txt',
-            'yelo': 'yelo_women.txt',
-            'tier': 'data/elo/tier_women.txt',
-            'form': 'data/elo/yelo_women_form.txt',
+            'elo': find_file('elo_women.txt'),
+            'yelo': find_file('yelo_women.txt'),
+            'tier': find_file('data/elo/tier_women.txt'),
+            'form': find_file('data/elo/yelo_women_form.txt'),
         }
     else:
         raise ValueError('gender must be "men" or "women"')
@@ -35,161 +91,239 @@ class PlayerData:
 
 def get_player_names(gender: str) -> List[str]:
     """Extract player names from the Elo file"""
-    paths = get_file_paths(gender)
-    names = []
-    elo_file = paths['elo']
+    from .data_loader import get_data_loader
     
-    if not os.path.exists(elo_file):
-        print(f"Warning: {elo_file} not found")
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
+    names = []
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
         return names
     
-    with open(elo_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('Elo Rank'):
-                # Extract name from the line (tab-separated format)
-                parts = line.split('\t')
-                if len(parts) >= 2:
-                    name = parts[1].strip()
-                    if name and name != 'Player':
-                        names.append(name)
+    for line in data_source.content.split('\n'):
+        line = line.strip()
+        if line and not line.startswith('Elo Rank'):
+            # Extract name from the line (tab-separated format)
+            parts = line.split('\t')
+            if len(parts) >= 2:
+                name = parts[1].strip()
+                if name and name != 'Player':
+                    names.append(name)
+    
+    print(f"Loaded {len(names)} player names from {data_source.source_type} source")
     return names
 
 def get_player_tiers(gender: str) -> Dict[str, str]:
     """Extract player tiers from the tier file"""
-    paths = get_file_paths(gender)
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'tier')
+    
     tiers = {}
-    db_file = paths['tier']
-    if not os.path.exists(db_file):
-        print(f"Warning: {db_file} not found")
+    if not data_source:
+        print(f"Warning: Could not load tier data for {gender}")
         return tiers
-    with open(db_file, 'r', encoding='utf-8') as f:
-        content = f.read()
+    
     import re
     pattern = r'(?:MenPlayer|WomenPlayer)\("([^"]+)",\s*"[^"]+",\s*[^,]*,\s*Tier\.([A-D])(?:,[^)]*)?\)'
-    matches = re.findall(pattern, content)
+    matches = re.findall(pattern, data_source.content)
     for name, tier in matches:
         tiers[name] = tier
+    
+    print(f"Loaded {len(tiers)} player tiers from {data_source.source_type} source")
     return tiers
 
 def get_player_elo(gender: str) -> Dict[str, float]:
-    paths = get_file_paths(gender)
-    return _extract_elo_values(paths['elo'], 3)  # Elo is in column 3
+    """Extract Elo ratings from the Elo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
+        return {}
+    
+    return _extract_elo_values_from_content(data_source.content, 3)  # Elo is in column 3
 
 def get_player_helo(gender: str) -> Dict[str, float]:
-    paths = get_file_paths(gender)
-    return _extract_elo_values(paths['elo'], 6)  # hElo is in column 6 (actual Elo value)
+    """Extract hElo ratings from the Elo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
+        return {}
+    
+    return _extract_elo_values_from_content(data_source.content, 6)  # hElo is in column 6
 
 def get_player_celo(gender: str) -> Dict[str, float]:
-    paths = get_file_paths(gender)
-    return _extract_elo_values(paths['elo'], 8)  # cElo is in column 8 (actual Elo value)
+    """Extract cElo ratings from the Elo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
+        return {}
+    
+    return _extract_elo_values_from_content(data_source.content, 8)  # cElo is in column 8
 
 def get_player_gelo(gender: str) -> Dict[str, float]:
-    paths = get_file_paths(gender)
-    return _extract_elo_values(paths['elo'], 10)  # gElo is in column 10 (actual Elo value)
+    """Extract gElo ratings from the Elo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
+        return {}
+    
+    return _extract_elo_values_from_content(data_source.content, 10)  # gElo is in column 10
 
 def get_player_yelo(gender: str) -> Dict[str, float]:
-    paths = get_file_paths(gender)
-    return _extract_yelo_values(paths['yelo'])
+    """Extract yElo ratings from the yElo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'yelo')
+    
+    if not data_source:
+        print(f"Warning: Could not load yElo data for {gender}")
+        return {}
+    
+    return _extract_yelo_values_from_content(data_source.content)
 
 def get_player_form(gender: str) -> Dict[str, float]:
     """Extract player form values from the form file (yElo_form2w column)"""
-    paths = get_file_paths(gender)
-    form_values = {}
-    form_file = paths['form']
+    from .data_loader import get_data_loader
     
-    if not os.path.exists(form_file):
-        print(f"Warning: {form_file} not found")
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'form')
+    
+    form_values = {}
+    if not data_source:
+        print(f"Warning: Could not load form data for {gender}")
         return form_values
     
-    with open(form_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('Rank'):
-                parts = line.split('\t')
-                if len(parts) >= 6:  # yElo_form2w is in column 5 (index 5)
-                    name = parts[1].strip()  # Name is in column 1
-                    try:
-                        value = float(parts[5].strip()) if parts[5].strip() else None
-                        if value is not None:
-                            form_values[name] = value
-                    except (ValueError, IndexError):
-                        continue
+    print(f"Loading form data from {data_source.source_type} source")
+    for line_num, line in enumerate(data_source.content.split('\n'), 1):
+        line = line.strip()
+        if line and not line.startswith('Rank'):
+            parts = line.split('\t')
+            if len(parts) >= 6:  # yElo_form2w is in column 5 (index 5)
+                name = parts[1].strip()  # Name is in column 1
+                try:
+                    value = float(parts[5].strip()) if parts[5].strip() else None
+                    if value is not None:
+                        form_values[name] = value
+                        if len(form_values) <= 5:  # Debug first 5 entries
+                            print(f"  Loaded form for {name}: {value}")
+                except (ValueError, IndexError) as e:
+                    if line_num <= 5:  # Debug first 5 errors
+                        print(f"  Error parsing line {line_num}: {e} - {line}")
+                    continue
+    
+    print(f"Loaded form data for {len(form_values)} players from {data_source.source_type} source")
     return form_values
 
 def get_player_ranking(gender: str) -> Dict[str, int]:
-    paths = get_file_paths(gender)
+    """Extract player rankings from the Elo file"""
+    from .data_loader import get_data_loader
+    
+    data_loader = get_data_loader()
+    data_source = data_loader.get_data_source(gender, 'elo')
+    
     ranking = {}
-    elo_file = paths['elo']
-    if not os.path.exists(elo_file):
-        print(f"Warning: {elo_file} not found")
+    if not data_source:
+        print(f"Warning: Could not load Elo data for {gender}")
         return ranking
-    with open(elo_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('Elo Rank'):
-                parts = line.split('\t')
-                if len(parts) >= 16:  # ATP rank is in column 15 (0-indexed = 15)
-                    name = parts[1].strip()
-                    try:
-                        rank = int(parts[15].strip()) if parts[15].strip() else None
-                        if rank is not None:
-                            ranking[name] = rank
-                    except (ValueError, IndexError):
-                        continue
+    
+    for line in data_source.content.split('\n'):
+        line = line.strip()
+        if line and not line.startswith('Elo Rank'):
+            parts = line.split('\t')
+            if len(parts) >= 16:  # ATP rank is in column 15 (0-indexed = 15)
+                name = parts[1].strip()
+                try:
+                    rank = int(parts[15].strip()) if parts[15].strip() else None
+                    if rank is not None:
+                        ranking[name] = rank
+                except (ValueError, IndexError):
+                    continue
+    
+    print(f"Loaded {len(ranking)} player rankings from {data_source.source_type} source")
     return ranking
 
-def _extract_elo_values(filename: str, column_index: int) -> Dict[str, float]:
+def _extract_elo_values_from_content(content: str, column_index: int) -> Dict[str, float]:
+    """Extract Elo values from content string"""
     elo_values = {}
-    if not os.path.exists(filename):
-        print(f"Warning: {filename} not found")
-        return elo_values
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('Elo Rank'):
-                parts = line.split('\t')
-                if len(parts) > column_index:
-                    name = parts[1].strip()  # Name is in column 1
-                    try:
-                        value = float(parts[column_index].strip()) if parts[column_index].strip() else None
-                        if value is not None:
-                            elo_values[name] = value
-                    except (ValueError, IndexError):
-                        continue
+    for line in content.split('\n'):
+        line = line.strip()
+        if line and not line.startswith('Elo Rank'):
+            parts = line.split('\t')
+            if len(parts) > column_index:
+                name = parts[1].strip()  # Name is in column 1
+                try:
+                    value = float(parts[column_index].strip()) if parts[column_index].strip() else None
+                    if value is not None:
+                        elo_values[name] = value
+                except (ValueError, IndexError):
+                    continue
     return elo_values
 
-def _extract_yelo_values(filename: str) -> Dict[str, float]:
+def _extract_yelo_values_from_content(content: str) -> Dict[str, float]:
+    """Extract yElo values from content string"""
     yelo_values = {}
-    if not os.path.exists(filename):
-        print(f"Warning: {filename} not found")
-        return yelo_values
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('Rank'):
-                parts = line.split('\t')
-                if len(parts) >= 5:  # yElo is in column 4 (index 4)
-                    name = parts[1].strip()  # Name is in column 1
-                    try:
-                        value = float(parts[4].strip()) if parts[4].strip() else None
-                        if value is not None:
-                            yelo_values[name] = value
-                    except (ValueError, IndexError):
-                        continue
+    for line in content.split('\n'):
+        line = line.strip()
+        if line and not line.startswith('Rank'):
+            parts = line.split('\t')
+            if len(parts) >= 5:  # yElo is in column 4 (index 4)
+                name = parts[1].strip()  # Name is in column 1
+                try:
+                    value = float(parts[4].strip()) if parts[4].strip() else None
+                    if value is not None:
+                        yelo_values[name] = value
+                except (ValueError, IndexError):
+                    continue
     return yelo_values
 
 def populate_static_database(gender: str) -> Dict[str, PlayerData]:
     print(f"Populating static database for {gender}...")
     names = get_player_names(gender)
+    print(f"Found {len(names)} player names")
+    
     tiers = get_player_tiers(gender)
+    print(f"Found {len(tiers)} player tiers")
+    
     elo_ratings = get_player_elo(gender)
+    print(f"Found {len(elo_ratings)} Elo ratings")
+    
     helo_ratings = get_player_helo(gender)
+    print(f"Found {len(helo_ratings)} hElo ratings")
+    
     celo_ratings = get_player_celo(gender)
+    print(f"Found {len(celo_ratings)} cElo ratings")
+    
     gelo_ratings = get_player_gelo(gender)
+    print(f"Found {len(gelo_ratings)} gElo ratings")
+    
     yelo_ratings = get_player_yelo(gender)
+    print(f"Found {len(yelo_ratings)} yElo ratings")
+    
     form_values = get_player_form(gender)
+    print(f"Found {len(form_values)} form values")
+    
     rankings = get_player_ranking(gender)
+    print(f"Found {len(rankings)} rankings")
+    
     static_db = {}
     for name in names:
         player_data = PlayerData(

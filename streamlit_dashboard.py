@@ -60,10 +60,29 @@ st.markdown("""
 def load_static_database(gender: str) -> Dict[str, any]:
     """Load static database with caching for performance"""
     try:
+        print(f"Loading {gender} database...")
         db = populate_static_database(gender)
+        
+        if not db:
+            st.warning(f"No {gender} players found in database. This might be due to data loading issues in the hosted environment.")
+            return {}
+        
+        print(f"Successfully loaded {len(db)} {gender} players")
         return db
+        
+    except FileNotFoundError as e:
+        st.error(f"Data files not found for {gender} database: {e}")
+        st.info("The application is trying to load data files. In hosted environments, this might fail if files are not accessible.")
+        return {}
+        
+    except ImportError as e:
+        st.error(f"Import error loading {gender} database: {e}")
+        st.info("This might be due to missing dependencies or module path issues.")
+        return {}
+        
     except Exception as e:
-        st.error(f"Error loading {gender} database: {e}")
+        st.error(f"Unexpected error loading {gender} database: {e}")
+        st.info("Please check the console logs for more details.")
         return {}
 
 
@@ -1052,6 +1071,82 @@ def display_scorito_game_analysis():
                     st.info(f'No players found in Tier {tier}')
     else:
         st.info('Click "Run Scorito Analysis" to simulate and analyze Scorito points.')
+
+
+def get_data_status(gender: str) -> Dict[str, any]:
+    """Get the current status of data loading for the specified gender"""
+    try:
+        from tennis_simulator.data.data_loader import get_data_loader
+        
+        data_loader = get_data_loader()
+        status = {
+            'elo': data_loader.get_data_source(gender, 'elo') is not None,
+            'yelo': data_loader.get_data_source(gender, 'yelo') is not None,
+            'form': data_loader.get_data_source(gender, 'form') is not None,
+            'tier': data_loader.get_data_source(gender, 'tier') is not None,
+            'players_loaded': 0
+        }
+        
+        # Try to get player count
+        try:
+            db = populate_static_database(gender)
+            status['players_loaded'] = len(db)
+        except:
+            pass
+        
+        return status
+        
+    except Exception as e:
+        print(f"Error getting data status for {gender}: {e}")
+        return {
+            'elo': False,
+            'yelo': False,
+            'form': False,
+            'tier': False,
+            'players_loaded': 0
+        }
+
+
+def display_data_status():
+    """Display the current status of data loading"""
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 📊 Data Status")
+    
+    men_status = get_data_status('men')
+    women_status = get_data_status('women')
+    
+    # Men's status
+    st.sidebar.markdown("**Men's Data:**")
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.sidebar.markdown(f"Elo: {'✅' if men_status['elo'] else '❌'}")
+        st.sidebar.markdown(f"yElo: {'✅' if men_status['yelo'] else '❌'}")
+    with col2:
+        st.sidebar.markdown(f"Form: {'✅' if men_status['form'] else '❌'}")
+        st.sidebar.markdown(f"Tier: {'✅' if men_status['tier'] else '❌'}")
+    
+    st.sidebar.markdown(f"Players: {men_status['players_loaded']}")
+    
+    # Women's status
+    st.sidebar.markdown("**Women's Data:**")
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.sidebar.markdown(f"Elo: {'✅' if women_status['elo'] else '❌'}")
+        st.sidebar.markdown(f"yElo: {'✅' if women_status['yelo'] else '❌'}")
+    with col2:
+        st.sidebar.markdown(f"Form: {'✅' if women_status['form'] else '❌'}")
+        st.sidebar.markdown(f"Tier: {'✅' if women_status['tier'] else '❌'}")
+    
+    st.sidebar.markdown(f"Players: {women_status['players_loaded']}")
+    
+    # Overall status
+    if men_status['players_loaded'] == 0 and women_status['players_loaded'] == 0:
+        st.sidebar.error("⚠️ No data loaded")
+        st.sidebar.info("Check deployment guide for troubleshooting")
+    elif men_status['players_loaded'] > 0 and women_status['players_loaded'] > 0:
+        st.sidebar.success("✅ All data loaded successfully")
+    else:
+        st.sidebar.warning("⚠️ Partial data loaded")
 
 
 def main():
