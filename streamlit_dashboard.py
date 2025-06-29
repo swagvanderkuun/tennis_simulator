@@ -670,7 +670,7 @@ def display_elo_weights_config():
         gelo_default = 0.4
         yelo_default = 0.4
         form_k_default = 0.03
-        form_alpha_default = 0.9
+        form_alpha_default = 0.95
     
     # Weight configuration
     st.subheader('Weight Configuration')
@@ -742,7 +742,7 @@ def display_elo_weights_config():
             st.session_state.preset_gelo = 0.4
             st.session_state.preset_yelo = 0.4
             st.session_state.preset_form_k = 0.03
-            st.session_state.preset_form_alpha = 0.9
+            st.session_state.preset_form_alpha = 0.95
             st.rerun()
     
     with col2:
@@ -757,7 +757,7 @@ def display_elo_weights_config():
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
             st.session_state.preset_form_k = 0.03
-            st.session_state.preset_form_alpha = 0.9
+            st.session_state.preset_form_alpha = 0.95
             st.rerun()
     
     with col3:
@@ -771,7 +771,7 @@ def display_elo_weights_config():
             st.session_state.preset_gelo = 0.1
             st.session_state.preset_yelo = 0.1
             st.session_state.preset_form_k = 0.03
-            st.session_state.preset_form_alpha = 0.9
+            st.session_state.preset_form_alpha = 0.95
             st.rerun()
     
     with col4:
@@ -785,7 +785,7 @@ def display_elo_weights_config():
             st.session_state.preset_gelo = 0.4
             st.session_state.preset_yelo = 0.1
             st.session_state.preset_form_k = 0.03
-            st.session_state.preset_form_alpha = 0.9
+            st.session_state.preset_form_alpha = 0.95
             st.rerun()
 
     # Show current weights if available
