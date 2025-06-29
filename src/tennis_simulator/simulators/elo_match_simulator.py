@@ -54,13 +54,13 @@ def five_set_probability(p3: float) -> float:
 @dataclass
 class EloWeights:
     """Configuration for Elo rating weights in match simulation"""
-    elo_weight: float = 0.4      # Overall Elo weight
-    helo_weight: float = 0.2     # Hard court Elo weight
-    celo_weight: float = 0.2     # Clay court Elo weight
-    gelo_weight: float = 0.1     # Grass court Elo weight
-    yelo_weight: float = 0.1     # Year-to-date Elo weight
-    form_k: float = 0.1          # Form steepness parameter (k)
-    form_alpha: float = 0.7      # Form weight parameter (α) - weight for standard vs form probability
+    elo_weight: float = 0.1      # Overall Elo weight
+    helo_weight: float = 0.1     # Hard court Elo weight
+    celo_weight: float = 0.0     # Clay court Elo weight
+    gelo_weight: float = 0.4     # Grass court Elo weight
+    yelo_weight: float = 0.4     # Year-to-date Elo weight
+    form_k: float = 0.03         # Form steepness parameter (k)
+    form_alpha: float = 0.95     # Form weight parameter (α) - weight for standard vs form probability
     
     def __post_init__(self):
         """Validate that weights sum to 1.0"""

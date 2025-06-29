@@ -12,6 +12,7 @@ import os
 from typing import Dict, List, Optional
 import random
 import plotly.graph_objects as go
+import plotly.express as px
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
@@ -21,6 +22,107 @@ from tennis_simulator.simulators.elo_match_simulator import EloMatchSimulator, E
 from tennis_simulator.data.static_database import populate_static_database
 from tennis_simulator.simulators.fixed_draw_elo_simulator import FixedDrawEloSimulator
 
+# Add custom CSS for better dark mode support
+st.markdown("""
+<style>
+/* Dark mode compatible styling */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 120px;
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #00ff88;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: inherit;
+    opacity: 0.8;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.feature-card h3 {
+    color: #00ff88;
+    margin-bottom: 15px;
+}
+
+.feature-card ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.feature-card li {
+    margin: 8px 0;
+    color: inherit;
+}
+
+.highlight-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.highlight-box h4 {
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+
+.highlight-box ul {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.highlight-box li {
+    margin: 5px 0;
+    color: inherit;
+}
+
+/* Ensure text is visible in both light and dark modes */
+.stMarkdown, .stText {
+    color: inherit !important;
+}
+
+/* Make sure links are visible */
+a {
+    color: #00ff88 !important;
+}
+
+/* Ensure tables are readable */
+.dataframe {
+    background-color: transparent !important;
+}
+
+/* Plotly chart improvements for dark mode */
+.js-plotly-plot .plotly .main-svg {
+    background-color: transparent !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # Page configuration
 st.set_page_config(
@@ -937,9 +1039,22 @@ def display_single_tournament():
         winners = [p['winner'] for p in positions]
         fig = go.Figure()
         for line in lines:
-            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='gray', width=1))
-        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', marker=dict(size=8, color='royalblue'), hovertext=winners, hoverinfo='text'))
-        fig.update_layout(height=1200, width=1600, showlegend=False, margin=dict(l=20, r=20, t=40, b=20), xaxis=dict(showticklabels=False), yaxis=dict(showticklabels=False), plot_bgcolor='white')
+            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='rgba(255, 255, 255, 0.3)', width=1))
+        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', 
+                                marker=dict(size=8, color='#00ff88'), 
+                                textfont=dict(color='white', size=10),
+                                hovertext=winners, hoverinfo='text'))
+        fig.update_layout(
+            height=1200, 
+            width=1600, 
+            showlegend=False, 
+            margin=dict(l=20, r=20, t=40, b=20), 
+            xaxis=dict(showticklabels=False), 
+            yaxis=dict(showticklabels=False), 
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
+        )
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info('Click "Run Single Tournament Simulation" to generate and view the bracket.')
@@ -989,10 +1104,23 @@ def display_bracket_view():
         fig = go.Figure()
         # Draw lines
         for line in lines:
-            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='gray', width=1))
+            fig.add_shape(type='line', x0=line['x0'], y0=line['y0'], x1=line['x1'], y1=line['y1'], line=dict(color='rgba(255, 255, 255, 0.3)', width=1))
         # Draw nodes
-        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', marker=dict(size=8, color='royalblue'), hovertext=winners, hoverinfo='text'))
-        fig.update_layout(height=1200, width=1600, showlegend=False, margin=dict(l=20, r=20, t=40, b=20), xaxis=dict(showticklabels=False), yaxis=dict(showticklabels=False), plot_bgcolor='white')
+        fig.add_trace(go.Scatter(x=xs, y=ys, mode='markers+text', text=labels, textposition='middle right', 
+                                marker=dict(size=8, color='#00ff88'), 
+                                textfont=dict(color='white', size=10),
+                                hovertext=winners, hoverinfo='text'))
+        fig.update_layout(
+            height=1200, 
+            width=1600, 
+            showlegend=False, 
+            margin=dict(l=20, r=20, t=40, b=20), 
+            xaxis=dict(showticklabels=False), 
+            yaxis=dict(showticklabels=False), 
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
+        )
         st.plotly_chart(fig, use_container_width=True)
         st.success(f'Winner: {winner}')
     else:
