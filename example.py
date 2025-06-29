@@ -65,6 +65,42 @@ def main():
         else:
             print(f"  {women_draw[i].name} (bye)")
     
+    # Show second round structure for men
+    print("\nMen's R32 Draw Structure:")
+    men_draw = list(simulator.men_tournament.players)
+    for i in range(0, len(men_draw), 4):
+        if i+3 < len(men_draw):
+            print(f"  Winner of ({men_draw[i].name} vs {men_draw[i+1].name}) vs Winner of ({men_draw[i+2].name} vs {men_draw[i+3].name})")
+        elif i+1 < len(men_draw):
+            print(f"  Winner of ({men_draw[i].name} vs {men_draw[i+1].name}) vs Bye")
+    
+    # Show second round structure for women
+    print("\nWomen's R32 Draw Structure:")
+    women_draw = list(simulator.women_tournament.players)
+    for i in range(0, len(women_draw), 4):
+        if i+3 < len(women_draw):
+            print(f"  Winner of ({women_draw[i].name} vs {women_draw[i+1].name}) vs Winner of ({women_draw[i+2].name} vs {women_draw[i+3].name})")
+        elif i+1 < len(women_draw):
+            print(f"  Winner of ({women_draw[i].name} vs {women_draw[i+1].name}) vs Bye")
+    
+    # Show third round structure for men
+    print("\nMen's R16 Draw Structure:")
+    men_draw = list(simulator.men_tournament.players)
+    for i in range(0, len(men_draw), 8):
+        if i+7 < len(men_draw):
+            print(f"  Winner of (R32 Match {i//4 + 1}) vs Winner of (R32 Match {i//4 + 2})")
+        elif i+3 < len(men_draw):
+            print(f"  Winner of (R32 Match {i//4 + 1}) vs Bye")
+    
+    # Show third round structure for women
+    print("\nWomen's R16 Draw Structure:")
+    women_draw = list(simulator.women_tournament.players)
+    for i in range(0, len(women_draw), 8):
+        if i+7 < len(women_draw):
+            print(f"  Winner of (R32 Match {i//4 + 1}) vs Winner of (R32 Match {i//4 + 2})")
+        elif i+3 < len(women_draw):
+            print(f"  Winner of (R32 Match {i//4 + 1}) vs Bye")
+    
     # Run single simulation
     print("\nRunning single simulation...")
     result = simulator.run_single_simulation()

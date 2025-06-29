@@ -94,16 +94,14 @@ class ImportDataParser:
                 print(f"Line has insufficient parts: {len(parts)} < 8")
     
     def _clean_player_name(self, player_name: str) -> str:
-        """Clean player name by removing seeding information."""
-        # Remove seeding like "(1)", "(2)", etc.
-        if '(' in player_name and ')' in player_name:
-            # Find the last occurrence of (number)
-            parts = player_name.split('(')
-            if len(parts) > 1:
-                # Take everything before the last (
-                player_name = parts[0].strip()
+        """Clean player name by removing seeding information and country codes."""
+        # Remove seeding like "(1)", "(2)", etc. at the beginning
+        name = re.sub(r"^\(\d+\)", "", player_name.strip())
         
-        return player_name
+        # Remove country codes like "(ITA)", "(USA)", etc. at the end
+        name = re.sub(r"\([A-Z]{3}\)\s*$", "", name.strip())
+        
+        return name.strip()
     
     def load_draw_data(self, men_file: str, women_file: str):
         """Load draw data from both men's and women's import files."""
@@ -369,40 +367,89 @@ class FixedDrawSimulator:
         players = player_db.get_players_by_tier(gender, tier)
         recommendations = []
         
+        # New tier-based scoring system
+        tier_scoring = {
+            Tier.A: [10, 20, 30, 40, 60, 80, 100],  # R64, R32, R16, QF, SF, F, W
+            Tier.B: [20, 40, 60, 80, 100, 120, 140],
+            Tier.C: [30, 60, 90, 120, 140, 160, 180],
+            Tier.D: [60, 90, 120, 160, 180, 200, 200]
+        }
+        
+        round_to_index = {
+            Round.R64: 0,  # Round 1
+            Round.R32: 1,  # Round 2
+            Round.R16: 2,  # Round 3
+            Round.QF: 3,   # Round 4
+            Round.SF: 4,   # Round 5
+            Round.F: 5,    # Round 6
+            Round.W: 6     # Round 7
+        }
+        
+        scoring = tier_scoring.get(tier, tier_scoring[Tier.D])
+        
         for player in players:
             # Count how often this player reaches different rounds
-            wins = 0
-            finals = 0
-            semifinals = 0
-            quarterfinals = 0
+            round_counts = {round_type: 0 for round_type in Round}
             
             for result in self.simulation_results:
                 if gender == Gender.MEN:
                     if result["men_winner"] == player.name:
-                        wins += 1
-                    if player.name in result["men_finalists"]:
-                        finals += 1
-                    if player.name in result["men_semifinalists"]:
-                        semifinals += 1
-                    if player.name in result["men_quarterfinalists"]:
-                        quarterfinals += 1
+                        round_counts[Round.W] += 1
+                    elif player.name in result["men_finalists"]:
+                        round_counts[Round.F] += 1
+                    elif player.name in result["men_semifinalists"]:
+                        round_counts[Round.SF] += 1
+                    elif player.name in result["men_quarterfinalists"]:
+                        round_counts[Round.QF] += 1
+                    else:
+                        # Check if player was eliminated in earlier rounds
+                        for match in result.get("men_matches", []):
+                            if match.get("loser") == player.name:
+                                # Find the round where they lost
+                                if match.get("round") == "R64":
+                                    round_counts[Round.R64] += 1
+                                elif match.get("round") == "R32":
+                                    round_counts[Round.R32] += 1
+                                elif match.get("round") == "R16":
+                                    round_counts[Round.R16] += 1
+                                break
                 else:
                     if result["women_winner"] == player.name:
-                        wins += 1
-                    if player.name in result["women_finalists"]:
-                        finals += 1
-                    if player.name in result["women_semifinalists"]:
-                        semifinals += 1
-                    if player.name in result["women_quarterfinalists"]:
-                        quarterfinals += 1
+                        round_counts[Round.W] += 1
+                    elif player.name in result["women_finalists"]:
+                        round_counts[Round.F] += 1
+                    elif player.name in result["women_semifinalists"]:
+                        round_counts[Round.SF] += 1
+                    elif player.name in result["women_quarterfinalists"]:
+                        round_counts[Round.QF] += 1
+                    else:
+                        # Check if player was eliminated in earlier rounds
+                        for match in result.get("women_matches", []):
+                            if match.get("loser") == player.name:
+                                # Find the round where they lost
+                                if match.get("round") == "R64":
+                                    round_counts[Round.R64] += 1
+                                elif match.get("round") == "R32":
+                                    round_counts[Round.R32] += 1
+                                elif match.get("round") == "R16":
+                                    round_counts[Round.R16] += 1
+                                break
             
             total_sims = len(self.simulation_results)
+            
+            # Calculate expected points using new scoring system
+            expected_points = 0
+            for round_type, count in round_counts.items():
+                round_index = round_to_index.get(round_type, 0)
+                if round_index < len(scoring):
+                    expected_points += (count * scoring[round_index]) / total_sims
+            
             stats = {
-                "win_rate": wins / total_sims * 100,
-                "final_rate": finals / total_sims * 100,
-                "semifinal_rate": semifinals / total_sims * 100,
-                "quarterfinal_rate": quarterfinals / total_sims * 100,
-                "expected_points": (wins * 32 + finals * 16 + semifinals * 8 + quarterfinals * 4) / total_sims
+                "win_rate": round_counts[Round.W] / total_sims * 100,
+                "final_rate": round_counts[Round.F] / total_sims * 100,
+                "semifinal_rate": round_counts[Round.SF] / total_sims * 100,
+                "quarterfinal_rate": round_counts[Round.QF] / total_sims * 100,
+                "expected_points": expected_points
             }
             
             recommendations.append((player, stats))

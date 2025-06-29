@@ -1,0 +1,211 @@
+"""
+Elo-based Tennis Match Simulator
+
+This module provides a sophisticated tennis match simulation system based on Elo ratings
+with configurable weights for different surface types (hard court, clay, grass) and
+year-to-date performance.
+"""
+
+import random
+import math
+from typing import Dict, Optional, Tuple
+from dataclasses import dataclass
+
+from ..core.models import Player, Match
+
+
+@dataclass
+class EloWeights:
+    """Configuration for Elo rating weights in match simulation"""
+    elo_weight: float = 0.4      # Overall Elo weight
+    helo_weight: float = 0.2     # Hard court Elo weight
+    celo_weight: float = 0.2     # Clay court Elo weight
+    gelo_weight: float = 0.1     # Grass court Elo weight
+    yelo_weight: float = 0.1     # Year-to-date Elo weight
+    
+    def __post_init__(self):
+        """Validate that weights sum to 1.0"""
+        total_weight = (self.elo_weight + self.helo_weight + 
+                       self.celo_weight + self.gelo_weight + self.yelo_weight)
+        if abs(total_weight - 1.0) > 0.001:
+            raise ValueError(f"Elo weights must sum to 1.0, got {total_weight}")
+
+
+class EloMatchSimulator:
+    """
+    Elo-based tennis match simulator with configurable surface weights.
+    
+    Uses the standard Elo formula: P(A beats B) = 1 / (1 + 10^((B_rating - A_rating) / 400))
+    """
+    
+    def __init__(self, weights: Optional[EloWeights] = None):
+        """
+        Initialize the simulator with optional custom weights.
+        
+        Args:
+            weights: EloWeights configuration. If None, uses default weights.
+        """
+        self.weights = weights or EloWeights()
+    
+    def calculate_weighted_rating(self, player: Player) -> float:
+        """
+        Calculate the weighted Elo rating for a player based on configured weights.
+        
+        Args:
+            player: Player object with Elo ratings
+            
+        Returns:
+            Weighted Elo rating
+        """
+        weighted_sum = 0.0
+        
+        # Add weighted contributions from each Elo type
+        if player.elo is not None:
+            weighted_sum += self.weights.elo_weight * player.elo
+        
+        if player.helo is not None:
+            weighted_sum += self.weights.helo_weight * player.helo
+            
+        if player.celo is not None:
+            weighted_sum += self.weights.celo_weight * player.celo
+            
+        if player.gelo is not None:
+            weighted_sum += self.weights.gelo_weight * player.gelo
+            
+        if player.yelo is not None:
+            weighted_sum += self.weights.yelo_weight * player.yelo
+        
+        return weighted_sum
+    
+    def calculate_win_probability(self, player1: Player, player2: Player) -> float:
+        """
+        Calculate the probability that player1 beats player2 using Elo formula.
+        
+        Args:
+            player1: First player
+            player2: Second player
+            
+        Returns:
+            Probability that player1 wins (0.0 to 1.0)
+        """
+        rating1 = self.calculate_weighted_rating(player1)
+        rating2 = self.calculate_weighted_rating(player2)
+        
+        # Calculate rating difference
+        rating_diff = rating2 - rating1
+        
+        # Apply Elo formula: P(A beats B) = 1 / (1 + 10^((B_rating - A_rating) / 400))
+        win_probability = 1 / (1 + math.pow(10, rating_diff / 400))
+        
+        return win_probability
+    
+    def simulate_match(self, player1: Player, player2: Player) -> Tuple[Player, Player, Dict]:
+        """
+        Simulate a tennis match between two players.
+        
+        Args:
+            player1: First player
+            player2: Second player
+            
+        Returns:
+            Tuple of (winner, loser, match_details)
+        """
+        # Calculate win probabilities
+        p1_win_prob = self.calculate_win_probability(player1, player2)
+        p2_win_prob = 1 - p1_win_prob
+        
+        # Determine winner based on probabilities
+        if random.random() < p1_win_prob:
+            winner, loser = player1, player2
+            winner_prob = p1_win_prob
+        else:
+            winner, loser = player2, player1
+            winner_prob = p2_win_prob
+        
+        # Create match details
+        match_details = {
+            'player1_win_probability': p1_win_prob,
+            'player2_win_probability': p2_win_prob,
+            'winner_probability': winner_prob,
+            'rating_difference': self.calculate_weighted_rating(player2) - self.calculate_weighted_rating(player1),
+            'weighted_rating_player1': self.calculate_weighted_rating(player1),
+            'weighted_rating_player2': self.calculate_weighted_rating(player2)
+        }
+        
+        return winner, loser, match_details
+    
+    def get_surface_specific_weights(self, surface: str) -> EloWeights:
+        """
+        Get pre-configured weights optimized for specific surfaces.
+        
+        Args:
+            surface: Surface type ('hard', 'clay', 'grass', 'overall')
+            
+        Returns:
+            EloWeights configuration for the surface
+        """
+        surface_weights = {
+            'hard': EloWeights(
+                elo_weight=0.3,
+                helo_weight=0.4,  # Higher weight for hard court
+                celo_weight=0.1,
+                gelo_weight=0.1,
+                yelo_weight=0.1
+            ),
+            'clay': EloWeights(
+                elo_weight=0.3,
+                helo_weight=0.1,
+                celo_weight=0.4,  # Higher weight for clay court
+                gelo_weight=0.1,
+                yelo_weight=0.1
+            ),
+            'grass': EloWeights(
+                elo_weight=0.3,
+                helo_weight=0.1,
+                celo_weight=0.1,
+                gelo_weight=0.4,  # Higher weight for grass court
+                yelo_weight=0.1
+            ),
+            'overall': EloWeights(
+                elo_weight=0.4,
+                helo_weight=0.2,
+                celo_weight=0.2,
+                gelo_weight=0.1,
+                yelo_weight=0.1
+            )
+        }
+        
+        return surface_weights.get(surface.lower(), EloWeights())
+    
+    def set_surface_weights(self, surface: str):
+        """
+        Update the simulator weights for a specific surface.
+        
+        Args:
+            surface: Surface type ('hard', 'clay', 'grass', 'overall')
+        """
+        self.weights = self.get_surface_specific_weights(surface)
+
+    def set_weights(self, weights: EloWeights):
+        """Set new Elo weights for the match simulator."""
+        self.weights = weights
+
+
+def create_match_simulator(weights: Optional[EloWeights] = None, surface: Optional[str] = None) -> EloMatchSimulator:
+    """
+    Factory function to create a match simulator with specified configuration.
+    
+    Args:
+        weights: Custom EloWeights configuration
+        surface: Surface type for pre-configured weights ('hard', 'clay', 'grass', 'overall')
+        
+    Returns:
+        Configured EloMatchSimulator instance
+    """
+    if weights and surface:
+        raise ValueError("Cannot specify both weights and surface")
+    
+    if surface:
+        return EloMatchSimulator(weights=EloMatchSimulator().get_surface_specific_weights(surface))
+    else:
+        return EloMatchSimulator(weights=weights) 

@@ -37,3 +37,4 @@ rich>=12.0.0
 
 # Progress bars
 tqdm>=4.64.0 
+watchdog == 6.0.0

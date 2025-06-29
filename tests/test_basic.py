@@ -46,7 +46,7 @@ def test_player_creation():
     assert player.tier == Tier.A
     assert player.elo == 2200
     assert player.atp_rank == 1
-    assert player.current_round == Round.R64
+    assert player.current_round == Round.R1
     assert not player.eliminated
 
 

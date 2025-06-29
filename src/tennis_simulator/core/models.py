@@ -24,13 +24,13 @@ class Gender(Enum):
 
 class Round(Enum):
     """Tournament round enumeration."""
-    R64 = "R64"
-    R32 = "R32"
-    R16 = "R16"
-    QF = "QF"
-    SF = "SF"
-    F = "F"
-    W = "W"
+    R1 = "R1"    # Round 1 (previously R64)
+    R2 = "R2"    # Round 2 (previously R32)
+    R3 = "R3"    # Round 3 (previously R16)
+    R4 = "R4"    # Round 4 (previously QF)
+    QF = "QF"    # Quarter Finals (previously SF)
+    SF = "SF"    # Semi Finals (previously F)
+    F = "F"      # Final (previously W)
 
 
 @dataclass
@@ -48,7 +48,7 @@ class Player:
     yelo: Optional[float] = None
     atp_rank: Optional[int] = None
     wta_rank: Optional[int] = None
-    current_round: Round = Round.R64
+    current_round: Round = Round.R1
     eliminated: bool = False
     points_earned: int = 0
     
@@ -141,14 +141,14 @@ class Match:
     def _get_next_round(self) -> Round:
         """Get the next round after current match round."""
         round_progression = {
-            Round.R64: Round.R32,
-            Round.R32: Round.R16,
-            Round.R16: Round.QF,
+            Round.R1: Round.R2,
+            Round.R2: Round.R3,
+            Round.R3: Round.R4,
+            Round.R4: Round.QF,
             Round.QF: Round.SF,
-            Round.SF: Round.F,
-            Round.F: Round.W
+            Round.SF: Round.F
         }
-        return round_progression.get(self.round, Round.W)
+        return round_progression.get(self.round, Round.F)
     
     def __str__(self) -> str:
         if self.winner:
@@ -165,7 +165,7 @@ class Tournament:
     gender: Gender
     players: List[Player] = field(default_factory=list)
     matches: List[Match] = field(default_factory=list)
-    current_round: Round = Round.R64
+    current_round: Round = Round.R1
     completed: bool = False
     winner: Optional[Player] = None
     
@@ -191,11 +191,11 @@ class Tournament:
     def reset(self) -> None:
         """Reset tournament state."""
         for player in self.players:
-            player.current_round = Round.R64
+            player.current_round = Round.R1
             player.eliminated = False
             player.points_earned = 0
         self.matches.clear()
-        self.current_round = Round.R64
+        self.current_round = Round.R1
         self.completed = False
         self.winner = None
     
@@ -216,6 +216,14 @@ class ScoritoGame:
     women_tournament: Optional[Tournament] = None
     total_points: int = 0
     
+    # New tier-based scoring system
+    TIER_SCORING = {
+        Tier.A: [10, 20, 30, 40, 60, 80, 100],  # R1, R2, R3, R4, QF, SF, F
+        Tier.B: [20, 40, 60, 80, 100, 120, 140],
+        Tier.C: [30, 60, 90, 120, 140, 160, 180],
+        Tier.D: [60, 90, 120, 160, 180, 200, 200]
+    }
+    
     def add_player_selection(self, gender: Gender, tier: Tier, player_names: List[str]) -> None:
         """Add player selections for a specific gender and tier."""
         if gender == Gender.MEN:
@@ -224,7 +232,7 @@ class ScoritoGame:
             self.women_selection[gender] = player_names
     
     def calculate_points(self) -> Dict[str, int]:
-        """Calculate Scorito points for all selected players."""
+        """Calculate Scorito points for all selected players using tier-based scoring."""
         points = {
             "men": {"A": 0, "B": 0, "C": 0, "D": 0},
             "women": {"A": 0, "B": 0, "C": 0, "D": 0}
@@ -237,7 +245,7 @@ class ScoritoGame:
                 for name in player_names:
                     player = self._find_player_by_name(self.men_tournament.players, name)
                     if player:
-                        tier_points += self._calculate_player_points(player)
+                        tier_points += self._calculate_player_points(player, tier)
                 points["men"][tier.value] = tier_points
         
         # Calculate women's points
@@ -247,7 +255,7 @@ class ScoritoGame:
                 for name in player_names:
                     player = self._find_player_by_name(self.women_tournament.players, name)
                     if player:
-                        tier_points += self._calculate_player_points(player)
+                        tier_points += self._calculate_player_points(player, tier)
                 points["women"][tier.value] = tier_points
         
         # Calculate total
@@ -262,22 +270,29 @@ class ScoritoGame:
                 return player
         return None
     
-    def _calculate_player_points(self, player: Player) -> int:
-        """Calculate Scorito points for a single player."""
+    def _calculate_player_points(self, player: Player, tier: Tier) -> int:
+        """Calculate Scorito points for a single player using tier-based scoring."""
         if player.eliminated:
             return 0
         
-        points_map = {
-            Round.R64: 0,
-            Round.R32: 1,
-            Round.R16: 2,
-            Round.QF: 4,
-            Round.SF: 8,
-            Round.F: 16,
-            Round.W: 32
+        # Map rounds to scoring array indices
+        round_to_index = {
+            Round.R1: 0,  # Round 1
+            Round.R2: 1,  # Round 2
+            Round.R3: 2,  # Round 3
+            Round.R4: 3,   # Round 4
+            Round.QF: 4,   # Round 5
+            Round.SF: 5,   # Round 6
+            Round.F: 6     # Round 7
         }
         
-        return points_map.get(player.current_round, 0)
+        round_index = round_to_index.get(player.current_round, 0)
+        tier_scoring = self.TIER_SCORING.get(tier, self.TIER_SCORING[Tier.D])
+        
+        if round_index < len(tier_scoring):
+            return tier_scoring[round_index]
+        else:
+            return 0
     
     def __str__(self) -> str:
         return f"{self.name} - Total Points: {self.total_points}" 

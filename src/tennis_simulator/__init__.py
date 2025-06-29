@@ -1,36 +1,28 @@
 """
 Tennis Simulator Package
 
-A comprehensive tennis tournament simulation system for ATP and WTA Grand Slam tournaments.
+A comprehensive tennis tournament simulation system with Elo-based match prediction.
 """
 
 __version__ = "1.0.0"
 __author__ = "Tennis Simulator Team"
 
-from .core.models import Player, Match, Tournament, Round, Gender, Tier, ScoritoGame
-from .data.player_database import player_db, PlayerDatabase
-from .simulators.tournament_simulator import FixedDrawSimulator, run_tournament_simulation
-from .utils.player_selector import PlayerSelector, run_interactive_selector
+from .core.models import Player, Match, Tournament, Tier, Gender, Round, ScoritoGame
+from .data.player_database import PlayerDatabase
+from .simulators.tournament_simulator import FixedDrawSimulator
+from .simulators.elo_match_simulator import EloMatchSimulator, EloWeights, create_match_simulator
+from .utils.player_selector import PlayerSelector
 
 __all__ = [
     # Core models
-    "Player",
-    "Match", 
-    "Tournament",
-    "Round",
-    "Gender",
-    "Tier",
-    "ScoritoGame",
+    "Player", "Match", "Tournament", "Tier", "Gender", "Round", "ScoritoGame",
     
-    # Database
-    "player_db",
+    # Data management
     "PlayerDatabase",
     
     # Simulators
-    "FixedDrawSimulator",
-    "run_tournament_simulation",
+    "FixedDrawSimulator", "EloMatchSimulator", "EloWeights", "create_match_simulator",
     
     # Utilities
     "PlayerSelector",
-    "run_interactive_selector",
 ] 
