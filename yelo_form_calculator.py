@@ -4,12 +4,29 @@ yElo Form Calculator
 
 This script calculates form values for tennis players by comparing current yElo values
 with values from 1 week ago and 2 weeks ago. The form is calculated as the difference
-between current and historical values.
+between current and historical values, adjusted for the number of matches played.
 """
 
 import os
 from typing import Dict, Tuple, List
 from dataclasses import dataclass
+
+
+def adjusted_form(delta_yelo: float, matches_played: int, gamma: float = 4, inactivity_penalty: float = -100) -> float:
+    """
+    Calculate adjusted form based on delta yElo and matches played.
+    
+    Args:
+        delta_yelo: Change in yElo rating
+        matches_played: Number of matches played (wins + losses)
+        gamma: Weighting parameter for matches played (default: 4)
+        inactivity_penalty: Penalty for not playing matches (default: -100)
+        
+    Returns:
+        Adjusted form value
+    """
+    weight = matches_played / (matches_played + gamma)
+    return (weight * delta_yelo) + ((1 - weight) * inactivity_penalty)
 
 
 @dataclass
@@ -22,20 +39,36 @@ class PlayerData:
     yelo: float
     yelo_1w: float = None
     yelo_2w: float = None
+    wins_1w: int = 0
+    losses_1w: int = 0
+    wins_2w: int = 0
+    losses_2w: int = 0
+    
+    @property
+    def matches_played_1w(self) -> int:
+        """Calculate matches played in the last week."""
+        return self.wins + self.losses - (self.wins_1w + self.losses_1w)
+    
+    @property
+    def matches_played_2w(self) -> int:
+        """Calculate matches played in the last two weeks."""
+        return self.wins + self.losses - (self.wins_2w + self.losses_2w)
     
     @property
     def form_1w(self) -> float:
         """Calculate form compared to 1 week ago."""
         if self.yelo_1w is None:
             return 0.0
-        return self.yelo - self.yelo_1w
+        delta_yelo = self.yelo - self.yelo_1w
+        return adjusted_form(delta_yelo, self.matches_played_1w)
     
     @property
     def form_2w(self) -> float:
         """Calculate form compared to 2 weeks ago."""
         if self.yelo_2w is None:
             return 0.0
-        return self.yelo - self.yelo_2w
+        delta_yelo = self.yelo - self.yelo_2w
+        return adjusted_form(delta_yelo, self.matches_played_2w)
 
 
 def read_yelo_file(filepath: str) -> Dict[str, PlayerData]:
@@ -109,12 +142,17 @@ def merge_player_data(current: Dict[str, PlayerData],
     for player_name, player_data in merged.items():
         if player_name in one_week:
             player_data.yelo_1w = one_week[player_name].yelo
+            player_data.wins_1w = one_week[player_name].wins
+            player_data.losses_1w = one_week[player_name].losses
         if player_name in two_weeks:
             player_data.yelo_2w = two_weeks[player_name].yelo
+            player_data.wins_2w = two_weeks[player_name].wins
+            player_data.losses_2w = two_weeks[player_name].losses
     
     # Add players that exist in historical data but not current
     for player_name, player_data in one_week.items():
         if player_name not in merged:
+            two_week_data = two_weeks.get(player_name)
             merged[player_name] = PlayerData(
                 rank=player_data.rank,
                 player=player_name,
@@ -122,19 +160,28 @@ def merge_player_data(current: Dict[str, PlayerData],
                 losses=player_data.losses,
                 yelo=0.0,  # No current data
                 yelo_1w=player_data.yelo,
-                yelo_2w=two_weeks.get(player_name, PlayerData(0, player_name, 0, 0, 0.0)).yelo if player_name in two_weeks else None
+                yelo_2w=two_week_data.yelo if two_week_data else None,
+                wins_1w=player_data.wins,
+                losses_1w=player_data.losses,
+                wins_2w=two_week_data.wins if two_week_data else 0,
+                losses_2w=two_week_data.losses if two_week_data else 0
             )
     
     for player_name, player_data in two_weeks.items():
         if player_name not in merged:
+            one_week_data = one_week.get(player_name)
             merged[player_name] = PlayerData(
                 rank=player_data.rank,
                 player=player_name,
                 wins=player_data.wins,
                 losses=player_data.losses,
                 yelo=0.0,  # No current data
-                yelo_1w=one_week.get(player_name, PlayerData(0, player_name, 0, 0, 0.0)).yelo if player_name in one_week else None,
-                yelo_2w=player_data.yelo
+                yelo_1w=one_week_data.yelo if one_week_data else None,
+                yelo_2w=player_data.yelo,
+                wins_1w=one_week_data.wins if one_week_data else 0,
+                losses_1w=one_week_data.losses if one_week_data else 0,
+                wins_2w=player_data.wins,
+                losses_2w=player_data.losses
             )
     
     return merged
@@ -157,12 +204,12 @@ def write_form_file(players: Dict[str, PlayerData], output_file: str):
     
     with open(output_file, 'w', encoding='utf-8') as f:
         # Write header
-        f.write("Rank\tPlayer\tWins\tLosses\tyElo_form1w\tyElo_form2w\n")
+        f.write("Rank\tPlayer\tWins\tLosses\tyElo_form1w\tyElo_form2w\tMatches_1w\tMatches_2w\n")
         
         # Write player data
         for i, player in enumerate(sorted_players, 1):
             if player.yelo > 0:  # Only include players with current data
-                f.write(f"{i}\t{player.player}\t{player.wins}\t{player.losses}\t{player.form_1w:.1f}\t{player.form_2w:.1f}\n")
+                f.write(f"{i}\t{player.player}\t{player.wins}\t{player.losses}\t{player.form_1w:.1f}\t{player.form_2w:.1f}\t{player.matches_played_1w}\t{player.matches_played_2w}\n")
 
 
 def calculate_form_for_gender(gender: str, data_dir: str = "data/elo"):
