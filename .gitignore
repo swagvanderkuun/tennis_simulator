@@ -194,6 +194,12 @@ data/import/*.txt
 !data/elo/*.example.txt
 !data/import/*.example.txt
 
+# Allow specific tennis data files for deployment
+!data/elo/yelo_men_form.txt
+!data/elo/yelo_women_form.txt
+!data/elo/tier_men.txt
+!data/elo/tier_women.txt
+
 # Selection files
 selection*.json
 my_selection*.json

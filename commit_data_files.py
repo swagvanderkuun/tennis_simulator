@@ -35,10 +35,11 @@ def add_and_commit_data_files():
         "data/elo/tier_men.txt",
         "data/elo/tier_women.txt"
     ]
-    # Add files to git
+    # Add files to git (force add for previously ignored files)
     for f in required_files:
         if os.path.exists(f):
-            subprocess.run(["git", "add", f])
+            subprocess.run(["git", "add", "-f", f])
+            print(f"Added {f} to git")
     # Commit
     subprocess.run(["git", "commit", "-m", "Add all required tennis data files for hosted deployment"])
     print("Committed all required data files to git.")
