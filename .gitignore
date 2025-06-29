@@ -199,6 +199,8 @@ data/import/*.txt
 !data/elo/yelo_women_form.txt
 !data/elo/tier_men.txt
 !data/elo/tier_women.txt
+!data/elo/importdata_women.txt
+!data/elo/importdata_men.txt
 
 # Selection files
 selection*.json
