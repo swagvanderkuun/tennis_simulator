@@ -1,0 +1,418 @@
+Rank	Player	Wins	Losses	yElo_form1w	yElo_form2w
+1	Aryna Sabalenka	42	8	-27.6	-4.6
+2	Coco Gauff	31	9	-49.9	45.1
+3	Elina Svitolina	29	9	0.0	14.5
+4	Iga Swiatek	32	10	0.0	67.3
+5	Mirra Andreeva	31	9	-47.2	-57.8
+6	Jasmine Paolini	25	10	-45.5	-65.2
+7	Marketa Vondrousova	11	5	221.3	275.7
+8	Qinwen Zheng	19	10	0.0	44.1
+9	Elise Mertens	26	11	0.0	37.0
+10	Madison Keys	30	9	-41.0	-51.5
+11	Ekaterina Alexandrova	23	12	0.0	11.2
+12	Elena Rybakina	29	12	20.3	-10.9
+13	Belinda Bencic	21	9	0.0	0.0
+14	Amanda Anisimova	25	12	-1.9	95.9
+15	Jessica Pegula	31	12	-32.1	-35.8
+16	Sofia Kenin	23	14	-21.6	-8.1
+17	Jelena Ostapenko	15	12	0.0	7.9
+18	Liudmila Samsonova	20	15	62.5	36.8
+19	Dayana Yastremska	21	13	59.4	77.6
+20	Peyton Stearns	16	13	0.0	-46.1
+21	Lois Boisson	14	5	0.0	220.6
+22	Paula Badosa	17	10	5.0	22.6
+23	Mccartney Kessler	27	15	124.0	109.4
+24	Victoria Mboko	25	6	0.0	65.9
+25	Emma Raducanu	15	12	0.0	22.7
+26	Clara Tauson	23	12	-3.0	3.2
+27	Xin Yu Wang	16	15	217.2	172.8
+28	Olga Danilovic	17	10	-41.1	8.8
+29	Diana Shnaider	18	15	-7.9	-5.2
+30	Elena Gabriela Ruse	23	10	0.0	65.9
+31	Anastasia Potapova	19	10	5.9	-67.9
+32	Veronika Kudermetova	24	15	0.0	25.9
+33	Marta Kostyuk	17	13	-32.3	-84.5
+34	Rebeka Masarova	27	14	69.2	-0.9
+35	Tereza Valentova	27	7	0.0	141.7
+36	Sara Bejlek	20	10	0.0	282.7
+37	Magda Linette	18	15	29.1	-46.2
+38	Naomi Osaka	17	8	-32.1	-61.0
+39	Danielle Collins	12	9	0.0	-77.2
+40	Kaja Juvan	25	8	0.0	70.0
+41	Katie Boulter	15	10	11.0	2.2
+42	Jaqueline Cristian	21	13	-49.7	-26.6
+43	Iva Jovic	15	7	0.0	174.0
+44	Emma Navarro	19	15	18.6	-7.6
+45	Ashlyn Krueger	20	16	-39.6	-30.2
+46	Karolina Muchova	13	9	0.0	-92.8
+47	Hailey Baptiste	21	14	-40.5	10.0
+48	Greet Minnen	23	12	0.0	98.8
+49	Linda Noskova	15	15	17.3	-6.0
+50	Rebecca Sramkova	14	17	78.3	95.9
+51	Marie Bouzkova	15	12	0.0	66.9
+52	Jessica Bouzas Maneiro	15	14	0.0	27.0
+53	Ons Jabeur	15	13	45.4	11.1
+54	Moyuka Uchijima	18	16	0.0	-47.9
+55	Maya Joint	33	16	-33.2	-74.2
+56	Anna Bondar	22	15	0.0	23.3
+57	Tatjana Maria	17	17	0.0	258.7
+58	Mayar Sherif	18	12	0.0	50.9
+59	Ann Li	15	13	0.0	14.5
+60	Sonay Kartal	16	13	-0.3	17.6
+61	Anna Blinkova	19	16	0.9	-5.0
+62	Daria Kasatkina	14	15	-32.8	31.2
+63	Sorana Cirstea	8	9	0.0	0.0
+64	Maria Sakkari	14	18	-30.6	-90.8
+65	Eva Lys	17	15	-14.8	-1.2
+66	Ajla Tomljanovic	16	14	-1.8	53.5
+67	Katerina Siniakova	16	14	93.3	52.0
+68	Francesca Jones	25	10	-2.8	-56.7
+69	Anca Alexia Todoni	19	12	-47.4	77.4
+70	Magdalena Frech	8	16	44.7	55.5
+71	Anna Kalinskaya	9	12	-50.2	-86.1
+72	Alexandra Eala	21	14	46.0	-27.5
+73	Caroline Dolehide	14	13	-20.8	-9.7
+74	Shuai Zhang	12	8	0.0	-42.7
+75	Suzan Lamens	18	16	-26.2	-32.5
+76	Dominika Salkova	16	11	102.7	212.6
+77	Dalma Galfi	24	15	-40.6	-91.4
+78	Viktorija Golubic	17	14	0.0	75.7
+79	Linda Fruhvirtova	18	13	0.0	33.5
+80	Antonia Ruzic	26	12	54.2	7.5
+81	Anastasia Pavlyuchenkova	6	8	0.0	-10.2
+82	Camila Osorio	14	10	0.0	-42.7
+83	Robin Montgomery	10	8	0.0	49.9
+84	Bernarda Pera	15	17	0.0	93.0
+85	Elisabetta Cocciaretto	12	16	0.0	115.8
+86	Joanna Garland	9	4	0.0	219.0
+87	Kimberly Birrell	25	15	-15.2	-32.2
+88	Victoria Azarenka	6	9	0.0	9.5
+89	Elina Avanesyan	11	12	0.0	-32.2
+90	Simona Waltert	26	12	0.0	-45.1
+91	Aliaksandra Sasnovich	22	16	32.0	-16.0
+92	Yulia Putintseva	15	15	-14.4	-30.0
+93	Varvara Gracheva	10	14	-37.1	-58.4
+94	Leylah Fernandez	14	15	50.9	-3.4
+95	Caty Mcnally	18	10	0.0	33.9
+96	Bianca Andreescu	7	7	-15.7	-27.1
+97	Oksana Selekhmeteva	19	10	0.0	17.8
+98	Maaya Rajeshwaran Revathi	7	1	0.0	0.0
+99	Julia Grabher	23	13	0.0	-41.7
+100	Iryna Shymanovich	24	12	0.0	7.5
+101	Daria Saville	13	15	0.0	80.3
+102	Valentina Ryser	20	8	0.0	122.4
+103	Amarissa Kiara Toth	12	4	-30.8	85.5
+104	Oleksandra Oliynykova	15	6	0.0	26.5
+105	Elsa Jacquemot	28	20	-14.2	14.5
+106	Heather Watson	13	13	-35.8	54.1
+107	Sofia Costoulas	17	5	0.0	-21.9
+108	Alexis Blokhina	5	0	0.0	0.0
+109	Teodora Kostovic	9	5	-31.1	-31.1
+110	Solana Sierra	21	11	0.0	64.1
+111	Darja Vidmanova	5	1	0.0	0.0
+112	Leolia Jeanjean	26	17	14.7	6.4
+113	Nuria Parrizas Diaz	13	13	0.0	241.7
+114	Victoria Jimenez Kasintseva	18	14	0.0	71.5
+115	Yue Yuan	11	15	0.0	39.2
+116	Donna Vekic	8	15	-13.3	-53.0
+117	Emiliana Arango	18	13	-31.6	-56.0
+118	Tamara Korpatsch	19	13	0.0	39.3
+119	Lucia Bronzetti	11	16	-27.3	-40.5
+120	Anna Lena Friedsam	22	10	-13.7	-31.6
+121	Maddison Inglis	20	13	0.0	23.2
+122	Beatriz Haddad Maia	7	18	-18.5	-15.1
+123	Cristina Bucsa	17	19	24.0	40.5
+124	Taylor Townsend	7	10	0.0	-60.0
+125	Petra Marcinko	16	14	0.0	130.6
+126	Nao Hibino	18	16	0.0	147.7
+127	Janice Tjen	5	0	0.0	0.0
+128	Laura Siegemund	10	14	69.1	45.8
+129	Tiantsoa Sarah Rakotomanga Rajaonah	21	12	0.0	38.5
+130	Maria Lourdes Carle	19	16	0.0	4.0
+131	Clara Burel	3	1	0.0	0.0
+132	Katie Volynets	20	17	-41.2	-123.1
+133	Julieta Pareja	5	2	0.0	0.0
+134	Viktoriya Tomova	9	16	48.3	68.3
+135	Polina Kudermetova	14	14	0.0	-70.0
+136	Anastasija Sevastova	5	5	0.0	-39.7
+137	Tara Wurth	11	7	77.6	9.7
+138	Carol Young Suh Lee	8	1	-34.4	-34.4
+139	Lola Radivojevic	14	15	0.0	120.7
+140	Tatiana Prozorova	22	9	0.0	-102.8
+141	Yuliia Starodubtseva	13	20	-29.3	12.9
+142	Clervie Ngounoue	13	5	0.0	-31.5
+143	Kamilla Rakhimova	11	19	41.9	6.4
+144	Ena Shibahara	19	17	8.2	-55.0
+145	Chloe Paquet	14	21	-18.4	-76.2
+146	Alina Charaeva	17	13	0.0	32.4
+147	Panna Udvardy	23	15	101.3	35.0
+148	Sara Daavettila	3	0	0.0	0.0
+149	Jil Teichmann	18	16	0.0	23.6
+150	Julie Belgraver	13	9	12.5	8.9
+151	Julia Riera	15	10	-0.1	88.8
+152	Lucrezia Stefanini	20	16	0.0	74.3
+153	Hanne Vandewinkel	22	12	0.0	-17.6
+154	Ella Seidel	20	18	30.7	-23.2
+155	Varvara Lepchenko	18	17	-24.0	-29.1
+156	Caroline Garcia	3	7	0.0	-35.1
+157	Ane Mintegi Del Olmo	5	2	0.0	0.0
+158	Katarzyna Kawa	21	14	12.1	-22.0
+159	Sinja Kraus	27	14	0.0	-71.7
+160	Anhelina Kalinina	9	13	0.0	-19.2
+161	Mona Barthel	11	10	0.0	65.5
+162	Carson Branstine	16	12	0.0	71.3
+163	Celine Naef	17	11	0.0	3.3
+164	Darja Semenistaja	19	17	0.0	-34.4
+165	Zeynep Sonmez	12	15	0.0	-37.7
+166	Carole Monnet	15	10	-38.4	60.2
+167	Astra Sharma	22	13	0.0	-6.5
+168	Lizette Cabrera	11	9	0.0	114.8
+169	Louisa Chirico	14	16	0.0	91.3
+170	Tyra Caterina Grant	14	10	30.9	28.9
+171	Sachia Vickery	4	3	0.0	0.0
+172	Irina Camelia Begu	7	11	0.0	-33.0
+173	Veronika Erjavec	13	13	0.0	67.7
+174	Jana Fett	13	12	0.0	-73.2
+175	Petra Martic	11	11	0.0	-52.2
+176	Camilla Rosatello	20	13	0.0	1.3
+177	Priscilla Hon	24	13	-22.8	-82.7
+178	Mananchaya Sawangkaew	16	12	0.0	-9.8
+179	Elena Pridankina	24	14	0.0	-24.9
+180	Nina Stojanovic	15	11	0.0	32.2
+181	Laura Samson	7	4	0.0	0.0
+182	Claire Liu	10	7	0.0	0.0
+183	Renata Zarazua	16	20	0.0	-22.3
+184	Barbora Palicova	17	17	0.0	144.7
+185	Sara Sorribes Tormo	11	8	0.0	0.0
+186	Leyre Romero Gormaz	16	17	0.0	93.7
+187	Maja Chwalinska	13	12	0.0	30.2
+188	Aliona Bolsova	10	9	-8.8	-42.4
+189	Emerson Jones	12	9	0.0	0.0
+190	Sohyun Park	9	3	0.0	0.0
+191	Xinyu Gao	15	10	0.0	83.0
+192	Talia Gibson	16	14	-18.5	-15.4
+193	Diane Parry	8	13	-28.4	-31.7
+194	Harmony Tan	16	10	0.0	83.6
+195	Alessandra Mazzola	5	3	0.0	0.0
+196	Rebecca Marino	11	13	0.0	83.6
+197	Linda Klimovicova	19	9	0.0	-64.2
+198	Jessika Ponchet	17	15	0.0	-7.3
+199	Yidi Yang	4	2	0.0	0.0
+200	Zarina Diyas	14	8	114.0	73.6
+201	Marina Stakusic	10	14	0.0	4.3
+202	Alycia Parks	13	16	0.0	-78.8
+203	Francisca Jorge	13	10	0.0	185.0
+204	Anastasiya Soboleva	12	14	-13.5	37.1
+205	Mariam Bolkvadze	14	12	0.0	-57.7
+206	Mingge Xu	9	7	44.6	119.7
+207	Ariana Geerlings	5	5	0.0	0.0
+208	Ekaterina Kazionova	9	3	0.0	92.2
+209	Anastasia Zakharova	17	16	-52.1	-19.6
+210	Wakana Sonobe	12	8	0.0	-140.8
+211	Cadence Brace	10	4	0.0	50.3
+212	Ella Mcdonald	8	5	0.0	0.0
+213	Guiomar Maristany Zuleta De Reales	12	11	0.0	-66.5
+214	Aleksandra Krunic	13	8	0.0	0.0
+215	Alice Rame	13	10	-16.9	63.0
+216	Ena Koike	4	3	0.0	0.0
+217	Andrea Lazaro Garcia	15	13	0.0	54.0
+218	Daria Snigur	17	14	0.0	13.6
+219	Matilde Jorge	14	10	0.0	193.2
+220	Elizabeth Mandlik	10	8	0.0	147.7
+221	Aneta Kladivova	6	4	0.0	-3.3
+222	Lulu Sun	7	17	-8.8	-26.4
+223	Aurora Zantedeschi	11	5	0.0	-0.8
+224	Mary Stoiana	3	2	0.0	0.0
+225	Lin Zhu	3	4	0.0	0.0
+226	Katarina Jokic	3	2	0.0	-67.6
+227	Silvia Ambrosio	11	7	0.0	57.0
+228	Amelia Rajecki	4	5	0.0	0.0
+229	Zongyu Li	6	3	-73.7	-73.7
+230	Xiyu Wang	6	9	0.0	0.0
+231	Tatiana Pieri	4	3	0.0	-40.3
+232	Anna Siskova	5	4	0.0	0.0
+233	Tamara Zidansek	16	13	0.0	-14.2
+234	Marina Bassols Ribera	11	10	0.0	-8.2
+235	Eleejah Inisan	4	4	0.0	0.0
+236	Hanyu Guo	11	8	-39.9	-68.5
+237	Arina Rodionova	21	13	0.0	-42.5
+238	Lanlana Tararudee	17	12	0.0	-89.5
+239	Katherine Sebov	9	5	0.0	32.9
+240	Yuriko Miyazaki	18	14	0.0	57.4
+241	Oana Georgeta Simion	4	2	0.0	0.0
+242	Ana Bogdan	5	7	0.0	-62.3
+243	Kathinka Von Deichmann	17	17	-23.6	76.0
+244	Fiona Ferro	9	7	-65.5	-91.1
+245	Tereza Martincova	8	7	0.0	0.0
+246	Mia Ristic	6	6	-15.3	-15.3
+247	Gabriela Ce	5	4	0.2	0.2
+248	Jesika Maleckova	5	6	0.0	0.0
+249	Samira De Stefano	3	3	0.0	0.0
+250	Sara Errani	3	9	0.0	0.0
+251	Lia Karatancheva	10	8	-1.5	-31.4
+252	Sayaka Ishii	16	15	0.0	5.8
+253	Amarni Banks	5	5	-29.3	16.5
+254	Mai Hontama	13	16	0.0	-62.8
+255	Viktoria Hruncakova	13	7	0.0	2.2
+256	Iveta Dapkute	3	2	0.0	0.0
+257	Xiaodi You	8	6	8.2	8.2
+258	Renata Jamrichova	9	11	-7.0	-25.1
+259	Rasheeda Mcadoo	5	4	0.0	0.0
+260	Jule Niemeier	7	16	0.0	-96.6
+261	Yaroslava Bartashevich	5	5	0.0	-32.1
+262	Destanee Aiava	12	11	0.0	-128.5
+263	Ana Sofia Sanchez	12	6	0.0	0.0
+264	Shrivalli Rashmikaa Bhamidipaty	8	6	0.0	16.8
+265	Carolina Alves	14	10	-34.8	54.0
+266	Zhibek Kulambayeva	6	4	0.0	0.0
+267	Kajsa Rinaldo Persson	10	9	55.7	-61.3
+268	Kyoka Okamura	13	15	0.0	155.5
+269	Laura Pigossi	13	17	71.5	-5.4
+270	Martyna Kubka	4	4	-18.3	-18.3
+271	Kristina Dmitruk	9	9	0.0	74.8
+272	Ayano Shimizu	8	5	0.0	0.0
+273	Susan Bandecchi	8	13	0.0	-89.1
+274	Tessah Andrianjafitrimo	13	10	0.0	-77.3
+275	Arantxa Rus	13	19	-39.1	-38.0
+276	Martina Okalova	7	5	0.0	-32.4
+277	Francesca Curmi	9	6	0.0	-43.7
+278	Wushuang Zheng	11	10	-57.6	-57.6
+279	Sijia Wei	14	14	0.0	-50.2
+280	Irina Bara	12	10	0.0	-60.5
+281	Noma Noha Akugue	21	17	-22.1	-19.0
+282	Diletta Cherubini	9	7	110.7	100.5
+283	Harriet Dart	9	14	-14.1	-36.3
+284	Angela Fita Boluda	10	15	84.7	114.5
+285	Emina Bektas	11	12	0.0	-23.7
+286	Anastasiia Gureva	3	3	0.0	0.0
+287	Despina Papamichail	10	7	-42.9	-15.5
+288	Anna Karolina Schmiedlova	3	5	0.0	0.0
+289	Kristina Liutova	3	2	0.0	-76.0
+290	Jodie Burrage	8	18	-9.7	6.5
+291	Sofia Shapatava	4	3	0.0	-62.3
+292	Carolyn Ansari	3	2	0.0	0.0
+293	Ekaterine Gorgodze	18	11	0.0	-76.2
+294	Marie Benoit	4	5	0.0	0.0
+295	Ayana Akli	5	3	0.0	-29.2
+296	Vitalia Diatchenko	4	3	0.0	0.0
+297	Miriana Tona	3	3	0.0	0.0
+298	Justina Mikulskyte	14	11	0.0	40.6
+299	En Shuo Liang	4	4	0.0	-49.9
+300	Olivia Gadecki	7	19	45.6	-3.7
+301	Anouk Koevermans	11	13	0.0	-1.3
+302	Robin Anderson	9	6	0.0	-41.3
+303	Maria Golovina	3	2	0.0	0.0
+304	Polina Iatcenko	9	6	4.8	0.0
+305	Akasha Urhobo	5	5	0.0	0.0
+306	Amandine Hesse	10	13	2.4	32.0
+307	Emeline Dartron	12	10	-50.8	-94.4
+308	Matilde Paoletti	3	3	0.0	0.0
+309	Caroline Uebelhoer	9	9	-2.1	1.4
+310	Kamilla Bartone	4	4	0.0	0.0
+311	Gabriela Lee	9	7	-50.1	-109.8
+312	Jasmijn Gimbrere	5	3	0.0	-6.5
+313	Eudice Wong Chong	4	5	0.0	0.0
+314	Jazmin Ortenzi	6	5	0.0	-41.5
+315	Ayla Aksu	5	8	0.0	0.0
+316	Aoi Ito	15	15	-41.1	-184.9
+317	Julia Adams	3	2	0.0	0.0
+318	Kaitlin Quevedo	7	9	0.0	-24.1
+319	Lea Ma	5	5	0.0	-2.5
+320	Mariia Tkacheva	7	6	0.0	0.0
+321	Tiphanie Fiquet	3	5	0.0	-16.0
+322	Sada Nahimana	15	8	-58.1	-188.9
+323	Melisa Ercan	4	4	0.0	0.0
+324	Diana Martynov	3	4	0.0	0.0
+325	Hiromi Abe	5	4	0.0	0.0
+326	Eva Guerrero Alvarez	4	4	0.0	-27.8
+327	Ekaterina Reyngold	3	2	0.0	0.0
+328	Irene Burillo Escorihuela	5	11	0.0	58.9
+329	Hanna Chang	10	13	0.0	-28.0
+330	Sara Cakarevic	4	4	0.0	0.0
+331	Vaidehi Chaudhari	3	4	0.0	0.0
+332	Eva Vedder	13	12	-56.5	-108.1
+333	Nikola Bartunkova	5	6	0.0	25.2
+334	Meiling Wang	8	6	-25.8	-25.8
+335	Raluka Serban	15	16	-34.5	-70.9
+336	Momoko Kobori	4	4	-48.5	-48.5
+337	Tina Nadine Smith	9	10	0.0	-23.1
+338	Valeriya Strakhova	12	12	-16.3	30.8
+339	Himeno Sakatsume	12	9	0.0	-41.2
+340	Fangzhou Liu	3	3	0.0	0.0
+341	Riya Bhatia	5	5	0.0	0.0
+342	Anastasia Gasanova	3	3	0.0	-53.8
+343	Saki Imamura	5	5	16.9	16.9
+344	Malene Helgo	4	9	-29.1	-29.1
+345	Urszula Radwanska	6	7	0.0	0.0
+346	Gabriela Andrea Knutson	12	11	-35.3	-112.4
+347	Lea Boskovic	7	10	0.0	-111.5
+348	Miho Kuramochi	5	5	0.0	0.0
+349	Cagla Buyukakcay	6	8	0.0	-24.9
+350	Sahaja Yamalapalli	6	6	0.0	0.0
+351	Maria Timofeeva	9	15	-33.5	-22.4
+352	Astrid Lew Yan Foon	7	6	-25.2	-25.2
+353	Radka Zelnickova	3	5	0.0	0.0
+354	Erika Andreeva	5	17	-3.7	-30.6
+355	Alicia Herrero Linana	9	7	0.0	-19.7
+356	Lauren Davis	6	10	0.0	-101.7
+357	Lian Tran	8	10	0.0	-50.0
+358	Hina Inoue	9	11	0.0	-1.7
+359	Makenna Jones	3	7	0.0	0.0
+360	Arianne Hartono	11	16	0.0	-62.2
+361	Julia Avdeeva	9	10	0.0	-28.9
+362	Madison Sieg	5	6	0.0	-64.2
+363	Nuria Brancaccio	4	10	0.0	0.0
+364	Sara Saito	17	15	0.0	-82.7
+365	Whitney Osuigwe	11	11	0.0	-155.6
+366	Clara Vlasselaer	3	3	0.0	0.0
+367	Nastasja Schunk	4	9	0.0	-19.9
+368	Ikumi Yamazaki	3	4	-64.7	-64.7
+369	Carol Zhao	7	11	0.0	46.7
+370	Miriam Bianca Bulgaru	8	16	0.0	-13.5
+371	Anastasia Tikhonova	8	11	0.0	43.5
+372	Su Jeong Jang	4	6	0.0	0.0
+373	Karina Miller	5	6	0.0	0.0
+374	Xinxin Yao	10	13	16.5	-49.7
+375	Margaux Rouvroy	11	16	-30.3	-55.3
+376	Iva Primorac	4	8	-51.8	-51.8
+377	Weronika Falkowska	3	3	0.0	0.0
+378	Maria Mateas	9	14	0.0	-36.7
+379	Lina Gjorcheska	6	10	8.6	-20.8
+380	Lisa Zaar	3	5	0.0	0.0
+381	Haruka Kaji	10	14	-27.8	-109.7
+382	Kayla Cross	7	9	0.0	-94.5
+383	Hong Yi Cody Wong	4	6	-36.0	-36.0
+384	Daria Kudashova	3	6	0.0	0.0
+385	Elvina Kalieva	10	13	0.0	-31.7
+386	Patricia Maria Tig	5	9	0.0	0.5
+387	Taylah Preston	12	13	0.0	-61.4
+388	Akiko Omae	4	6	0.0	-71.0
+389	Selena Janicijevic	9	17	41.0	2.1
+390	Ksenia Zaytseva	3	5	-27.6	-63.2
+391	Manon Leonard	17	17	0.0	-138.9
+392	Mei Yamaguchi	16	18	0.0	-35.1
+393	Lucija Ciric Bagaric	6	9	-6.9	-6.9
+394	Aliona Falei	5	8	0.0	-68.5
+395	Katarina Zavatska	6	12	-12.7	-99.1
+396	Han Shi	8	14	0.0	-84.4
+397	Ekaterina Makarova	6	14	60.6	0.0
+398	Ruien Zhang	3	5	-34.3	-94.6
+399	Emily Appleton	4	10	0.0	11.4
+400	Gabriella Da Silva Fick	3	7	0.0	0.0
+401	Jamie Loeb	5	6	0.0	-71.5
+402	Alevtina Ibragimova	10	12	-24.5	-113.9
+403	Jia Jing Lu	3	6	-39.7	-39.7
+404	Ipek Oz	7	13	0.0	-24.1
+405	Petra Hule	3	11	0.0	-23.9
+406	Carlota Martinez Cirez	4	10	-49.0	-100.2
+407	Maria Kozyreva	3	8	0.0	-38.3
+408	Anna Sinclair Rogers	6	11	0.0	-40.6
+409	Elena Micic	4	9	19.2	0.0
+410	Dalila Jakupovic	6	14	13.2	28.4
+411	Ankita Raina	6	10	62.9	-9.1
+412	Leonie Kung	7	16	0.0	-40.0
+413	Lina Glushko	6	12	0.0	-48.4
+414	Victoria Hu	4	9	0.0	-47.9
+415	Ye Xin Ma	5	9	0.0	-50.0
+416	Nahia Berecoechea	3	8	-55.6	0.0
+417	Nicole Fossa Huergo	3	13	0.0	-36.5
