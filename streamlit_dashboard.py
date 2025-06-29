@@ -175,7 +175,7 @@ def display_player_search(df: pd.DataFrame):
         st.dataframe(tier_filtered_df, use_container_width=True)
 
 
-def display_match_simulation(db: Dict[str, any]):
+def display_match_simulation(db: Dict[str, any], gender: str = 'women'):
     """Display match simulation interface"""
     st.subheader("🎾 Match Simulation")
     
@@ -190,6 +190,12 @@ def display_match_simulation(db: Dict[str, any]):
     else:
         st.warning("No global weights set. Using default weights. Set weights in the 'Elo Weights' tab.")
         simulator = create_match_simulator()
+    
+    # Show gender-specific information
+    if gender == 'men':
+        st.info("🏆 Men's matches use best-of-5 sets (five-set probability adjustment applied)")
+    else:
+        st.info("🏆 Women's matches use best-of-3 sets (standard probability calculation)")
     
     # Player selection
     player_names = list(db.keys())
@@ -236,7 +242,7 @@ def display_match_simulation(db: Dict[str, any]):
             st.markdown(f"Form: {player2.form:.1f}" if hasattr(player2, 'form') and player2.form is not None else "Form: N/A")
         
         # Calculate win probability
-        win_prob = simulator.calculate_win_probability(player1, player2)
+        win_prob = simulator.calculate_win_probability(player1, player2, gender)
         
         st.subheader("Match Prediction")
         
@@ -254,7 +260,7 @@ def display_match_simulation(db: Dict[str, any]):
         
         # Simulate match button
         if st.button("🎯 Simulate Match", type="primary"):
-            winner, loser, details = simulator.simulate_match(player1, player2)
+            winner, loser, details = simulator.simulate_match(player1, player2, gender)
             
             st.success(f"🏆 **Winner: {winner.name}**")
             st.info(f"Runner-up: {loser.name}")
@@ -274,7 +280,7 @@ def display_match_simulation(db: Dict[str, any]):
                 results = []
                 
                 for i in range(num_simulations):
-                    winner, _, _ = simulator.simulate_match(player1, player2)
+                    winner, _, _ = simulator.simulate_match(player1, player2, gender)
                     if winner.name == player1.name:
                         player1_wins += 1
                     results.append(winner.name)
@@ -800,7 +806,7 @@ def main():
             st.error("Failed to load database. Please check the data files.")
             return
         
-        display_match_simulation(db)
+        display_match_simulation(db, gender)
     
     elif page == 'Elo Weights':
         display_elo_weights_config()

@@ -8,10 +8,47 @@ year-to-date performance.
 
 import random
 import math
+import numpy
 from typing import Dict, Optional, Tuple
 from dataclasses import dataclass
 
 from ..core.models import Player, Match
+
+
+def five_set_probability(p3: float) -> float:
+    """
+    Convert best-of-3 probability to best-of-5 probability for men's matches.
+    
+    Formula:
+    - p1 = numpy.roots([-2, 3, 0, -1*p3])[1]  # Single set probability
+    - p5 = (p1**3)*(4 - 3*p1 + (6*(1-p1)*(1-p1)))  # Best-of-5 probability
+    
+    Args:
+        p3: Best-of-3 probability (0.0 to 1.0)
+        
+    Returns:
+        Best-of-5 probability (0.0 to 1.0)
+    """
+    # Find single set probability by solving cubic equation
+    # -2*p1^3 + 3*p1^2 - p3 = 0
+    roots = numpy.roots([-2, 3, 0, -1*p3])
+    
+    # Take the real root between 0 and 1
+    p1 = None
+    for root in roots:
+        if abs(root.imag) < 1e-10 and 0 <= root.real <= 1:
+            p1 = root.real
+            break
+    
+    if p1 is None:
+        # Fallback: use p3 directly if no valid root found
+        return p3
+    
+    # Calculate best-of-5 probability
+    p5 = (p1**3) * (4 - 3*p1 + (6*(1-p1)*(1-p1)))
+    
+    # Ensure result is between 0 and 1
+    return max(0.0, min(1.0, p5))
 
 
 @dataclass
@@ -125,15 +162,17 @@ class EloMatchSimulator:
         rating_diff = rating2 - rating1
         return 1 / (1 + math.pow(10, rating_diff / 400))
     
-    def calculate_win_probability(self, player1: Player, player2: Player) -> float:
+    def calculate_win_probability(self, player1: Player, player2: Player, gender: str = 'women') -> float:
         """
         Calculate the probability that player1 beats player2 using blended Elo and form probabilities.
         
         Formula: P_new = α * P_standard + (1-α) * P_form
+        For men: Apply five-set probability adjustment after blending
         
         Args:
             player1: First player
             player2: Second player
+            gender: 'men' or 'women' to determine if five-set adjustment is applied
             
         Returns:
             Blended probability that player1 wins (0.0 to 1.0)
@@ -151,21 +190,26 @@ class EloMatchSimulator:
         p_blended = (self.weights.form_alpha * p_standard + 
                     (1 - self.weights.form_alpha) * p_form)
         
+        # Apply five-set adjustment for men only
+        if gender.lower() == 'men':
+            p_blended = five_set_probability(p_blended)
+        
         return p_blended
     
-    def simulate_match(self, player1: Player, player2: Player) -> Tuple[Player, Player, Dict]:
+    def simulate_match(self, player1: Player, player2: Player, gender: str = 'women') -> Tuple[Player, Player, Dict]:
         """
         Simulate a tennis match between two players.
         
         Args:
             player1: First player
             player2: Second player
+            gender: 'men' or 'women' to determine if five-set adjustment is applied
             
         Returns:
             Tuple of (winner, loser, match_details)
         """
         # Calculate win probabilities
-        p1_win_prob = self.calculate_win_probability(player1, player2)
+        p1_win_prob = self.calculate_win_probability(player1, player2, gender)
         p2_win_prob = 1 - p1_win_prob
         
         # Calculate individual components for match details
@@ -173,6 +217,10 @@ class EloMatchSimulator:
         p1_form = self.calculate_form_probability(player1, player2)
         p2_standard = 1 - p1_standard
         p2_form = 1 - p1_form
+        
+        # Calculate blended probability before five-set adjustment (for details)
+        p1_blended_before = (self.weights.form_alpha * p1_standard + 
+                           (1 - self.weights.form_alpha) * p1_form)
         
         # Determine winner based on probabilities
         if random.random() < p1_win_prob:
@@ -195,11 +243,14 @@ class EloMatchSimulator:
             'player2_standard_probability': p2_standard,
             'player1_form_probability': p1_form,
             'player2_form_probability': p2_form,
+            'player1_blended_before_five_set': p1_blended_before,
             'player1_form': getattr(player1, 'form', None),
             'player2_form': getattr(player2, 'form', None),
             'form_difference': (getattr(player1, 'form', 0.0) or 0.0) - (getattr(player2, 'form', 0.0) or 0.0),
             'form_weight_alpha': self.weights.form_alpha,
-            'form_steepness_k': self.weights.form_k
+            'form_steepness_k': self.weights.form_k,
+            'gender': gender,
+            'five_set_adjusted': gender.lower() == 'men'
         }
         
         return winner, loser, match_details

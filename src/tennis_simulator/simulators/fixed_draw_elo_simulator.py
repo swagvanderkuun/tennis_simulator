@@ -233,7 +233,9 @@ class FixedDrawEloSimulator:
             matches = self._create_matches_for_round(current_players, round_name)
             winners = []
             for match in matches:
-                winner, loser, details = self.match_simulator.simulate_match(match.player1, match.player2)
+                # Determine gender for match simulation
+                gender = 'men' if tournament.gender == Gender.MEN else 'women'
+                winner, loser, details = self.match_simulator.simulate_match(match.player1, match.player2, gender)
                 match.winner = winner
                 match.loser = loser
                 tournament.matches.append(match)
