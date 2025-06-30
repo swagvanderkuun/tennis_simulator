@@ -1141,17 +1141,22 @@ def display_scorito_game_analysis():
             avg_points = {name: sum(pts)/len(pts) if pts else 0 for name, pts in player_points.items()}
 
             for tier in ['A', 'B', 'C', 'D']:
-                st.subheader(f'Top 6 Players - Tier {tier}')
+                st.subheader(f'All Players - Tier {tier}')
                 tier_players = []
                 for name, data in db.items():
                     if data.tier.upper() == tier:
                         tier_players.append((name, avg_points.get(name, 0)))
                 if tier_players:
                     tier_players.sort(key=lambda x: x[1], reverse=True)
-                    top_6 = tier_players[:6]
-                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in top_6]
+                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in tier_players]
                     df = pd.DataFrame(data)
-                    st.table(df)
+                    
+                    # Add rank column
+                    df.insert(0, 'Rank', range(1, len(df) + 1))
+                    
+                    # Display with better formatting
+                    st.dataframe(df, use_container_width=True)
+                    st.caption(f"Total players in Tier {tier}: {len(tier_players)}")
                 else:
                     st.info(f'No players found in Tier {tier}')
     else:
