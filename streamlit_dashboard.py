@@ -751,7 +751,7 @@ def display_elo_weights_config():
     # Display total weight
     if abs(total_weight - 1.0) < 0.01:
         st.success(f'✅ Total Weight: {total_weight:.2f}')
-        # Automatically save weights when they sum to 1.0
+        # Only save weights if the user actually changed a slider (by comparing to defaults or previous session value)
         weights = EloWeights(
             elo_weight=elo_weight,
             helo_weight=helo_weight,
@@ -761,9 +761,11 @@ def display_elo_weights_config():
             form_k=form_k,
             form_alpha=form_alpha
         )
-        st.session_state.global_weights = weights
-        st.success('✅ Weights automatically saved! These weights will be used in all simulators.')
-        st.info('💡 Changes are saved automatically when weights sum to 1.0. No need to click any buttons!')
+        # Only update if different from previous
+        if ('global_weights' not in st.session_state or vars(st.session_state.global_weights) != vars(weights)):
+            st.session_state.global_weights = weights
+            st.success('✅ Weights automatically saved! These weights will be used in all simulators.')
+            st.info('💡 Changes are saved automatically when weights sum to 1.0. No need to click any buttons!')
     else:
         st.error(f'❌ Total Weight: {total_weight:.2f} (must be 1.0)')
         st.warning('Weights will be saved automatically when they sum to 1.0.')
@@ -865,15 +867,14 @@ def display_explorer():
                 try:
                     sim.set_custom_weights(st.session_state.global_weights)
                     weights = st.session_state.global_weights
-                    st.info(f"Using global Elo weights. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
-                except AttributeError as e:
-                    st.error(f"Error setting custom weights: {e}")
-                    st.warning("Continuing with default weights.")
+                    st.success(f"Applied global Elo weights. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
                 except Exception as e:
-                    st.error(f"Unexpected error setting weights: {e}")
-                    st.warning("Continuing with default weights.")
+                    st.warning(f"Could not apply global weights: {e}. Using default weights.")
             else:
-                st.warning("No global weights set. Using default weights.")
+                # Show that default weights are being used
+                from tennis_simulator.simulators.elo_match_simulator import EloWeights
+                default_weights = EloWeights()
+                st.success(f"Using default Elo weights. Form parameters: k={default_weights.form_k:.3f}, α={default_weights.form_alpha:.2f}")
             
             sim.setup_tournaments()
             if gender == "men":
@@ -1103,7 +1104,10 @@ def display_scorito_game_analysis():
         weights = st.session_state.global_weights
         st.info(f"Using global Elo weights. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
     else:
-        st.warning("No global weights set. Using default weights.")
+        # Show that default weights are being used
+        from tennis_simulator.simulators.elo_match_simulator import EloWeights
+        default_weights = EloWeights()
+        st.success(f"Using default Elo weights. Form parameters: k={default_weights.form_k:.3f}, α={default_weights.form_alpha:.2f}")
 
     if st.button('Run Scorito Analysis'):
         with st.spinner(f'Running {num_simulations} simulations for Scorito analysis...'):
@@ -1118,7 +1122,10 @@ def display_scorito_game_analysis():
                 except Exception as e:
                     st.warning(f"Could not apply global weights: {e}. Using default weights.")
             else:
-                st.warning("No global weights set. Using default weights.")
+                # Show that default weights are being used
+                from tennis_simulator.simulators.elo_match_simulator import EloWeights
+                default_weights = EloWeights()
+                st.success(f"Using default Elo weights. Form parameters: k={default_weights.form_k:.3f}, α={default_weights.form_alpha:.2f}")
             
             sim.setup_tournaments()
             tournament = sim.men_tournament if gender == 'men' else sim.women_tournament
