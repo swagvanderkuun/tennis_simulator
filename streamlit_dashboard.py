@@ -707,9 +707,9 @@ def display_elo_weights_config():
         form_alpha_default = current_weights.form_alpha
     else:
         elo_default = 0.1
-        helo_default = 0.1
+        helo_default = 0.5
         celo_default = 0.0
-        gelo_default = 0.4
+        gelo_default = 0.0
         yelo_default = 0.4
         form_k_default = 0.03
         form_alpha_default = 0.95
