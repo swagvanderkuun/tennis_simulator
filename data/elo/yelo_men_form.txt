@@ -4,219 +4,219 @@ Rank	Player	Wins	Losses	yElo_form1w	yElo_form2w	Matches_1w	Matches_2w
 3	Jannik Sinner	19	3	-84.3	-26.1	2	9
 4	Alexander Bublik	27	16	21.3	118.0	5	10
 5	Jack Draper	28	8	-55.3	-49.9	4	8
-6	Tommy Paul	25	9	-100.0	-27.5	0	5
-7	Novak Djokovic	21	8	-100.0	2.7	0	6
-8	Casper Ruud	25	8	-100.0	-81.9	0	2
-9	Alexander Zverev	35	13	-47.6	21.7	4	13
+6	Novak Djokovic	21	8	-100.0	2.7	0	6
+7	Casper Ruud	25	8	-100.0	-81.9	0	2
+8	Alexander Zverev	35	13	-47.6	21.7	4	13
+9	Tommy Paul	25	10	-90.6	-53.4	1	6
 10	Arthur Fils	21	10	-100.0	-59.1	0	2
-11	Jiri Lehecka	24	13	15.0	97.0	5	11
-12	Alex De Minaur	27	12	-86.5	-82.5	1	3
-13	Matteo Berrettini	13	10	-100.0	-100.0	0	0
-14	Daniil Medvedev	23	13	-3.6	-31.5	5	8
-15	Flavio Cobolli	20	16	-42.2	1.8	3	6
-16	Tallon Griekspoor	23	13	-100.0	-26.7	0	4
+11	Tallon Griekspoor	27	13	-11.4	49.2	4	8
+12	Taylor Fritz	25	11	-18.6	59.6	5	10
+13	Jiri Lehecka	24	13	15.0	97.0	5	11
+14	Alex De Minaur	27	12	-86.5	-82.5	1	3
+15	Matteo Berrettini	13	10	-100.0	-100.0	0	0
+16	Daniil Medvedev	23	13	-3.6	-31.5	5	8
 17	Holger Rune	22	13	-64.6	-34.3	3	7
-18	Hubert Hurkacz	15	11	-100.0	-71.1	0	2
-19	Gabriel Diallo	25	17	-74.6	50.4	2	9
-20	Taylor Fritz	21	11	-88.6	-19.7	1	6
+18	Gabriel Diallo	27	18	-55.3	66.3	5	12
+19	Hubert Hurkacz	15	11	-100.0	-71.1	0	2
+20	Alejandro Davidovich Fokina	26	15	-37.0	-36.2	4	6
 21	Francisco Cerundolo	27	14	-87.5	-92.9	1	2
-22	Alejandro Davidovich Fokina	23	14	-100.0	-73.2	0	2
-23	Karen Khachanov	18	15	-27.0	5.7	4	9
-24	Filip Misolic	33	11	-16.9	84.4	5	11
-25	Cameron Norrie	21	17	-85.8	-27.0	1	5
-26	Jakub Mensik	24	13	-71.5	-103.5	2	5
-27	Joao Fonseca	25	10	-86.6	-51.8	1	4
+22	Corentin Moutet	22	16	36.4	58.4	9	13
+23	Flavio Cobolli	20	17	-50.3	-14.6	4	7
+24	Karen Khachanov	18	15	-27.0	5.7	4	9
+25	Filip Misolic	33	11	-16.9	84.4	5	11
+26	Joao Fonseca	26	11	-70.5	-41.1	3	6
+27	Jakub Mensik	25	14	-61.3	-109.3	4	7
 28	Stefanos Tsitsipas	19	12	-73.1	-75.2	2	4
-29	Ben Shelton	19	13	-89.3	-27.1	1	7
-30	Borna Coric	26	9	-100.0	-89.7	0	1
-31	Corentin Moutet	18	15	-28.0	2.8	4	8
-32	Tomas Machac	18	11	-48.3	-60.6	3	4
-33	Fabian Marozsan	18	15	-67.1	-45.3	2	4
-34	Sebastian Ofner	18	9	-62.2	-57.0	3	5
-35	Andrey Rublev	18	14	-72.2	-36.7	2	5
-36	Laslo Djere	22	11	-55.5	-82.6	3	5
-37	Roberto Bautista Agut	10	16	16.3	22.3	4	6
-38	Jacob Fearnley	24	15	-49.6	-30.7	3	7
-39	Grigor Dimitrov	14	10	-100.0	-88.3	0	1
-40	Brandon Nakashima	20	18	-42.9	1.1	3	7
-41	Matteo Arnaldi	15	14	-100.0	-77.3	0	3
-42	Gael Monfils	17	10	-88.8	-95.5	1	4
-43	Frances Tiafoe	17	14	-89.7	-6.9	1	6
-44	Daniel Altmaier	23	21	-83.1	-15.4	1	5
-45	Dino Prizmic	16	6	-100.0	18.0	0	5
-46	Alexei Popyrin	12	15	-63.6	2.5	2	7
-47	Jaume Munar	15	15	-55.5	-25.1	2	4
-48	Sebastian Korda	11	10	-100.0	-40.9	0	3
-49	Mariano Navone	17	17	-100.0	-35.6	0	3
-50	Alex Michelsen	20	15	-26.7	-26.4	3	6
-51	Alexandre Muller	19	16	-85.2	-82.2	1	2
-52	Felix Auger Aliassime	23	15	-64.0	-34.6	2	6
-53	Marton Fucsovics	27	13	-100.0	-1.2	0	7
-54	Quentin Halys	16	16	-63.6	21.7	2	7
-55	Zsombor Piros	26	9	-100.0	-66.5	0	3
-56	Ethan Quinn	28	16	-89.0	-19.6	1	7
-57	Zizou Bergs	23	15	-84.2	-14.5	1	7
-58	Nuno Borges	22	19	-85.8	-38.9	1	6
-59	Carlos Taberner	27	13	8.7	-0.7	5	6
+29	Borna Coric	26	9	-100.0	-89.7	0	1
+30	Tomas Machac	18	11	-48.3	-60.6	3	4
+31	Andrey Rublev	18	14	-72.2	-36.7	2	5
+32	Cameron Norrie	21	18	-92.3	-50.0	2	6
+33	Roberto Bautista Agut	12	17	48.3	41.4	7	9
+34	Jacob Fearnley	25	16	-33.5	-23.2	5	9
+35	Laslo Djere	23	12	-47.6	-86.1	5	7
+36	Felix Auger Aliassime	25	16	-24.4	-5.1	5	9
+37	Ben Shelton	19	14	-95.3	-50.0	2	8
+38	Grigor Dimitrov	14	10	-100.0	-88.3	0	1
+39	Brandon Nakashima	20	18	-42.9	1.1	3	7
+40	Matteo Arnaldi	15	14	-100.0	-77.3	0	3
+41	Gael Monfils	17	10	-88.8	-95.5	1	4
+42	Frances Tiafoe	17	14	-89.7	-6.9	1	6
+43	Alex Michelsen	22	16	12.8	-3.4	6	9
+44	Marcos Giron	16	15	-31.6	-36.4	4	5
+45	Ethan Quinn	31	17	-53.4	13.8	5	11
+46	Jenson Brooksby	18	14	38.1	35.8	8	12
+47	Alexei Popyrin	12	15	-63.6	2.5	2	7
+48	Fabian Marozsan	18	16	-73.3	-59.4	3	5
+49	Sebastian Korda	11	10	-100.0	-40.9	0	3
+50	Sebastian Ofner	18	10	-74.5	-75.8	4	6
+51	Daniel Altmaier	24	22	-69.7	-12.0	3	7
+52	Marton Fucsovics	27	13	-100.0	-1.2	0	7
+53	Mariano Navone	18	18	-71.6	-24.8	2	5
+54	Zsombor Piros	26	9	-100.0	-66.5	0	3
+55	Dino Prizmic	20	7	-58.9	33.1	5	10
+56	Jaume Munar	15	16	-53.2	-30.3	3	5
+57	Carlos Taberner	27	13	8.7	-0.7	5	6
+58	Ugo Humbert	17	13	-54.6	-12.4	4	9
+59	Hamad Medjedovic	21	11	-55.0	-30.6	4	7
 60	Kei Nishikori	13	10	-100.0	-100.0	0	0
 61	Marin Cilic	19	10	25.4	31.0	5	11
 62	Otto Virtanen	14	16	-100.0	103.4	0	8
-63	Marcos Giron	14	14	-82.0	-77.4	1	2
+63	Alexandre Muller	19	17	-86.4	-91.3	2	3
 64	Cristian Garin	29	13	-54.2	-71.4	4	10
-65	Vit Kopriva	26	12	-100.0	-86.0	0	3
+65	Zizou Bergs	23	16	-79.9	-22.9	2	8
 66	Colton Smith	21	8	-49.9	-90.6	4	11
 67	Denis Shapovalov	15	13	-59.7	-65.1	2	5
-68	Reilly Opelka	21	16	-69.6	-1.1	2	10
-69	Ugo Humbert	15	12	-85.2	-34.1	1	6
-70	Jason Kubler	14	6	-100.0	-81.0	0	2
-71	Tomas Martin Etcheverry	16	20	-35.5	-42.5	3	5
+68	Nuno Borges	23	20	-76.8	-43.5	3	8
+69	Jason Kubler	14	6	-100.0	-81.0	0	2
+70	Reilly Opelka	22	17	-57.8	-1.2	4	12
+71	Quentin Halys	16	17	-71.3	-0.6	3	8
 72	Giovanni Mpetshi Perricard	13	13	-85.6	-61.6	1	5
 73	Andrea Pellegrino	17	10	-100.0	-14.3	0	6
 74	Matteo Gigante	19	13	-88.1	13.5	1	7
-75	Hamad Medjedovic	19	10	-88.1	-60.8	1	4
-76	Thanasi Kokkinakis	3	1	-100.0	-100.0	0	0
-77	Camilo Ugo Carabelli	25	16	-85.0	-85.0	1	2
-78	Chun Hsin Tseng	24	17	-100.0	48.0	0	11
-79	Francisco Comesana	18	15	-100.0	-86.0	0	1
-80	Jordan Thompson	8	9	-87.3	-88.3	1	4
-81	Patrick Kypson	14	4	-100.0	87.5	0	8
-82	Luciano Darderi	17	18	-82.6	-86.3	1	3
-83	Yannick Hanfmann	15	15	-26.5	103.5	3	10
-84	Juan Manuel Cerundolo	25	17	-87.1	-23.3	1	6
-85	Mackenzie Mcdonald	22	15	-11.5	30.7	4	10
-86	Titouan Droguet	18	10	1.3	27.3	5	9
-87	Hugo Dellien	26	15	-100.0	12.9	0	6
-88	Arthur Rinderknech	11	21	2.8	43.9	5	8
-89	Damir Dzumhur	26	19	-100.0	-41.1	0	4
-90	Miomir Kecmanovic	18	17	-84.2	-66.3	1	3
-91	Raphael Collignon	19	10	-100.0	-100.0	0	0
-92	Ignacio Buse	17	14	-100.0	48.0	0	9
-93	Vilius Gaubas	21	15	-89.9	-83.5	1	4
-94	David Goffin	8	12	-100.0	-100.0	0	0
-95	Guy Den Ouden	15	7	-100.0	-28.4	0	6
-96	Alejandro Tabilo	8	12	-100.0	-4.1	0	6
-97	Jenson Brooksby	13	12	-81.3	-62.4	1	5
-98	Dusan Lajovic	22	21	-32.9	-62.7	5	8
+75	Thanasi Kokkinakis	3	1	-100.0	-100.0	0	0
+76	Vit Kopriva	27	13	-74.5	-94.9	2	5
+77	Tomas Martin Etcheverry	16	21	-36.5	-52.1	4	6
+78	Jordan Thompson	8	9	-87.3	-88.3	1	4
+79	Patrick Kypson	14	4	-100.0	87.5	0	8
+80	Arthur Rinderknech	12	22	22.8	59.9	7	10
+81	Yannick Hanfmann	15	15	-26.5	103.5	3	10
+82	Juan Manuel Cerundolo	25	17	-87.1	-23.3	1	6
+83	Titouan Droguet	18	10	1.3	27.3	5	9
+84	Hugo Dellien	26	15	-100.0	12.9	0	6
+85	Learner Tien	17	16	-47.3	-28.8	4	7
+86	Raphael Collignon	19	10	-100.0	-100.0	0	0
+87	Ignacio Buse	17	14	-100.0	48.0	0	9
+88	Camilo Ugo Carabelli	25	17	-82.6	-90.4	2	3
+89	Vilius Gaubas	21	15	-89.9	-83.5	1	4
+90	David Goffin	8	12	-100.0	-100.0	0	0
+91	Francisco Comesana	18	16	-85.0	-85.1	1	2
+92	Lorenzo Sonego	11	16	-19.4	-25.7	4	6
+93	Luciano Darderi	17	19	-77.7	-94.0	2	4
+94	Guy Den Ouden	15	7	-100.0	-28.4	0	6
+95	Alejandro Tabilo	8	12	-100.0	-4.1	0	6
+96	Chun Hsin Tseng	25	19	-73.6	27.0	3	14
+97	Dusan Lajovic	22	21	-32.9	-62.7	5	8
+98	Damir Dzumhur	26	20	-85.1	-48.8	1	5
 99	Terence Atmane	23	17	-52.2	-84.3	3	5
-100	Jesper De Jong	19	19	-70.7	-63.6	3	6
-101	Roman Andres Burruchaga	26	17	-100.0	-72.9	0	2
-102	Tristan Schoolkate	29	18	-70.0	5.2	2	9
-103	Alex Barrena	13	1	-11.9	-11.9	5	5
-104	Learner Tien	15	15	-85.9	-61.4	1	4
-105	Marco Trungelliti	20	16	-84.7	41.8	1	11
-106	Lorenzo Sonego	10	15	-55.3	-51.6	2	4
-107	Francesco Passaro	20	11	-45.5	-78.2	4	11
-108	Yibing Wu	7	3	-100.0	0.0	0	10
-109	Nikoloz Basilashvili	20	16	-84.0	-54.7	1	7
-110	Tomas Barrios Vera	27	16	-44.4	-46.0	3	7
-111	Borna Gojo	11	11	-100.0	-89.7	0	1
-112	Pierre Hugues Herbert	23	15	-87.9	-5.9	1	7
-113	Alexander Shevchenko	19	22	-100.0	2.5	0	12
-114	Elias Ymer	15	10	-49.9	-37.4	3	5
-115	Emilio Nava	36	16	-52.3	-30.1	3	10
-116	Dalibor Svrcina	32	16	-18.7	-27.8	5	11
-117	Shintaro Mochizuki	24	15	20.3	87.2	5	10
-118	Pablo Llamas Ruiz	6	4	-100.0	24.8	0	4
-119	Rinky Hijikata	15	20	-100.0	-39.7	0	6
-120	Richard Gasquet	6	7	-100.0	-51.0	0	2
-121	Lucas Pouille	5	4	-100.0	-100.0	0	0
-122	Mark Lajal	16	10	-100.0	-2.8	0	5
-123	Juncheng Shang	3	2	-100.0	-100.0	0	0
-124	Adam Walton	27	19	-54.0	-48.8	3	6
-125	Kamil Majchrzak	21	12	-100.0	-109.1	0	3
-126	Luca Nardi	21	20	-100.0	-59.3	0	6
-127	Valentin Royer	36	16	-84.8	-40.9	1	9
-128	Andrea Vavassori	7	4	-100.0	-100.0	0	0
-129	Elmer Moller	18	16	-100.0	-101.1	0	6
-130	Nerman Fatic	10	5	-100.0	8.1	0	5
-131	Nicolas Jarry	10	16	-62.8	-21.2	2	7
-132	Henrique Rocha	15	14	-100.0	128.2	0	9
-133	Sebastian Baez	16	15	-100.0	-84.0	0	1
-134	Martin Landaluce	17	16	-15.1	59.9	4	11
-135	Hugo Gaston	13	18	-100.0	-74.1	0	1
-136	Bu Yunchaokete	11	18	-89.9	-93.4	1	2
-137	Roberto Carballes Baena	9	12	-100.0	-100.0	0	0
-138	Valentin Vacherot	20	14	-89.6	-82.6	1	5
-139	Pablo Carreno Busta	23	17	-100.0	-50.8	0	6
-140	Sandro Kopp	4	1	-100.0	-100.0	0	0
-141	Lloyd Harris	8	10	-60.3	0.0	2	18
-142	Oliver Crawford	4	2	-100.0	0.0	0	6
-143	Arthur Bouquier	12	5	-100.0	-88.3	0	1
-144	Dimitar Kuzmanov	20	13	-30.0	36.0	5	11
-145	Federico Cina	12	8	-100.0	-45.7	0	3
-146	Luca Van Assche	20	14	-51.3	-35.4	3	11
-147	Yoshihito Nishioka	9	10	-86.7	-120.9	1	4
-148	Benjamin Bonzi	14	15	-45.4	-51.6	3	5
-149	Yosuke Watanuki	15	12	-100.0	-62.8	0	3
-150	Kyrian Jacquet	18	9	-100.0	-43.7	0	5
-151	Alex Bolt	13	12	-34.4	-18.2	3	8
-152	Thiago Agustin Tirante	22	16	-39.1	-16.5	4	8
-153	Daniel Merida Aguilar	10	8	-38.6	87.8	4	9
-154	Zhizhen Zhang	4	9	-100.0	-100.0	0	0
-155	Brandon Holt	34	16	-85.8	-83.9	1	7
-156	Felipe Meligeni Alves	15	10	-100.0	-89.9	0	1
-157	Aleksandar Kovacevic	23	17	-84.2	-89.4	1	3
-158	Pedro Martinez	11	19	-83.8	-77.1	1	2
-159	Botic Van De Zandschulp	10	15	-100.0	-86.3	0	1
-160	Jerome Kym	10	10	-100.0	-30.4	0	4
-161	Daniel Elahi Galan	25	17	-87.8	-38.9	1	6
-162	Marko Topo	6	5	-100.0	0.0	0	11
-163	Vitaliy Sachko	16	14	-100.0	-36.5	0	5
-164	Trevor Svajda	4	4	-100.0	0.0	0	8
-165	Daniel Evans	11	15	-52.8	79.0	2	9
-166	Alibek Kachmazov	15	13	-100.0	-87.7	0	1
-167	Ugo Blanchet	14	13	-100.0	-7.6	0	5
-168	Federico Coria	18	15	-100.0	-66.4	0	2
-169	Gustavo Heide	7	7	-100.0	-100.0	0	0
-170	Roman Safiullin	9	14	-90.6	-96.9	1	3
-171	Giulio Zeppieri	12	11	-74.0	-18.2	2	7
-172	Nicolas Moreno De Alboran	4	6	-100.0	0.0	0	10
-173	Aleksandar Vukic	10	20	-24.2	-19.4	3	6
-174	Christopher Oconnell	14	18	-60.3	-90.8	3	6
-175	Lukas Neumayer	21	16	-71.5	11.6	2	10
-176	Ilia Simakin	16	9	-100.0	-29.1	0	5
-177	Chris Rodesch	18	12	-100.0	-70.7	0	6
-178	Alexander Blockx	17	14	-85.0	-80.3	1	6
-179	Clement Chidekh	14	14	-100.0	38.8	0	5
-180	Hady Habib	13	13	-100.0	-77.5	0	3
-181	Liam Draxl	27	15	-100.0	-76.6	0	6
-182	Stan Wawrinka	8	14	-87.0	-99.4	1	3
-183	Jaime Faria	12	13	-40.9	-60.6	3	5
-184	Clement Tabur	12	8	-91.0	22.7	1	9
-185	Anton Matusevich	3	1	-100.0	-100.0	0	0
-186	Benjamin Hassan	17	18	-82.9	-33.4	1	6
-187	Michael Mmoh	12	10	-100.0	-72.8	0	1
-188	Albert Ramos	8	11	-67.1	3.3	2	7
-189	Dominik Koepfer	7	6	-100.0	-100.0	0	0
-190	Joao Lucas Reis Da Silva	20	13	-53.9	41.0	4	9
-191	Kimmer Coppejans	13	11	-100.0	-64.1	0	2
-192	Rodrigo Pacheco Mendez	13	14	2.8	66.6	4	11
-193	Gastao Elias	4	6	-100.0	-100.0	0	0
-194	Nishesh Basavareddy	12	13	-100.0	-85.2	0	2
-195	Fajing Sun	6	6	-100.0	-100.0	0	0
-196	Jack Pinnington Jones	5	5	-87.4	0.0	1	10
-197	Jurij Rodionov	20	16	-49.4	40.5	3	10
-198	Andrea Collarini	18	16	-100.0	-9.3	0	7
-199	Francesco Maestrelli	13	11	-41.9	-96.6	3	6
-200	Andres Martin	8	5	-100.0	-16.5	0	6
-201	J J Wolf	4	4	-100.0	-100.0	0	0
-202	Alex Rybakov	3	3	-100.0	0.0	0	6
-203	Facundo Diaz Acosta	4	7	-100.0	-100.0	0	0
-204	Eliakim Coulibaly	10	5	-100.0	-100.0	0	0
-205	Aslan Karatsev	14	8	-100.0	-100.0	0	0
-206	Luka Pavlovic	14	9	-100.0	-81.2	0	5
-207	Marc Andrea Huesler	14	10	-100.0	-85.1	0	4
-208	Gauthier Onclin	12	13	-100.0	-17.7	0	8
-209	Ryan Peniston	7	7	-60.1	-59.3	2	3
-210	Geoffrey Blancaneaux	15	13	-85.4	-23.0	1	6
-211	Jie Cui	9	7	-100.0	-100.0	0	0
-212	Maximilian Marterer	4	4	-100.0	0.0	0	8
-213	Arthur Fery	4	3	-55.9	-55.9	2	2
-214	Henry Searle	9	6	-54.2	-22.5	2	4
-215	Dali Blanch	3	1	-100.0	0.0	0	4
-216	Ivan Gakhov	12	8	-84.5	-94.6	2	4
-217	Harold Mayot	13	16	-100.0	-88.9	0	3
-218	Pedro Rodrigues	3	1	-100.0	-100.0	0	0
+100	Roman Andres Burruchaga	26	17	-100.0	-72.9	0	2
+101	Tristan Schoolkate	29	18	-70.0	5.2	2	9
+102	Miomir Kecmanovic	18	18	-85.5	-78.3	2	4
+103	Marco Trungelliti	20	16	-84.7	41.8	1	11
+104	Francesco Passaro	20	11	-45.5	-78.2	4	11
+105	Yibing Wu	7	3	-100.0	0.0	0	10
+106	Nikoloz Basilashvili	20	16	-84.0	-54.7	1	7
+107	Mackenzie Mcdonald	22	16	-27.8	-0.3	5	11
+108	Tomas Barrios Vera	27	16	-44.4	-46.0	3	7
+109	Daniel Evans	13	16	23.7	154.6	5	12
+110	Borna Gojo	11	11	-100.0	-89.7	0	1
+111	Pierre Hugues Herbert	23	15	-87.9	-5.9	1	7
+112	Brandon Holt	37	17	-22.9	-31.9	5	11
+113	Emilio Nava	36	16	-52.3	-30.1	3	10
+114	Dalibor Svrcina	32	16	-18.7	-27.8	5	11
+115	Shintaro Mochizuki	24	15	20.3	87.2	5	10
+116	Elias Ymer	16	11	-37.8	-31.4	5	7
+117	Pablo Llamas Ruiz	6	4	-100.0	24.8	0	4
+118	Richard Gasquet	6	7	-100.0	-51.0	0	2
+119	Lucas Pouille	5	4	-100.0	-100.0	0	0
+120	Mark Lajal	16	10	-100.0	-2.8	0	5
+121	Juncheng Shang	3	2	-100.0	-100.0	0	0
+122	Valentin Royer	36	16	-84.8	-40.9	1	9
+123	Andrea Vavassori	7	4	-100.0	-100.0	0	0
+124	Elmer Moller	18	16	-100.0	-101.1	0	6
+125	Nerman Fatic	10	5	-100.0	8.1	0	5
+126	Jesper De Jong	19	20	-86.7	-88.0	4	7
+127	Nicolas Jarry	10	16	-62.8	-21.2	2	7
+128	Henrique Rocha	15	14	-100.0	128.2	0	9
+129	Sebastian Baez	16	15	-100.0	-84.0	0	1
+130	Martin Landaluce	17	16	-15.1	59.9	4	11
+131	Hugo Gaston	13	18	-100.0	-74.1	0	1
+132	Alexander Shevchenko	19	23	-86.4	-19.9	1	13
+133	Alex Barrena	15	2	-26.0	-26.0	8	8
+134	Roberto Carballes Baena	9	12	-100.0	-100.0	0	0
+135	Kamil Majchrzak	21	13	-83.7	-119.9	1	4
+136	Nishesh Basavareddy	14	14	-26.7	-35.9	3	5
+137	Valentin Vacherot	20	14	-89.6	-82.6	1	5
+138	Pablo Carreno Busta	23	17	-100.0	-50.8	0	6
+139	Sandro Kopp	4	1	-100.0	-100.0	0	0
+140	Lloyd Harris	8	10	-60.3	0.0	2	18
+141	Adam Walton	27	20	-60.0	-63.1	4	7
+142	Arthur Bouquier	12	5	-100.0	-88.3	0	1
+143	Dimitar Kuzmanov	20	13	-30.0	36.0	5	11
+144	Federico Cina	12	8	-100.0	-45.7	0	3
+145	Luca Van Assche	20	14	-51.3	-35.4	3	11
+146	Rinky Hijikata	15	21	-87.9	-61.2	1	7
+147	Roman Safiullin	10	15	-66.9	-79.2	3	5
+148	Yoshihito Nishioka	9	10	-86.7	-120.9	1	4
+149	Bu Yunchaokete	11	19	-88.7	-98.6	2	3
+150	Luca Nardi	21	21	-86.8	-78.6	1	7
+151	Aleksandar Vukic	12	21	24.9	14.7	6	9
+152	Yosuke Watanuki	15	12	-100.0	-62.8	0	3
+153	George Loffhagen	4	2	0.0	0.0	6	6
+154	Kyrian Jacquet	18	9	-100.0	-43.7	0	5
+155	Alex Bolt	13	12	-34.4	-18.2	3	8
+156	Thiago Agustin Tirante	22	16	-39.1	-16.5	4	8
+157	Daniel Merida Aguilar	10	8	-38.6	87.8	4	9
+158	Zhizhen Zhang	4	9	-100.0	-100.0	0	0
+159	Felipe Meligeni Alves	15	10	-100.0	-89.9	0	1
+160	James Duckworth	21	18	-12.1	9.6	5	10
+161	Oliver Crawford	4	3	-85.7	0.0	1	7
+162	Jerome Kym	10	10	-100.0	-30.4	0	4
+163	Daniel Elahi Galan	25	17	-87.8	-38.9	1	6
+164	Marko Topo	6	5	-100.0	0.0	0	11
+165	Bernard Tomic	16	16	6.5	29.6	4	7
+166	Vitaliy Sachko	16	14	-100.0	-36.5	0	5
+167	Trevor Svajda	4	4	-100.0	0.0	0	8
+168	Alibek Kachmazov	15	13	-100.0	-87.7	0	1
+169	Ugo Blanchet	14	13	-100.0	-7.6	0	5
+170	Billy Harris	22	27	0.1	-4.6	6	10
+171	Federico Coria	18	15	-100.0	-66.4	0	2
+172	Gustavo Heide	7	7	-100.0	-100.0	0	0
+173	Benjamin Bonzi	14	16	-49.4	-63.5	4	6
+174	Giulio Zeppieri	12	11	-74.0	-18.2	2	7
+175	Nicolas Moreno De Alboran	4	6	-100.0	0.0	0	10
+176	Pedro Martinez	11	20	-77.9	-76.8	2	3
+177	Lukas Neumayer	21	16	-71.5	11.6	2	10
+178	Ilia Simakin	16	9	-100.0	-29.1	0	5
+179	Rafael Jodar	7	4	-20.8	-30.9	4	7
+180	Chris Rodesch	18	12	-100.0	-70.7	0	6
+181	Alexander Blockx	17	14	-85.0	-80.3	1	6
+182	Aleksandar Kovacevic	24	18	-75.7	-98.6	3	5
+183	Clement Chidekh	14	14	-100.0	38.8	0	5
+184	Hady Habib	13	13	-100.0	-77.5	0	3
+185	Liam Draxl	27	15	-100.0	-76.6	0	6
+186	Stan Wawrinka	8	14	-87.0	-99.4	1	3
+187	Mattia Bellucci	14	21	-10.9	-25.7	5	8
+188	Jaime Faria	12	13	-40.9	-60.6	3	5
+189	Clement Tabur	12	8	-91.0	22.7	1	9
+190	Botic Van De Zandschulp	10	16	-85.5	-86.2	1	2
+191	Anton Matusevich	3	1	-100.0	-100.0	0	0
+192	Benjamin Hassan	17	18	-82.9	-33.4	1	6
+193	Michael Mmoh	12	10	-100.0	-72.8	0	1
+194	Albert Ramos	8	11	-67.1	3.3	2	7
+195	Marco Cecchinato	12	9	49.1	36.3	6	9
+196	Dominik Koepfer	7	6	-100.0	-100.0	0	0
+197	Gastao Elias	4	6	-100.0	-100.0	0	0
+198	Fajing Sun	6	6	-100.0	-100.0	0	0
+199	Jurij Rodionov	20	16	-49.4	40.5	3	10
+200	Andrea Collarini	18	16	-100.0	-9.3	0	7
+201	Francesco Maestrelli	13	11	-41.9	-96.6	3	6
+202	Andres Martin	8	5	-100.0	-16.5	0	6
+203	J J Wolf	4	4	-100.0	-100.0	0	0
+204	Dali Blanch	6	2	-43.8	0.0	4	8
+205	Alex Rybakov	3	3	-100.0	0.0	0	6
+206	Facundo Diaz Acosta	4	7	-100.0	-100.0	0	0
+207	Eliakim Coulibaly	10	5	-100.0	-100.0	0	0
+208	Aslan Karatsev	14	8	-100.0	-100.0	0	0
+209	Luka Pavlovic	14	9	-100.0	-81.2	0	5
+210	Marc Andrea Huesler	14	10	-100.0	-85.1	0	4
+211	Gauthier Onclin	12	13	-100.0	-17.7	0	8
+212	Ryan Peniston	7	7	-60.1	-59.3	2	3
+213	Christopher Oconnell	14	19	-73.6	-115.6	4	7
+214	Jie Cui	9	7	-100.0	-100.0	0	0
+215	Maximilian Marterer	4	4	-100.0	0.0	0	8
+216	Arthur Fery	4	3	-55.9	-55.9	2	2
+217	Jack Pinnington Jones	5	6	-84.2	0.0	2	11
+218	Harold Mayot	13	16	-100.0	-88.9	0	3
 219	Yusuke Takahashi	5	3	-100.0	-100.0	0	0
 220	Zachary Svajda	11	15	-100.0	100.8	0	8
 221	James Trotter	12	14	-85.0	-15.2	1	6
@@ -224,207 +224,210 @@ Rank	Player	Wins	Losses	yElo_form1w	yElo_form2w	Matches_1w	Matches_2w
 223	Daniel Rincon	17	15	-45.7	-49.1	3	7
 224	Jan Lennard Struff	5	17	-83.2	-37.5	1	4
 225	Dennis Novak	6	3	-100.0	-100.0	0	0
-226	Matheus Pucinelli De Almeida	16	9	-100.0	-76.7	0	3
-227	Michael Zheng	4	2	-100.0	0.0	0	6
-228	Dmitry Popko	15	15	-100.0	-65.8	0	2
-229	Saba Purtseladze	5	3	-100.0	-104.9	0	2
-230	James Duckworth	18	17	-83.1	-52.2	1	6
-231	Murphy Cassone	19	15	-100.0	-43.9	0	5
-232	Rafael Jodar	4	3	-100.0	-78.5	0	3
-233	Alfredo Perez	5	5	-100.0	-100.0	0	0
-234	Federico Bondioli	3	3	0.0	0.0	6	6
-235	Billy Harris	19	25	-81.2	-66.3	1	5
-236	Thiago Seyboth Wild	8	16	-100.0	-67.0	0	2
-237	Pierluigi Basile	3	3	-100.0	0.0	0	6
-238	Arthur Cazaux	6	11	-86.0	-89.5	1	4
-239	Dinko Dinev	3	1	-100.0	-100.0	0	0
-240	Adrian Mannarino	12	24	-60.2	82.4	2	10
-241	Marat Sharipov	8	8	-100.0	-85.0	0	1
-242	Rio Noguchi	16	12	-100.0	-53.8	0	6
-243	Hyeon Chung	4	4	-100.0	-110.8	0	2
-244	Li Tu	10	16	-53.2	2.8	2	7
-245	Petr Brunclik	3	3	-100.0	-86.7	0	1
-246	Mili Poljicak	9	8	-89.8	-89.8	1	1
-247	Nicolas Mejia	14	15	-100.0	-83.9	0	3
-248	Lukas Klein	13	15	-100.0	-33.7	0	6
-249	Stefan Kozlov	7	7	-100.0	-69.5	0	2
-250	Mattia Bellucci	11	20	-82.1	-79.8	1	4
-251	Rei Sakamoto	7	11	-64.6	-62.5	2	3
-252	Karue Sell	8	10	-100.0	-3.4	0	5
-253	Stuart Parker	6	4	-100.0	-62.7	0	3
-254	Milos Karol	4	5	-100.0	0.0	0	9
-255	Constant Lestienne	14	16	-100.0	-83.7	0	1
-256	Jacopo Berrettini	3	3	-100.0	-100.0	0	0
-257	Justin Engel	4	11	-49.1	0.0	2	15
-258	Mikhail Kukushkin	11	14	-100.0	-95.2	0	2
+226	Michael Zheng	4	2	-100.0	0.0	0	6
+227	Dmitry Popko	15	15	-100.0	-65.8	0	2
+228	Saba Purtseladze	5	3	-100.0	-104.9	0	2
+229	Murphy Cassone	19	15	-100.0	-43.9	0	5
+230	Joao Lucas Reis Da Silva	20	14	-71.3	16.4	5	10
+231	Rodrigo Pacheco Mendez	13	15	-8.5	39.8	5	12
+232	Geoffrey Blancaneaux	15	14	-82.6	-31.7	2	7
+233	Ivan Gakhov	13	9	-84.0	-102.3	4	6
+234	Kimmer Coppejans	13	12	-88.9	-72.8	1	3
+235	Alfredo Perez	5	5	-100.0	-100.0	0	0
+236	Matheus Pucinelli De Almeida	18	10	-61.6	-73.7	3	6
+237	Thiago Seyboth Wild	8	16	-100.0	-67.0	0	2
+238	Pierluigi Basile	3	3	-100.0	0.0	0	6
+239	Arthur Cazaux	6	11	-86.0	-89.5	1	4
+240	Dinko Dinev	3	1	-100.0	-100.0	0	0
+241	Jacopo Berrettini	4	4	-61.8	-61.8	2	2
+242	Adrian Mannarino	12	24	-60.2	82.4	2	10
+243	Marat Sharipov	8	8	-100.0	-85.0	0	1
+244	Henry Searle	9	7	-53.9	-30.5	3	5
+245	Rio Noguchi	16	12	-100.0	-53.8	0	6
+246	Hyeon Chung	4	4	-100.0	-110.8	0	2
+247	Li Tu	10	16	-53.2	2.8	2	7
+248	Petr Brunclik	3	3	-100.0	-86.7	0	1
+249	Lukas Klein	13	15	-100.0	-33.7	0	6
+250	Nicolas Mejia	16	16	-58.3	-79.1	3	6
+251	Stefan Kozlov	7	7	-100.0	-69.5	0	2
+252	Rei Sakamoto	7	11	-64.6	-62.5	2	3
+253	Karue Sell	8	10	-100.0	-3.4	0	5
+254	Stuart Parker	6	4	-100.0	-62.7	0	3
+255	Milos Karol	4	5	-100.0	0.0	0	9
+256	Constant Lestienne	14	16	-100.0	-83.7	0	1
+257	Mikhail Kukushkin	11	14	-100.0	-95.2	0	2
+258	Arthur Gea	11	12	-34.6	6.5	5	9
 259	Stefanos Sakellaridis	4	2	-100.0	-100.0	0	0
-260	Calvin Hemery	14	16	-65.9	-77.1	2	4
-261	Mitchell Krueger	15	17	-84.7	-105.0	1	5
-262	Coleman Wong	13	15	-100.0	-69.2	0	5
-263	Dan Martin	3	2	-100.0	-100.0	0	0
-264	Patrick Maloney	6	7	-100.0	-65.3	0	3
-265	Hynek Barton	6	9	-34.6	-41.5	3	5
-266	Lautaro Midon	15	10	-73.8	-18.3	3	8
-267	Arthur Gea	9	11	-63.8	-13.2	2	6
-268	Robert Strombachs	5	3	-91.0	-75.8	1	4
-269	Juan Manuel La Serna	3	3	0.0	0.0	6	6
-270	Eliot Spizzirri	21	17	-85.5	-95.4	1	5
-271	Raul Brancaccio	3	4	0.0	0.0	7	7
-272	Jan Choinski	9	15	-60.9	-46.2	2	6
-273	Ilya Snitari	3	2	-100.0	-92.2	0	1
-274	Omar Jasika	10	9	-100.0	-84.9	0	1
-275	Andres Andrade	11	12	-100.0	-35.8	0	5
-276	Alexis Galarneau	19	17	-100.0	-84.1	0	3
-277	Juan Pablo Varillas	15	10	-100.0	-100.0	0	0
-278	Bernard Tomic	13	15	-100.0	-61.1	0	3
-279	Timofey Skatov	15	17	-66.6	-36.3	2	7
-280	Federico Arnaboldi	13	16	-88.4	-97.3	1	7
-281	Gabriel Debru	3	3	-100.0	-100.0	0	0
-282	Martin Klizan	3	4	-100.0	0.0	0	7
-283	Yasutaka Uchiyama	7	12	-100.0	-78.5	0	2
-284	Petr Bar Biryukov	4	5	-100.0	0.0	0	9
-285	Mika Brunold	9	9	-16.5	-16.5	4	4
-286	Sho Shimabukuro	5	9	-100.0	-12.7	0	3
-287	Yu Hsiou Hsu	9	10	-89.8	-66.5	1	7
-288	Viktor Durasovic	16	13	-65.0	-40.7	2	7
-289	Tibo Colson	3	2	-100.0	-100.0	0	0
-290	Franco Agamenone	4	4	-100.0	-100.0	0	0
-291	Jay Clarke	8	9	-85.8	-117.5	1	4
-292	Federico Agustin Gomez	8	16	-100.0	16.0	0	5
-293	Christopher Eubanks	11	17	-100.0	-86.6	0	2
-294	Filip Cristian Jianu	14	20	-100.0	-27.3	0	8
-295	Frederico Ferreira Silva	3	4	-91.8	-91.8	1	1
-296	Joel Schwaerzler	9	11	-100.0	-35.4	0	3
-297	Toby Samuel	3	4	-100.0	0.0	0	7
-298	Alejandro Moro Canas	13	18	-63.1	-58.6	2	7
-299	Manuel Guinard	3	7	-100.0	-100.0	0	0
-300	Emil Ruusuvuori	6	8	-100.0	-100.0	0	0
-301	Thiago Monteiro	16	16	-100.0	-81.9	0	1
-302	Javier Barranco Cosano	7	9	-90.4	-72.1	1	3
-303	Hernan Casanova	8	7	-92.3	-68.1	1	4
-304	Santiago Fa Rodriguez Taverna	15	11	-84.6	-81.9	1	5
-305	Pavel Kotov	7	16	-100.0	-85.0	0	1
-306	Miguel Tobon	3	3	-100.0	-100.0	0	0
-307	Enrico Dalla Valle	10	13	-100.0	-86.2	0	1
-308	Andre Ilagan	7	8	-100.0	-100.0	0	0
-309	Elmar Ejupovic	3	4	-100.0	-100.0	0	0
-310	Dominic Stricker	4	10	-100.0	-68.8	0	2
-311	Mees Rottgering	4	6	-100.0	-64.1	0	2
-312	Stefano Travaglia	3	5	-86.5	0.0	1	8
-313	Luka Mikrut	4	6	0.0	0.0	10	10
-314	Hiroki Moriya	4	5	-100.0	-100.0	0	0
-315	Norbert Gombos	8	7	-92.8	-104.2	1	4
-316	Moez Echargui	4	3	-100.0	-100.0	0	0
-317	Kilian Feldbausch	4	6	0.0	0.0	10	10
-318	Remy Bertola	6	12	-100.0	-100.0	0	0
-319	Pol Martin Tiffon	9	11	-100.0	-94.3	0	4
-320	Johannus Monday	8	10	-83.0	-59.0	1	4
-321	Nicolai Budkov Kjaer	10	13	-84.3	-84.3	1	1
-322	Juan Pablo Ficovich	21	18	-100.0	-82.4	0	2
-323	Giles Hussey	7	5	-100.0	-18.2	0	4
-324	Ricardas Berankis	10	9	-100.0	-85.4	0	1
-325	Andrej Martin	5	5	-100.0	-84.5	0	1
-326	Bernabe Zapata Miralles	4	10	-100.0	-100.0	0	0
-327	Jakub Paul	7	9	-100.0	-100.0	0	0
-328	Maximus Jones	12	11	-86.1	-81.9	1	3
+260	Christoph Negritu	9	9	-32.4	-30.6	3	4
+261	Calvin Hemery	14	16	-65.9	-77.1	2	4
+262	Mitchell Krueger	15	17	-84.7	-105.0	1	5
+263	Coleman Wong	13	15	-100.0	-69.2	0	5
+264	Dan Martin	3	2	-100.0	-100.0	0	0
+265	Juan Carlos Prado Angelo	12	13	74.8	74.8	7	7
+266	Patrick Maloney	6	7	-100.0	-65.3	0	3
+267	Pedro Rodrigues	4	2	-82.2	-82.2	2	2
+268	Hynek Barton	6	9	-34.6	-41.5	3	5
+269	Jacopo Vasami	5	6	0.0	0.0	11	11
+270	Mili Poljicak	10	9	-86.5	-86.5	3	3
+271	Robert Strombachs	5	3	-91.0	-75.8	1	4
+272	Juan Manuel La Serna	3	3	0.0	0.0	6	6
+273	Eliot Spizzirri	21	17	-85.5	-95.4	1	5
+274	Johannus Monday	9	11	-49.7	-31.2	3	6
+275	Raul Brancaccio	3	4	0.0	0.0	7	7
+276	Justin Engel	4	12	-41.2	0.0	3	16
+277	Jan Choinski	9	15	-60.9	-46.2	2	6
+278	Ilya Snitari	3	2	-100.0	-92.2	0	1
+279	Omar Jasika	10	9	-100.0	-84.9	0	1
+280	Andres Andrade	11	12	-100.0	-35.8	0	5
+281	Alexis Galarneau	19	17	-100.0	-84.1	0	3
+282	Juan Pablo Varillas	15	10	-100.0	-100.0	0	0
+283	Timofey Skatov	15	17	-66.6	-36.3	2	7
+284	Federico Arnaboldi	13	16	-88.4	-97.3	1	7
+285	Luka Mikrut	6	7	0.0	0.0	13	13
+286	Gabriel Debru	3	3	-100.0	-100.0	0	0
+287	Martin Klizan	3	4	-100.0	0.0	0	7
+288	Yasutaka Uchiyama	7	12	-100.0	-78.5	0	2
+289	Petr Bar Biryukov	4	5	-100.0	0.0	0	9
+290	Mika Brunold	9	9	-16.5	-16.5	4	4
+291	Sho Shimabukuro	5	9	-100.0	-12.7	0	3
+292	Yu Hsiou Hsu	9	10	-89.8	-66.5	1	7
+293	Viktor Durasovic	16	13	-65.0	-40.7	2	7
+294	Tibo Colson	3	2	-100.0	-100.0	0	0
+295	Franco Agamenone	4	4	-100.0	-100.0	0	0
+296	Federico Agustin Gomez	8	16	-100.0	16.0	0	5
+297	Christopher Eubanks	11	17	-100.0	-86.6	0	2
+298	Filip Cristian Jianu	14	20	-100.0	-27.3	0	8
+299	Joel Schwaerzler	9	11	-100.0	-35.4	0	3
+300	Toby Samuel	3	4	-100.0	0.0	0	7
+301	Alejandro Moro Canas	13	18	-63.1	-58.6	2	7
+302	Manuel Guinard	3	7	-100.0	-100.0	0	0
+303	Emil Ruusuvuori	6	8	-100.0	-100.0	0	0
+304	Thiago Monteiro	16	16	-100.0	-81.9	0	1
+305	Javier Barranco Cosano	7	9	-90.4	-72.1	1	3
+306	Santiago Fa Rodriguez Taverna	15	11	-84.6	-81.9	1	5
+307	Pavel Kotov	7	16	-100.0	-85.0	0	1
+308	Frederico Ferreira Silva	4	5	-86.4	-86.4	3	3
+309	Enrico Dalla Valle	10	13	-100.0	-86.2	0	1
+310	Andre Ilagan	7	8	-100.0	-100.0	0	0
+311	Elmar Ejupovic	3	4	-100.0	-100.0	0	0
+312	Dominic Stricker	4	10	-100.0	-68.8	0	2
+313	Mees Rottgering	4	6	-100.0	-64.1	0	2
+314	Jay Clarke	8	10	-82.4	-129.5	2	5
+315	Lautaro Midon	16	11	-84.9	-36.8	5	10
+316	Hiroki Moriya	4	5	-100.0	-100.0	0	0
+317	Norbert Gombos	8	7	-92.8	-104.2	1	4
+318	Moez Echargui	4	3	-100.0	-100.0	0	0
+319	Kilian Feldbausch	4	6	0.0	0.0	10	10
+320	Remy Bertola	6	12	-100.0	-100.0	0	0
+321	Gonzalo Bueno	18	15	-12.5	-3.0	6	10
+322	Pol Martin Tiffon	9	11	-100.0	-94.3	0	4
+323	Nicolai Budkov Kjaer	10	13	-84.3	-84.3	1	1
+324	Juan Pablo Ficovich	21	18	-100.0	-82.4	0	2
+325	Giles Hussey	7	5	-100.0	-18.2	0	4
+326	Ricardas Berankis	10	9	-100.0	-85.4	0	1
+327	Bernabe Zapata Miralles	4	10	-100.0	-100.0	0	0
+328	Jakub Paul	7	9	-100.0	-100.0	0	0
 329	Eduardo Ribeiro	4	3	-100.0	-100.0	0	0
-330	Patrick Zahraj	9	11	-82.5	-74.0	1	2
-331	Hugo Grenier	15	18	-81.6	-74.9	1	3
-332	Daniel Michalski	6	6	-72.0	-76.6	2	3
-333	Michael Geerts	13	12	-85.9	-88.8	1	2
-334	Alvaro Guillen Meza	15	13	-85.5	-96.5	1	4
-335	Khumoun Sultanov	11	13	-100.0	-84.5	0	1
-336	Christoph Negritu	7	8	-100.0	-83.8	0	1
-337	Max Hans Rehberg	8	9	-100.0	-100.0	0	0
-338	Franco Roncadelli	10	8	25.8	3.1	5	6
+330	Miguel Tobon	4	4	-72.2	-72.2	2	2
+331	Patrick Zahraj	9	11	-82.5	-74.0	1	2
+332	Hugo Grenier	15	18	-81.6	-74.9	1	3
+333	Daniel Michalski	6	6	-72.0	-76.6	2	3
+334	Michael Geerts	13	12	-85.9	-88.8	1	2
+335	Alvaro Guillen Meza	15	13	-85.5	-96.5	1	4
+336	Khumoun Sultanov	11	13	-100.0	-84.5	0	1
+337	Hernan Casanova	9	8	-94.6	-77.2	3	6
+338	Max Hans Rehberg	8	9	-100.0	-100.0	0	0
 339	Blake Ellis	5	6	-100.0	-100.0	0	0
-340	Gianluca Mager	4	5	-100.0	-100.0	0	0
-341	Max Wiskandt	5	8	-100.0	-80.1	0	2
-342	Beibit Zhukayev	11	15	-100.0	-50.0	0	3
-343	Roberto Cid	5	4	-100.0	-100.0	0	0
-344	Diego Dedura Palomero	3	9	-88.4	0.0	1	12
-345	Mathys Erhard	11	12	-69.2	-49.4	2	5
-346	Lorenzo Giustino	4	8	0.0	0.0	12	12
-347	Gregoire Barrere	7	12	-100.0	-83.2	0	1
-348	Florent Bax	5	4	-72.2	-72.2	2	2
+340	Federico Bondioli	3	4	0.0	0.0	7	7
+341	Pedro Boscardin Dias	13	12	14.4	14.0	6	8
+342	Gianluca Mager	4	5	-100.0	-100.0	0	0
+343	Max Wiskandt	5	8	-100.0	-80.1	0	2
+344	Beibit Zhukayev	11	15	-100.0	-50.0	0	3
+345	Roberto Cid	5	4	-100.0	-100.0	0	0
+346	Gregoire Barrere	7	12	-100.0	-83.2	0	1
+347	Florent Bax	5	4	-72.2	-72.2	2	2
+348	Oriol Roca Batalla	7	13	-30.4	-55.3	4	6
 349	Philip Henning	7	7	-100.0	-63.4	0	2
 350	Matteo Martineau	13	15	-63.0	-50.4	2	6
-351	James Mccabe	15	18	-57.2	-78.2	2	4
-352	Maximilian Neuchrist	6	7	-100.0	-100.0	0	0
-353	Genaro Alberto Olivieri	14	16	-74.9	-83.5	2	3
-354	Alexander Ritschard	4	7	-100.0	-100.0	0	0
-355	Maxim Mrva	7	7	-72.8	-51.8	2	4
-356	Aziz Dougaz	13	17	-100.0	-93.4	0	3
-357	Facundo Mena	12	17	-86.9	12.1	1	10
-358	Oriol Roca Batalla	6	12	-57.8	-69.0	2	4
-359	Tyler Zink	5	7	-100.0	-67.1	0	3
-360	Maxime Chazal	3	7	-100.0	-100.0	0	0
-361	Yi Zhou	3	7	-100.0	0.0	0	10
-362	Fabio Fognini	4	13	-85.8	-82.3	1	3
-363	Alexey Vatutin	5	9	-82.3	-82.8	1	3
-364	Sascha Gueymard Wayenburg	10	13	-87.9	-63.5	1	3
-365	Pedro Cachin	4	9	-100.0	-100.0	0	0
-366	Oleksandr Ovcharenko	3	5	-100.0	-100.0	0	0
-367	Adria Soriano Barrera	4	5	-100.0	-64.3	0	2
-368	Sumit Nagal	9	16	-63.7	-49.2	2	7
-369	Matej Dodig	4	9	-86.8	0.0	1	13
-370	Gonzalo Villanueva	10	10	-54.1	-38.1	3	5
+351	Maximus Jones	13	12	-78.6	-87.6	3	5
+352	Genaro Alberto Olivieri	16	17	-57.3	-76.1	5	6
+353	James Mccabe	15	18	-57.2	-78.2	2	4
+354	Maximilian Neuchrist	6	7	-100.0	-100.0	0	0
+355	Alexander Ritschard	4	7	-100.0	-100.0	0	0
+356	Maxim Mrva	7	7	-72.8	-51.8	2	4
+357	Aziz Dougaz	13	17	-100.0	-93.4	0	3
+358	Facundo Mena	12	17	-86.9	12.1	1	10
+359	Stefano Travaglia	3	6	-92.1	0.0	2	9
+360	Tyler Zink	5	7	-100.0	-67.1	0	3
+361	Maxime Chazal	3	7	-100.0	-100.0	0	0
+362	Yi Zhou	3	7	-100.0	0.0	0	10
+363	Andrej Martin	5	6	-87.4	-86.5	1	2
+364	Pedro Cachin	4	9	-100.0	-100.0	0	0
+365	Oleksandr Ovcharenko	3	5	-100.0	-100.0	0	0
+366	Adria Soriano Barrera	4	5	-100.0	-64.3	0	2
+367	Sumit Nagal	9	16	-63.7	-49.2	2	7
+368	Matej Dodig	4	9	-86.8	0.0	1	13
+369	Mathys Erhard	11	13	-73.7	-64.1	3	6
+370	Fabio Fognini	4	14	-79.1	-83.5	2	4
 371	Yuta Shimizu	10	11	-100.0	-72.1	0	5
 372	Edas Butvilas	9	13	-100.0	-83.5	0	1
-373	Giovanni Fonio	3	8	-88.2	-88.2	1	1
+373	Diego Dedura Palomero	3	10	-92.3	0.0	2	13
 374	Enzo Couacaud	6	9	-22.5	-22.5	3	3
 375	Adrian Andreev	3	7	-100.0	-100.0	0	0
-376	Adolfo Daniel Vallejo	12	16	-64.7	-19.2	2	7
-377	Valerio Aboian	3	4	-100.0	-100.0	0	0
-378	Neil Oberleitner	4	7	-100.0	-100.0	0	0
-379	Marco Cecchinato	7	9	-85.3	-89.1	1	4
-380	Zdenek Kolar	3	7	0.0	0.0	10	10
-381	Daniel Dutra Da Silva	5	11	-100.0	-83.6	0	1
-382	Daniil Glinka	4	4	-100.0	-90.7	0	1
-383	Charles Broom	3	7	-100.0	-92.5	0	1
-384	Jelle Sels	5	10	-100.0	-86.9	0	1
-385	Tung Lin Wu	6	12	-100.0	-90.5	0	2
-386	August Holmgren	5	12	-100.0	-57.7	0	4
-387	Nikolas Sanchez Izquierdo	5	7	-83.6	-86.7	1	2
-388	Denis Yevseyev	10	19	-83.0	-46.7	1	6
-389	Corentin Denolly	7	13	-100.0	-83.4	0	1
-390	Carlos Sanchez Jover	4	7	-100.0	-92.9	0	1
-391	Murkel Alejandro Dellien Velasco	15	17	-87.8	-89.4	1	3
-392	Moerani Bouzige	5	7	-100.0	-94.6	0	2
-393	Marek Gengel	7	8	-100.0	-86.3	0	1
-394	Gonzalo Bueno	14	14	-87.4	-70.5	1	5
-395	Juan Alejandro Hernandez Serrano	5	8	-73.5	-73.5	2	2
-396	Matias Soto	10	11	-100.0	-100.0	0	0
-397	Facundo Bagnis	3	4	-96.8	0.0	1	7
-398	Tom Paris	5	7	-72.9	-76.7	2	3
-399	Christian Langmo	4	7	-100.0	-92.1	0	2
-400	Duje Ajdukovic	7	14	-100.0	-12.8	0	5
-401	Rodrigo Alujas 	3	5	-100.0	-100.0	0	0
-402	Antoine Escoffier	6	14	-100.0	-68.9	0	4
-403	Pedro Boscardin Dias	10	11	-64.8	-57.1	2	4
-404	Max Houkes	9	12	-100.0	-81.9	0	2
-405	Lukas Pokorny	6	9	-100.0	-109.8	0	3
-406	Mariano Kestelboim	5	7	-89.5	-72.1	1	3
-407	Henri Squire	9	19	-82.1	-54.3	1	6
+376	Gonzalo Villanueva	11	11	-43.3	-32.3	5	7
+377	Sascha Gueymard Wayenburg	10	14	-84.4	-64.1	2	4
+378	Adolfo Daniel Vallejo	12	16	-64.7	-19.2	2	7
+379	Valerio Aboian	3	4	-100.0	-100.0	0	0
+380	Neil Oberleitner	4	7	-100.0	-100.0	0	0
+381	Zdenek Kolar	3	7	0.0	0.0	10	10
+382	Daniel Dutra Da Silva	5	11	-100.0	-83.6	0	1
+383	Daniil Glinka	4	4	-100.0	-90.7	0	1
+384	Charles Broom	3	7	-100.0	-92.5	0	1
+385	Franco Roncadelli	10	9	7.2	-21.0	6	7
+386	Jelle Sels	5	10	-100.0	-86.9	0	1
+387	Lorenzo Giustino	4	9	0.0	0.0	13	13
+388	Tung Lin Wu	6	12	-100.0	-90.5	0	2
+389	Max Houkes	11	13	-43.8	-52.4	3	5
+390	August Holmgren	5	12	-100.0	-57.7	0	4
+391	Nikolas Sanchez Izquierdo	5	7	-83.6	-86.7	1	2
+392	Denis Yevseyev	10	19	-83.0	-46.7	1	6
+393	Corentin Denolly	7	13	-100.0	-83.4	0	1
+394	Oleg Prihodko	3	11	0.0	0.0	14	14
+395	Carlos Sanchez Jover	4	7	-100.0	-92.9	0	1
+396	Murkel Alejandro Dellien Velasco	15	17	-87.8	-89.4	1	3
+397	Alexey Vatutin	5	10	-82.9	-98.6	2	4
+398	Moerani Bouzige	5	7	-100.0	-94.6	0	2
+399	Facundo Bagnis	3	4	-96.8	0.0	1	7
+400	Tom Paris	5	7	-72.9	-76.7	2	3
+401	Christian Langmo	4	7	-100.0	-92.1	0	2
+402	Duje Ajdukovic	7	14	-100.0	-12.8	0	5
+403	Giovanni Fonio	3	9	-94.7	-94.7	2	2
+404	Marek Gengel	7	9	-83.0	-82.2	1	2
+405	Rodrigo Alujas 	3	5	-100.0	-100.0	0	0
+406	Antoine Escoffier	6	14	-100.0	-68.9	0	4
+407	Lukas Pokorny	6	9	-100.0	-109.8	0	3
 408	Lucas Poullain	3	6	-84.5	0.0	1	9
-409	Radu Albot	6	17	-83.6	-36.9	1	5
-410	Abedallah Shelbayh	5	13	-86.6	-87.9	1	4
-411	Conner Huertas Del Pino	5	7	-100.0	-82.6	0	1
-412	Ergi Kirkin	8	11	-100.0	-100.0	0	0
-413	Aleksandre Bakshi	3	6	-100.0	-88.7	0	1
-414	Rudolf Molleker	3	6	-86.9	-86.9	1	1
-415	Pedro Sakamoto	7	9	-100.0	-92.5	0	1
-416	Guido Ivan Justo	6	9	-88.9	-88.9	1	1
-417	Juan Carlos Prado Angelo	7	13	-65.1	-65.1	2	2
-418	Nicolas Kicker	7	8	-90.5	-96.7	1	2
-419	Masamichi Imamura	3	7	-100.0	0.0	0	10
-420	Nicolas Alvarez Varona	7	11	-83.0	-81.3	1	2
-421	Luciano Emanuel Ambrogi	3	7	0.0	0.0	10	10
-422	Taro Daniel	4	17	-83.5	-56.5	1	4
-423	Juan Bautista Torres	7	15	-61.0	-60.4	2	3
-424	Benoit Paire	4	11	-91.3	-91.3	1	1
-425	Robin Bertrand	5	10	-100.0	-86.8	0	2
-426	Jozef Kovalik	4	15	-81.7	-119.9	1	5
-427	Renzo Olivo	8	15	-85.3	-89.9	1	2
-428	Maxime Janvier	4	14	-100.0	-81.2	0	1
-429	Mateus Alves	4	12	-100.0	-100.0	0	0
+409	Abedallah Shelbayh	5	13	-86.6	-87.9	1	4
+410	Ergi Kirkin	8	11	-100.0	-100.0	0	0
+411	Aleksandre Bakshi	3	6	-100.0	-88.7	0	1
+412	Rudolf Molleker	3	6	-86.9	-86.9	1	1
+413	Pedro Sakamoto	7	9	-100.0	-92.5	0	1
+414	Juan Alejandro Hernandez Serrano	5	9	-83.6	-83.6	3	3
+415	Henri Squire	9	20	-77.0	-64.6	2	7
+416	Matias Soto	10	12	-89.3	-89.3	1	1
+417	Mariano Kestelboim	5	8	-93.1	-83.3	2	4
+418	Masamichi Imamura	3	7	-100.0	0.0	0	10
+419	Nicolas Alvarez Varona	7	11	-83.0	-81.3	1	2
+420	Conner Huertas Del Pino	5	8	-85.6	-80.3	1	2
+421	Radu Albot	6	18	-84.3	-53.0	2	6
+422	Juan Bautista Torres	8	16	-34.7	-41.1	4	5
+423	Taro Daniel	4	17	-83.5	-56.5	1	4
+424	Nicolas Kicker	7	9	-91.5	-105.2	2	3
+425	Guido Ivan Justo	6	10	-91.5	-91.5	2	2
+426	Luciano Emanuel Ambrogi	3	8	0.0	0.0	11	11
+427	Benoit Paire	4	11	-91.3	-91.3	1	1
+428	Robin Bertrand	5	10	-100.0	-86.8	0	2
+429	Jozef Kovalik	4	15	-81.7	-119.9	1	5
+430	Maxime Janvier	4	14	-100.0	-81.2	0	1
+431	Mateus Alves	4	12	-100.0	-100.0	0	0
+432	Renzo Olivo	8	16	-81.7	-95.0	2	3
