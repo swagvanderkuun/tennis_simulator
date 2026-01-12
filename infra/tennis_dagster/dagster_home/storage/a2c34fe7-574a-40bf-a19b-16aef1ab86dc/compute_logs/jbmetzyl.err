@@ -1,0 +1,23 @@
+2026-01-11 20:25:39 +0000 - dagster - DEBUG - scrape_elo_job - a2c34fe7-574a-40bf-a19b-16aef1ab86dc - 22998 - LOGS_CAPTURED - Started capturing logs in process (pid: 22998).
+2026-01-11 20:25:39 +0000 - dagster - DEBUG - scrape_elo_job - a2c34fe7-574a-40bf-a19b-16aef1ab86dc - 22998 - scrape_elo_op - STEP_START - Started execution of step "scrape_elo_op".
+2026-01-11 20:25:39 +0000 - dagster - ERROR - scrape_elo_job - a2c34fe7-574a-40bf-a19b-16aef1ab86dc - 22998 - scrape_elo_op - STEP_FAILURE - Execution of step "scrape_elo_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "scrape_elo_op"::
+
+RuntimeError: Missing required TennisAbstract URL env vars: men:elo, men:yelo, women:elo, women:yelo
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 46, in scrape_elo_op
+    raise RuntimeError(
+

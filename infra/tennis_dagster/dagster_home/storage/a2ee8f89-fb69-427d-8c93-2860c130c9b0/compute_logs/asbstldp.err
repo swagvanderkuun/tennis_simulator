@@ -1,0 +1,30 @@
+2026-01-12 19:57:09 +0000 - dagster - DEBUG - scrape_draw_job - a2ee8f89-fb69-427d-8c93-2860c130c9b0 - 180 - LOGS_CAPTURED - Started capturing logs in process (pid: 180).
+2026-01-12 19:57:09 +0000 - dagster - DEBUG - scrape_draw_job - a2ee8f89-fb69-427d-8c93-2860c130c9b0 - 180 - scrape_draw_op - STEP_START - Started execution of step "scrape_draw_op".
+2026-01-12 19:57:09 +0000 - dagster - INFO - scrape_draw_job - a2ee8f89-fb69-427d-8c93-2860c130c9b0 - scrape_draw_op - scrape_draw_op fetching https://www.tennisabstract.com/current/2026ATPAdelaide.html
+2026-01-12 19:57:09 +0000 - dagster - ERROR - scrape_draw_job - a2ee8f89-fb69-427d-8c93-2860c130c9b0 - 180 - scrape_draw_op - STEP_FAILURE - Execution of step "scrape_draw_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "scrape_draw_op"::
+
+ValueError: Could not parse season year from <h2> candidates: ['2026 ATP Adelaide', 'Singles | Doubles', 'Singles Forecast']
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 240, in scrape_draw_op
+    parsed = parse_singles_forecast_draw(html)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/draws_tennisabstract.py", line 78, in parse_singles_forecast_draw
+    tour, year, tournament_name = _parse_tournament_meta(soup)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/draws_tennisabstract.py", line 60, in _parse_tournament_meta
+    raise ValueError(f"Could not parse season year from <h2> candidates: {h2_candidates!r}")
+

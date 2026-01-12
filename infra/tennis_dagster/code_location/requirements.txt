@@ -1,0 +1,13 @@
+dagster==1.10.3
+dagster-webserver==1.10.3
+dagster-postgres==0.26.3
+
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+
+requests>=2.31
+pandas>=2.0
+beautifulsoup4>=4.12
+lxml>=5.0
+
+

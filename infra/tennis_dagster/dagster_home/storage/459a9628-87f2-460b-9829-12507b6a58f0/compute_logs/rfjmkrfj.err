@@ -1,0 +1,7 @@
+2026-01-12 20:07:25 +0000 - dagster - DEBUG - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - 161 - LOGS_CAPTURED - Started capturing logs in process (pid: 161).
+2026-01-12 20:07:25 +0000 - dagster - DEBUG - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - 161 - scrape_draw_op - STEP_START - Started execution of step "scrape_draw_op".
+2026-01-12 20:07:25 +0000 - dagster - INFO - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - scrape_draw_op - scrape_draw_op fetching https://www.tennisabstract.com/current/2026ATPAuckland.html
+2026-01-12 20:07:25 +0000 - dagster - INFO - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - scrape_draw_op - Parsed draw: 2026 ATP Auckland entries=32
+2026-01-12 20:07:26 +0000 - dagster - INFO - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - scrape_draw_op - Stored draw snapshot_id=3 source_id=3
+2026-01-12 20:07:26 +0000 - dagster - DEBUG - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - 161 - scrape_draw_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-12 20:07:26 +0000 - dagster - DEBUG - scrape_draw_job - 459a9628-87f2-460b-9829-12507b6a58f0 - 161 - scrape_draw_op - STEP_SUCCESS - Finished execution of step "scrape_draw_op" in 418ms.

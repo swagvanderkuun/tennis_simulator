@@ -1,0 +1,105 @@
+2026-01-11 20:29:25 +0000 - dagster - DEBUG - scrape_elo_job - 2495ebc1-5c15-46e8-b625-70a47b346c34 - 161 - LOGS_CAPTURED - Started capturing logs in process (pid: 161).
+2026-01-11 20:29:25 +0000 - dagster - DEBUG - scrape_elo_job - 2495ebc1-5c15-46e8-b625-70a47b346c34 - 161 - scrape_elo_op - STEP_START - Started execution of step "scrape_elo_op".
+2026-01-11 20:29:25 +0000 - dagster - INFO - scrape_elo_job - 2495ebc1-5c15-46e8-b625-70a47b346c34 - scrape_elo_op - scrape_elo_op starting at 2026-01-11T20:29:25.218260+00:00
+2026-01-11 20:29:26 +0000 - dagster - INFO - scrape_elo_job - 2495ebc1-5c15-46e8-b625-70a47b346c34 - scrape_elo_op - Stored Elo snapshot for gender=men snapshot_id=2 rows=499
+2026-01-11 20:29:26 +0000 - dagster - ERROR - scrape_elo_job - 2495ebc1-5c15-46e8-b625-70a47b346c34 - 161 - scrape_elo_op - STEP_FAILURE - Execution of step "scrape_elo_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "scrape_elo_op"::
+
+sqlalchemy.exc.InternalError: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: INSERT INTO tennis.elo_snapshots (gender, scraped_at, source_elo_url, source_yelo_url, status, error) VALUES (%(gender)s, %(scraped_at)s, %(source_elo_url)s, %(source_yelo_url)s, %(status)s, %(error)s) RETURNING tennis.elo_snapshots.id]
+[parameters: {'gender': 'women', 'scraped_at': datetime.datetime(2026, 1, 11, 20, 29, 25, 218260, tzinfo=datetime.timezone.utc), 'source_elo_url': 'https://tennisabstract.com/reports/wta_elo_ratings.html', 'source_yelo_url': 'https://tennisabstract.com/reports/wta_season_yelo_ratings.html', 'status': 'failed', 'error': '(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "uq_alias_source_alias"\nDETAIL:  Key (source, alias)=(tennisabstrac ... (303 characters truncated) ... t\': datetime.datetime(2026, 1, 11, 20, 29, 25, 218260, tzinfo=datetime.timezone.utc)}]\n(Background on this error at: https://sqlalche.me/e/20/gkpj)'}]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 145, in scrape_elo_op
+    conn.execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+
+The above exception was caused by the following exception:
+psycopg2.errors.InFailedSqlTransaction: current transaction is aborted, commands ignored until end of transaction block
+
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+
+The above exception occurred during handling of the following exception:
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "uq_alias_source_alias"
+DETAIL:  Key (source, alias)=(tennisabstract, nan) already exists.
+
+[SQL: INSERT INTO tennis.player_aliases (player_id, source, alias, created_at) VALUES (%(player_id)s, %(source)s, %(alias)s, %(created_at)s) RETURNING tennis.player_aliases.id]
+[parameters: {'player_id': 1019, 'source': 'tennisabstract', 'alias': 'nan', 'created_at': datetime.datetime(2026, 1, 11, 20, 29, 25, 218260, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+Stack Trace:
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 121, in scrape_elo_op
+    pid = get_or_create_player_id(conn, gender, r.name)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 80, in get_or_create_player_id
+    conn.execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+
+The above exception was caused by the following exception:
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "uq_alias_source_alias"
+DETAIL:  Key (source, alias)=(tennisabstract, nan) already exists.
+
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+

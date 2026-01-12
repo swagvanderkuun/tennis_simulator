@@ -1,0 +1,58 @@
+# Dagster instance config for the tennis_dagster stack.
+#
+# NOTE:
+# - This uses default local storage under DAGSTER_HOME (a bind mount in docker-compose).
+# - Postgres in this stack is intended for *application data* (scraped Elo/draw DB), not for Dagster metadata.
+# - This is intentional to keep the stack simple and isolated.
+
+telemetry:
+  enabled: false
+
+run_queue:
+  max_concurrent_runs: 4
+
+# Use Postgres (from THIS stack) for Dagster metadata to avoid sqlite migration issues
+# and to keep state consistent across webserver/daemon.
+run_storage:
+  module: dagster_postgres.run_storage
+  class: PostgresRunStorage
+  config:
+    postgres_db:
+      hostname: postgres
+      port: 5432
+      username:
+        env: POSTGRES_USER
+      password:
+        env: POSTGRES_PASSWORD
+      db_name:
+        env: POSTGRES_DB
+
+event_log_storage:
+  module: dagster_postgres.event_log
+  class: PostgresEventLogStorage
+  config:
+    postgres_db:
+      hostname: postgres
+      port: 5432
+      username:
+        env: POSTGRES_USER
+      password:
+        env: POSTGRES_PASSWORD
+      db_name:
+        env: POSTGRES_DB
+
+schedule_storage:
+  module: dagster_postgres.schedule_storage
+  class: PostgresScheduleStorage
+  config:
+    postgres_db:
+      hostname: postgres
+      port: 5432
+      username:
+        env: POSTGRES_USER
+      password:
+        env: POSTGRES_PASSWORD
+      db_name:
+        env: POSTGRES_DB
+
+
