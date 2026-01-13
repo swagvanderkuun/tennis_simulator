@@ -32,6 +32,7 @@ from tennis_simulator.db.tiers import (
     copy_tier_set,
     load_tiers,
     upsert_tiers,
+    ensure_tier_set_has_all_elo_current_players,
     TIERS,
 )
 
@@ -1405,6 +1406,16 @@ def display_tier_editor():
 
     if not selected_id:
         return
+
+    # Ensure all Elo-ranked players are present in this tier set (default tier D)
+    try:
+        added = ensure_tier_set_has_all_elo_current_players(
+            engine, tier_set_id=int(selected_id), gender=gender, default_tier="D"
+        )
+        if added > 0:
+            st.info(f"Added {added} missing Elo-ranked players to this tier set as Tier D.")
+    except Exception as e:
+        st.warning(f"Could not auto-add missing Elo-ranked players: {e}")
 
     st.subheader("Edit tiers")
     rows = load_tiers(engine, int(selected_id))

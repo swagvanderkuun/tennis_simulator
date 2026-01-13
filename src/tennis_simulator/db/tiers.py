@@ -203,3 +203,38 @@ def upsert_tiers(engine: Engine, *, tier_set_id: int, gender: str, tiers: dict[s
             )
 
 
+def ensure_tier_set_has_all_elo_current_players(engine: Engine, *, tier_set_id: int, gender: str, default_tier: str = "D") -> int:
+    """
+    Ensure every player present in tennis.elo_current for the given gender has a tier assignment
+    in the given tier_set_id. Missing players are inserted with default_tier (default: D).
+
+    Returns: number of assignments inserted.
+    """
+    if default_tier not in TIERS:
+        raise ValueError(f"Invalid default_tier: {default_tier}")
+
+    with engine.begin() as conn:
+        res = conn.execute(
+            text(
+                """
+                WITH missing AS (
+                  SELECT ec.player_id
+                  FROM tennis.elo_current ec
+                  WHERE ec.gender = :gender
+                  EXCEPT
+                  SELECT ta.player_id
+                  FROM tennis.tier_assignments ta
+                  WHERE ta.tier_set_id = :tier_set_id
+                )
+                INSERT INTO tennis.tier_assignments (tier_set_id, player_id, tier)
+                SELECT :tier_set_id, m.player_id, :tier
+                FROM missing m
+                ON CONFLICT (tier_set_id, player_id) DO NOTHING
+                """
+            ),
+            {"tier_set_id": tier_set_id, "gender": gender, "tier": default_tier},
+        )
+        # rowcount is driver-dependent for INSERT..SELECT; but psycopg2 provides it.
+        return int(res.rowcount or 0)
+
+
