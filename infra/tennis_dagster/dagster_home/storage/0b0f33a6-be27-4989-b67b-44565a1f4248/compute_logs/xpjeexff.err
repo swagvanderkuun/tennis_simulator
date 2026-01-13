@@ -1,0 +1,6 @@
+2026-01-12 23:02:51 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - 16217 - LOGS_CAPTURED - Started capturing logs in process (pid: 16217).
+2026-01-12 23:02:51 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - 16217 - backfill_elo_snapshot_op - STEP_START - Started execution of step "backfill_elo_snapshot_op".
+2026-01-12 23:02:52 +0000 - dagster - INFO - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - backfill_elo_snapshot_op - Backfill men yelo from /opt/dagster/app/backfills/atp_yelo_2025-12-01.html (as_of=2025-12-01) update_current=False
+2026-01-12 23:02:52 +0000 - dagster - INFO - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - backfill_elo_snapshot_op - Backfill stored snapshot_id=23 rows=553
+2026-01-12 23:02:52 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - 16217 - backfill_elo_snapshot_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-12 23:02:52 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 0b0f33a6-be27-4989-b67b-44565a1f4248 - 16217 - backfill_elo_snapshot_op - STEP_SUCCESS - Finished execution of step "backfill_elo_snapshot_op" in 781ms.

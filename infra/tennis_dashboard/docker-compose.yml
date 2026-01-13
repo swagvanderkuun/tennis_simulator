@@ -1,0 +1,17 @@
+name: tennis_dashboard
+
+services:
+  streamlit:
+    build:
+      context: ../..
+      dockerfile: infra/tennis_dashboard/Dockerfile
+    container_name: tennis_dashboard_streamlit
+    # Use host networking so the dashboard can connect to the existing Postgres published on 127.0.0.1:<port>
+    network_mode: host
+    environment:
+      DASHBOARD_BIND_IP: ${DASHBOARD_BIND_IP:-100.73.243.20}
+      DASHBOARD_PORT: ${DASHBOARD_PORT:-8501}
+      TENNIS_DB_URL: ${TENNIS_DB_URL}
+    restart: unless-stopped
+
+

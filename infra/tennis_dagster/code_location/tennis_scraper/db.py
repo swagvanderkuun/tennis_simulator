@@ -83,11 +83,16 @@ def define_tables(metadata: MetaData) -> dict[str, Table]:
         Column("player_id", BigInteger, ForeignKey(f"{APP_SCHEMA}.players.id"), nullable=False),
         Column("player_name", Text, nullable=True),  # denormalized from players.canonical_name
         Column("elo_rank", Integer, nullable=True),
+        Column("yelo_rank", Integer, nullable=True),
         Column("elo", Float, nullable=True),
         Column("helo", Float, nullable=True),
         Column("celo", Float, nullable=True),
         Column("gelo", Float, nullable=True),
         Column("yelo", Float, nullable=True),
+        # Season yElo from TA is often missing early-season (TA only includes players with >=5 wins).
+        # We store both the raw value and an imputed/effective yelo to keep downstream code simple.
+        Column("yelo_raw", Float, nullable=True),
+        Column("yelo_imputed", Integer, nullable=False, server_default=text("0")),
         Column("rank", Integer, nullable=True),
         UniqueConstraint("snapshot_id", "player_id", name="uq_snapshot_player"),
     )
@@ -102,11 +107,14 @@ def define_tables(metadata: MetaData) -> dict[str, Table]:
         Column("as_of", DateTime(timezone=True), nullable=False),  # snapshot scraped_at
         Column("source_snapshot_id", BigInteger, ForeignKey(f"{APP_SCHEMA}.elo_snapshots.id"), nullable=False),
         Column("elo_rank", Integer, nullable=True),
+        Column("yelo_rank", Integer, nullable=True),
         Column("elo", Float, nullable=True),
         Column("helo", Float, nullable=True),
         Column("celo", Float, nullable=True),
         Column("gelo", Float, nullable=True),
         Column("yelo", Float, nullable=True),
+        Column("yelo_raw", Float, nullable=True),
+        Column("yelo_imputed", Integer, nullable=False, server_default=text("0")),
         Column("rank", Integer, nullable=True),
         UniqueConstraint("gender", "player_id", name="uq_elo_current_gender_player"),
     )
@@ -226,6 +234,12 @@ def create_app_tables(engine: Engine) -> dict[str, Table]:
     with engine.begin() as conn:
         conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_ratings ADD COLUMN IF NOT EXISTS elo_rank integer"))
         conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_ratings ADD COLUMN IF NOT EXISTS player_name text"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_ratings ADD COLUMN IF NOT EXISTS yelo_rank integer"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_ratings ADD COLUMN IF NOT EXISTS yelo_raw double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_ratings ADD COLUMN IF NOT EXISTS yelo_imputed integer DEFAULT 0"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_rank integer"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_raw double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_imputed integer DEFAULT 0"))
         # Backfill for existing rows (safe + idempotent)
         conn.execute(
             text(
@@ -255,6 +269,32 @@ def create_app_tables(engine: Engine) -> dict[str, Table]:
                 UPDATE {APP_SCHEMA}.elo_current
                 SET player_name = btrim(regexp_replace(replace(player_name, chr(160), ' '), '\\s+', ' ', 'g'))
                 WHERE player_name IS NOT NULL
+                """
+            )
+        )
+
+        # Backfill yElo columns for existing rows:
+        # - If yelo_raw is missing, assume existing yelo is the raw yElo from TA.
+        # - If yelo is NULL (because TA didn't include the player), impute yelo := elo and mark yelo_imputed=1.
+        conn.execute(
+            text(
+                f"""
+                UPDATE {APP_SCHEMA}.elo_current
+                SET
+                  yelo_raw = COALESCE(yelo_raw, yelo),
+                  yelo = COALESCE(yelo, elo),
+                  yelo_imputed = CASE WHEN COALESCE(yelo_raw, yelo) IS NULL THEN 1 ELSE 0 END
+                """
+            )
+        )
+        conn.execute(
+            text(
+                f"""
+                UPDATE {APP_SCHEMA}.elo_ratings
+                SET
+                  yelo_raw = COALESCE(yelo_raw, yelo),
+                  yelo = COALESCE(yelo, elo),
+                  yelo_imputed = CASE WHEN COALESCE(yelo_raw, yelo) IS NULL THEN 1 ELSE 0 END
                 """
             )
         )

@@ -42,6 +42,7 @@ services:
       - "${DAGSTER_WEB_PORT:-3001}:3000"
     volumes:
       - ./dagster_home:/opt/dagster/dagster_home
+      - ./backfills:/opt/dagster/app/backfills:ro
     command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
 
   dagster_daemon:
@@ -66,6 +67,7 @@ services:
       TA_DRAW_EXAMPLE_URL: ${TA_DRAW_EXAMPLE_URL:-}
     volumes:
       - ./dagster_home:/opt/dagster/dagster_home
+      - ./backfills:/opt/dagster/app/backfills:ro
     command: ["dagster-daemon", "run", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
 
 volumes:

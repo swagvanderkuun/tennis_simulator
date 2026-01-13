@@ -40,3 +40,7 @@ tqdm>=4.64.0
 watchdog == 6.0.0
 plotly==6.2.0
 bracketool==0.1.0
+
+# Postgres / DB access (for tier editor + sync scripts)
+sqlalchemy>=2.0.25
+psycopg2-binary>=2.9.9

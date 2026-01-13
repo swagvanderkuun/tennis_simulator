@@ -123,6 +123,7 @@ celerybeat.pid
 .env
 .venv
 infra/tennis_dagster/tennis_dagster.env
+infra/tennis_dashboard/tennis_dashboard.env
 env/
 venv/
 ENV/

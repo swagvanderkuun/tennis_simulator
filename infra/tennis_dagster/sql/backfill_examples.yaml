@@ -1,0 +1,16 @@
+ops:
+  backfill_elo_snapshot_op:
+    config:
+      # One of:
+      # - source_url (best-effort; archive sites often 429)
+      # - source_html_path (HTML file inside container)
+      # - source_zip_path (zip file inside container, e.g. archive.today download.zip)
+      source_zip_path: "/opt/dagster/app/backfills/LVRwr.zip"
+
+      gender: "men"          # men | women
+      rating_type: "elo"     # elo | yelo
+      as_of_date: "2025-12-01"
+
+      # Default false: backfill is append-only and won't overwrite current ratings
+      update_current: false
+

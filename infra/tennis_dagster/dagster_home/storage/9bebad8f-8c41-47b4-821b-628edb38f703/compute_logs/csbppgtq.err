@@ -1,0 +1,27 @@
+2026-01-12 22:38:55 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 9bebad8f-8c41-47b4-821b-628edb38f703 - 235 - LOGS_CAPTURED - Started capturing logs in process (pid: 235).
+2026-01-12 22:38:55 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 9bebad8f-8c41-47b4-821b-628edb38f703 - 235 - backfill_elo_snapshot_op - STEP_START - Started execution of step "backfill_elo_snapshot_op".
+2026-01-12 22:38:56 +0000 - dagster - INFO - backfill_elo_snapshot_job - 9bebad8f-8c41-47b4-821b-628edb38f703 - backfill_elo_snapshot_op - Backfill men elo from https://archive.is/LVRwr (as_of=2025-12-01) update_current=False
+2026-01-12 22:40:11 +0000 - dagster - ERROR - backfill_elo_snapshot_job - 9bebad8f-8c41-47b4-821b-628edb38f703 - 235 - backfill_elo_snapshot_op - STEP_FAILURE - Execution of step "backfill_elo_snapshot_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "backfill_elo_snapshot_op"::
+
+RuntimeError: Failed to fetch https://archive.is/LVRwr
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 341, in backfill_elo_snapshot_op
+    html = fetch_html(source_url)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/tennisabstract.py", line 82, in fetch_html
+    raise last_exc if last_exc else RuntimeError(f"Failed to fetch {url}")
+

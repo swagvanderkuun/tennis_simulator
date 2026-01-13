@@ -1,0 +1,8 @@
+2026-01-13 03:15:04 +0000 - dagster - DEBUG - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - 307978 - LOGS_CAPTURED - Started capturing logs in process (pid: 307978).
+2026-01-13 03:15:04 +0000 - dagster - DEBUG - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - 307978 - scrape_elo_op - STEP_START - Started execution of step "scrape_elo_op".
+2026-01-13 03:15:05 +0000 - dagster - INFO - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - scrape_elo_op - scrape_elo_op starting at 2026-01-13T03:15:05.175742+00:00
+2026-01-13 03:15:06 +0000 - dagster - INFO - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - scrape_elo_op - Stored Elo snapshot for gender=men snapshot_id=26 rows=498
+2026-01-13 03:15:07 +0000 - dagster - INFO - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - scrape_elo_op - Stored Elo snapshot for gender=women snapshot_id=27 rows=520
+2026-01-13 03:15:07 +0000 - dagster - INFO - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - scrape_elo_op - scrape_elo_op done
+2026-01-13 03:15:07 +0000 - dagster - DEBUG - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - 307978 - scrape_elo_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-13 03:15:07 +0000 - dagster - DEBUG - scrape_elo_job - 122d16b8-3cf8-4b2d-bdf4-2c962db87008 - 307978 - scrape_elo_op - STEP_SUCCESS - Finished execution of step "scrape_elo_op" in 2.43s.
