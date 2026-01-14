@@ -23,3 +23,4 @@ COPY . /app
 CMD ["bash", "-lc", "streamlit run streamlit_dashboard.py --server.address=${DASHBOARD_BIND_IP:-0.0.0.0} --server.port=${DASHBOARD_PORT:-8501} --server.headless=true --browser.gatherUsageStats=false"]
 
 
+
