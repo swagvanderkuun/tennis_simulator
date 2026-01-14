@@ -73,6 +73,68 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# ---- Global simulator weight presets (must sum to 1.0) ----
+WEIGHT_PRESETS: dict[str, EloWeights] = {
+    "Custom (use sliders)": EloWeights(),  # placeholder; actual value comes from sliders/global_weights
+    "Overall (default)": EloWeights(elo_weight=0.45, helo_weight=0.25, celo_weight=0.20, gelo_weight=0.10),
+    "Hard Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.50, celo_weight=0.15, gelo_weight=0.10),
+    "Clay Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.15, celo_weight=0.50, gelo_weight=0.10),
+    "Grass Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.15, celo_weight=0.10, gelo_weight=0.50),
+}
+
+
+def _weights_sig(weights: EloWeights) -> tuple[float, float, float, float, float, float]:
+    return (
+        float(weights.elo_weight),
+        float(weights.helo_weight),
+        float(weights.celo_weight),
+        float(weights.gelo_weight),
+        float(weights.form_elo_scale),
+        float(weights.form_elo_cap),
+    )
+
+
+def _apply_weights(weights: EloWeights, *, set_slider_keys: bool) -> None:
+    """
+    Force-set both the slider widget state and the global weights object.
+    This makes presets actually apply immediately in Streamlit (slider keys keep their state).
+    """
+    st.session_state.global_weights = weights
+    st.session_state["_weights_sliders_sig"] = _weights_sig(weights)
+
+    # IMPORTANT: Only write slider keys in contexts where those widgets haven't been created yet
+    # in the current run (e.g., via on_click callback).
+    if set_slider_keys:
+        st.session_state["elo_weight"] = float(weights.elo_weight)
+        st.session_state["helo_weight"] = float(weights.helo_weight)
+        st.session_state["celo_weight"] = float(weights.celo_weight)
+        st.session_state["gelo_weight"] = float(weights.gelo_weight)
+        st.session_state["form_elo_scale_slider"] = float(weights.form_elo_scale)
+        st.session_state["form_elo_cap_slider"] = float(weights.form_elo_cap)
+
+
+def _apply_preset(preset_name: str, *, set_slider_keys: bool) -> None:
+    w = WEIGHT_PRESETS[preset_name]
+    st.session_state["active_preset"] = preset_name
+    _apply_weights(w, set_slider_keys=set_slider_keys)
+
+
+def _weights_selector(label: str, key: str) -> EloWeights:
+    """
+    Show a preset selector and return the currently active weights.
+    Selecting a preset overwrites the global weights used throughout the app.
+    """
+    options = list(WEIGHT_PRESETS.keys())
+    selected = st.selectbox(label, options=options, key=key)
+    if selected != "Custom (use sliders)":
+        w = WEIGHT_PRESETS[selected]
+        # Apply globally (do NOT touch slider keys here; those may exist on other pages).
+        _apply_preset(selected, set_slider_keys=False)
+        return w
+
+    # Custom: use global weights if present, otherwise defaults
+    return st.session_state.global_weights if "global_weights" in st.session_state else EloWeights()
+
 
 @st.cache_data
 def load_static_database(gender: str) -> Dict[str, any]:
@@ -109,23 +171,67 @@ def load_postgres_players_df(gender: str) -> pd.DataFrame:
           WHERE gender = :gender AND active = 1
           ORDER BY created_at DESC, id DESC
           LIMIT 1
+        ),
+        current AS (
+          SELECT
+            c.*,
+            COALESCE(ta.tier, 'D') AS tier
+          FROM tennis.elo_current c
+          LEFT JOIN active_set s ON true
+          LEFT JOIN tennis.tier_assignments ta
+            ON ta.tier_set_id = s.id AND ta.player_id = c.player_id
+          WHERE c.gender = :gender
+        ),
+        anchor AS (
+          SELECT max(as_of) AS as_of
+          FROM current
+        ),
+        targets AS (
+          SELECT
+            (as_of - interval '28 days') AS t4w,
+            (as_of - interval '84 days') AS t12w
+          FROM anchor
         )
         SELECT
           c.player_name AS name,
-          COALESCE(ta.tier, 'D') AS tier,
+          c.tier AS tier,
           c.elo,
           c.helo,
           c.celo,
           c.gelo,
-          c.yelo,
           c.rank AS ranking,
           c.elo_rank,
-          c.as_of
-        FROM tennis.elo_current c
-        LEFT JOIN active_set s ON true
-        LEFT JOIN tennis.tier_assignments ta
-          ON ta.tier_set_id = s.id AND ta.player_id = c.player_id
-        WHERE c.gender = :gender
+          c.as_of,
+
+          e4.elo AS elo_4w,
+          e12.elo AS elo_12w,
+
+          (
+            0.75 * (CASE WHEN c.elo IS NOT NULL AND e4.elo IS NOT NULL THEN (c.elo - e4.elo) ELSE 0.0 END)
+            +
+            0.25 * (CASE WHEN c.elo IS NOT NULL AND e12.elo IS NOT NULL THEN (c.elo - e12.elo) ELSE 0.0 END)
+          ) AS form
+        FROM current c
+        LEFT JOIN LATERAL (
+          SELECT r.elo
+          FROM tennis.elo_ratings r
+          JOIN tennis.elo_snapshots s ON s.id = r.snapshot_id
+          WHERE r.player_name = c.player_name
+            AND s.gender = :gender
+            AND s.scraped_at <= (SELECT t4w FROM targets)
+          ORDER BY s.scraped_at DESC, r.id DESC
+          LIMIT 1
+        ) e4 ON true
+        LEFT JOIN LATERAL (
+          SELECT r.elo
+          FROM tennis.elo_ratings r
+          JOIN tennis.elo_snapshots s ON s.id = r.snapshot_id
+          WHERE r.player_name = c.player_name
+            AND s.gender = :gender
+            AND s.scraped_at <= (SELECT t12w FROM targets)
+          ORDER BY s.scraped_at DESC, r.id DESC
+          LIMIT 1
+        ) e12 ON true
         ORDER BY c.elo_rank NULLS LAST, c.player_name
         """
     )
@@ -159,10 +265,10 @@ def load_database_df(gender: str) -> pd.DataFrame:
                     "helo": data.helo,
                     "celo": data.celo,
                     "gelo": data.gelo,
-                    "yelo": data.yelo,
                     "ranking": data.ranking if hasattr(data, "ranking") else None,
                     "elo_rank": None,
                     "as_of": None,
+                    "form": data.form if hasattr(data, "form") else None,
                 }
             )
         return pd.DataFrame(rows)
@@ -179,7 +285,6 @@ def create_player_from_static_data(name: str, data: any) -> Player:
         helo=data.helo,
         celo=data.celo,
         gelo=data.gelo,
-        yelo=data.yelo,
         atp_rank=data.ranking if hasattr(data, 'ranking') else None,
         wta_rank=data.ranking if hasattr(data, 'ranking') else None
     )
@@ -205,7 +310,6 @@ def display_database_overview(db: Dict[str, any], gender: str):
             'hElo': data.helo,
             'cElo': data.celo,
             'gElo': data.gelo,
-            'yElo': data.yelo,
             'Form': data.form if hasattr(data, 'form') else None,
             'Ranking': data.ranking if hasattr(data, 'ranking') else None
         })
@@ -305,6 +409,12 @@ def display_player_search(df: pd.DataFrame):
     
     if selected_tiers:
         tier_filtered_df = df[df['Tier'].isin(selected_tiers)]
+        # Optional sort
+        sort_options = [c for c in ["Elo Rank", "Elo", "Form", "Form Rank", "Ranking", "Name"] if c in tier_filtered_df.columns]
+        sort_by = st.selectbox("Sort by:", options=sort_options or ["Name"])
+        ascending = st.checkbox("Ascending", value=False)
+        if sort_by in tier_filtered_df.columns:
+            tier_filtered_df = tier_filtered_df.sort_values(by=sort_by, ascending=ascending, na_position="last")
         st.dataframe(tier_filtered_df, use_container_width=True)
 
 
@@ -313,16 +423,9 @@ def display_match_simulation(db: Dict[str, any], gender: str = 'women'):
     st.subheader("🎾 Match Simulation")
     
     # Check if global weights are available
-    if 'global_weights' in st.session_state:
-        st.info("Using global Elo weights from the 'Elo Weights' tab.")
-        simulator = EloMatchSimulator(weights=st.session_state.global_weights)
-        
-        # Show current form parameters
-        weights = st.session_state.global_weights
-        st.info(f"Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
-    else:
-        st.warning("No global weights set. Using default weights. Set weights in the 'Elo Weights' tab.")
-        simulator = create_match_simulator()
+    weights = _weights_selector("Preset (Match Simulation):", key=f"preset_match_sim_{gender}")
+    simulator = EloMatchSimulator(weights=weights)
+    st.info(f"Using weights: total=1.0, form_scale={weights.form_elo_scale:.1f}, form_cap={weights.form_elo_cap:.1f}")
     
     # Show gender-specific information
     if gender == 'men':
@@ -362,7 +465,6 @@ def display_match_simulation(db: Dict[str, any], gender: str = 'women'):
             st.markdown(f"hElo: {player1.helo:.1f}")
             st.markdown(f"cElo: {player1.celo:.1f}")
             st.markdown(f"gElo: {player1.gelo:.1f}")
-            st.markdown(f"yElo: {player1.yelo:.1f}")
             st.markdown(f"Form: {player1.form:.1f}" if hasattr(player1, 'form') and player1.form is not None else "Form: N/A")
         
         with col2:
@@ -372,7 +474,6 @@ def display_match_simulation(db: Dict[str, any], gender: str = 'women'):
             st.markdown(f"hElo: {player2.helo:.1f}")
             st.markdown(f"cElo: {player2.celo:.1f}")
             st.markdown(f"gElo: {player2.gelo:.1f}")
-            st.markdown(f"yElo: {player2.yelo:.1f}")
             st.markdown(f"Form: {player2.form:.1f}" if hasattr(player2, 'form') and player2.form is not None else "Form: N/A")
         
         # Calculate win probability
@@ -459,10 +560,11 @@ def create_player_from_row(row: dict, gender: str) -> Player:
         helo=_num_or_none(row.get("helo")),
         celo=_num_or_none(row.get("celo")),
         gelo=_num_or_none(row.get("gelo")),
-        yelo=_num_or_none(row.get("yelo")),
         atp_rank=row.get("ranking") if gender == "men" else None,
         wta_rank=row.get("ranking") if gender == "women" else None,
     )
+    # `form` is derived from Elo deltas over time (Elo points), see load_postgres_players_df().
+    p.form = _num_or_none(row.get("form")) or 0.0
     return p
 
 
@@ -473,10 +575,8 @@ def display_match_simulation_from_df(df: pd.DataFrame, gender: str):
         st.error("No player data available.")
         return
 
-    if 'global_weights' in st.session_state:
-        simulator = EloMatchSimulator(weights=st.session_state.global_weights)
-    else:
-        simulator = create_match_simulator()
+    weights = _weights_selector("Preset (Match Simulation):", key=f"preset_match_sim_df_{gender}")
+    simulator = EloMatchSimulator(weights=weights)
 
     player_names = df["name"].tolist()
 
@@ -691,8 +791,8 @@ def _simulate_draw_tree_once(
                 "helo": 1500,
                 "celo": 1500,
                 "gelo": 1500,
-                "yelo": None,
                 "ranking": None,
+                "form": 0.0,
             },
         )
 
@@ -751,10 +851,10 @@ def simulate_draw_multiple(df_players: pd.DataFrame, entries: list[dict], gender
     Simulate a fixed draw bracket using the given entries ordering.
     BYE entries auto-advance.
     """
-    if 'global_weights' in st.session_state:
-        match_simulator = EloMatchSimulator(weights=st.session_state.global_weights)
-    else:
-        match_simulator = create_match_simulator()
+    # Prefer the globally selected weights (or defaults).
+    match_simulator = EloMatchSimulator(
+        weights=st.session_state.global_weights if "global_weights" in st.session_state else EloWeights()
+    )
 
     # Map name -> row
     row_map = {r["name"]: r for r in df_players.to_dict(orient="records")}
@@ -766,7 +866,7 @@ def simulate_draw_multiple(df_players: pd.DataFrame, entries: list[dict], gender
             ordered.append({"is_bye": True, "name": "BYE"})
         else:
             name = e["player_name"]
-            row = row_map.get(name, {"name": name, "tier": "D", "elo": 1500, "helo": 1500, "celo": 1500, "gelo": 1500, "yelo": 1500, "ranking": None})
+            row = row_map.get(name, {"name": name, "tier": "D", "elo": 1500, "helo": 1500, "celo": 1500, "gelo": 1500, "ranking": None, "form": 0.0})
             ordered.append({"is_bye": False, "row": row})
 
     def play_round(players_list: list[dict]) -> list[dict]:
@@ -830,36 +930,19 @@ def display_elo_weights_config():
     """Display Elo weights configuration interface."""
     st.header('⚖️ Elo Weights Configuration')
     st.write('Configure the weights for different Elo rating types in match simulation.')
-    
-    # Get current weights from session state or use defaults
-    if 'preset_elo' in st.session_state and 'preset_used' not in st.session_state:
-        # Use preset values if available and not yet used
-        elo_default = st.session_state.preset_elo
-        helo_default = st.session_state.preset_helo
-        celo_default = st.session_state.preset_celo
-        gelo_default = st.session_state.preset_gelo
-        yelo_default = st.session_state.preset_yelo
-        form_k_default = st.session_state.preset_form_k
-        form_alpha_default = st.session_state.preset_form_alpha
-        # Mark preset as used
-        st.session_state.preset_used = True
-    elif 'global_weights' in st.session_state:
-        current_weights = st.session_state.global_weights
-        elo_default = current_weights.elo_weight
-        helo_default = current_weights.helo_weight
-        celo_default = current_weights.celo_weight
-        gelo_default = current_weights.gelo_weight
-        yelo_default = current_weights.yelo_weight
-        form_k_default = current_weights.form_k
-        form_alpha_default = current_weights.form_alpha
-    else:
-        elo_default = 0.4
-        helo_default = 0.2
-        celo_default = 0.2
-        gelo_default = 0.1
-        yelo_default = 0.1
-        form_k_default = 0.1
-        form_alpha_default = 0.7
+
+    # Ensure sliders reflect current global weights when arriving on this page.
+    base_w = st.session_state.global_weights if "global_weights" in st.session_state else WEIGHT_PRESETS["Overall (default)"]
+    sig = _weights_sig(base_w)
+    if st.session_state.get("_weights_sliders_sig") != sig:
+        # Safe here: this runs before any slider widgets are created in this function.
+        st.session_state["elo_weight"] = float(base_w.elo_weight)
+        st.session_state["helo_weight"] = float(base_w.helo_weight)
+        st.session_state["celo_weight"] = float(base_w.celo_weight)
+        st.session_state["gelo_weight"] = float(base_w.gelo_weight)
+        st.session_state["form_elo_scale_slider"] = float(base_w.form_elo_scale)
+        st.session_state["form_elo_cap_slider"] = float(base_w.form_elo_cap)
+        st.session_state["_weights_sliders_sig"] = sig
     
     # Weight configuration
     st.subheader('Weight Configuration')
@@ -868,13 +951,41 @@ def display_elo_weights_config():
     col1, col2 = st.columns(2)
     
     with col1:
-        elo_weight = st.slider('Overall Elo Weight', 0.0, 1.0, elo_default, 0.05, key="elo_weight")
-        helo_weight = st.slider('Hard Court Elo Weight', 0.0, 1.0, helo_default, 0.05, key="helo_weight")
-        celo_weight = st.slider('Clay Court Elo Weight', 0.0, 1.0, celo_default, 0.05, key="celo_weight")
+        elo_weight = st.slider(
+            'Overall Elo Weight',
+            0.0,
+            1.0,
+            float(st.session_state.get("elo_weight", base_w.elo_weight)),
+            0.05,
+            key="elo_weight",
+        )
+        helo_weight = st.slider(
+            'Hard Court Elo Weight',
+            0.0,
+            1.0,
+            float(st.session_state.get("helo_weight", base_w.helo_weight)),
+            0.05,
+            key="helo_weight",
+        )
+        celo_weight = st.slider(
+            'Clay Court Elo Weight',
+            0.0,
+            1.0,
+            float(st.session_state.get("celo_weight", base_w.celo_weight)),
+            0.05,
+            key="celo_weight",
+        )
     
     with col2:
-        gelo_weight = st.slider('Grass Court Elo Weight', 0.0, 1.0, gelo_default, 0.05, key="gelo_weight")
-        yelo_weight = st.slider('Year-to-Date Elo Weight', 0.0, 1.0, yelo_default, 0.05, key="yelo_weight")
+        gelo_weight = st.slider(
+            'Grass Court Elo Weight',
+            0.0,
+            1.0,
+            float(st.session_state.get("gelo_weight", base_w.gelo_weight)),
+            0.05,
+            key="gelo_weight",
+        )
+        # yElo intentionally removed from simulation model (sparse early season).
     
     # Form configuration
     st.subheader('Form Configuration')
@@ -883,17 +994,29 @@ def display_elo_weights_config():
     col1, col2 = st.columns(2)
     
     with col1:
-        form_k = st.slider('Form Steepness (k)', 0.01, 0.5, form_k_default, 0.01, 
-                          help="Controls how steeply form differences affect probability. Higher values = more impact.",
-                          key="form_k_slider")
+        form_elo_scale = st.slider(
+            'Form Elo Scale',
+            0.0,
+            400.0,
+            float(st.session_state.get("form_elo_scale_slider", base_w.form_elo_scale)),
+            10.0,
+            help="Converts rank-based form signal into Elo points. Higher = form matters more.",
+            key="form_elo_scale_slider",
+        )
     
     with col2:
-        form_alpha = st.slider('Form Weight (α)', 0.0, 1.0, form_alpha_default, 0.05,
-                              help="Weight for blending standard Elo (α) vs form probability (1-α). α=1.0 = Elo only, α=0.0 = Form only.",
-                              key="form_alpha_slider")
+        form_elo_cap = st.slider(
+            'Form Elo Cap',
+            0.0,
+            200.0,
+            float(st.session_state.get("form_elo_cap_slider", base_w.form_elo_cap)),
+            5.0,
+            help="Caps the maximum Elo boost/penalty from form (prevents extreme effects).",
+            key="form_elo_cap_slider",
+        )
     
     # Calculate total weight
-    total_weight = elo_weight + helo_weight + celo_weight + gelo_weight + yelo_weight
+    total_weight = elo_weight + helo_weight + celo_weight + gelo_weight
     
     # Display total weight
     if abs(total_weight - 1.0) < 0.01:
@@ -904,9 +1027,8 @@ def display_elo_weights_config():
             helo_weight=helo_weight,
             celo_weight=celo_weight,
             gelo_weight=gelo_weight,
-            yelo_weight=yelo_weight,
-            form_k=form_k,
-            form_alpha=form_alpha
+            form_elo_scale=form_elo_scale,
+            form_elo_cap=form_elo_cap,
         )
         st.session_state.global_weights = weights
         st.success('✅ Weights automatically saved! These weights will be used in all simulators.')
@@ -920,47 +1042,16 @@ def display_elo_weights_config():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button('Hard Court Focus'):
-            # Clear any existing preset usage flag
-            if 'preset_used' in st.session_state:
-                del st.session_state.preset_used
-            # Store preset values in different session state keys
-            st.session_state.preset_elo = 0.3
-            st.session_state.preset_helo = 0.4
-            st.session_state.preset_celo = 0.1
-            st.session_state.preset_gelo = 0.1
-            st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
-            st.rerun()
+        if st.button('Hard Court Focus', on_click=lambda: _apply_preset("Hard Court Focus", set_slider_keys=True)):
+            pass
     
     with col2:
-        if st.button('Clay Court Focus'):
-            # Clear any existing preset usage flag
-            if 'preset_used' in st.session_state:
-                del st.session_state.preset_used
-            st.session_state.preset_elo = 0.3
-            st.session_state.preset_helo = 0.1
-            st.session_state.preset_celo = 0.4
-            st.session_state.preset_gelo = 0.1
-            st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
-            st.rerun()
+        if st.button('Clay Court Focus', on_click=lambda: _apply_preset("Clay Court Focus", set_slider_keys=True)):
+            pass
     
     with col3:
-        if st.button('Grass Court Focus'):
-            # Clear any existing preset usage flag
-            if 'preset_used' in st.session_state:
-                del st.session_state.preset_used
-            st.session_state.preset_elo = 0.3
-            st.session_state.preset_helo = 0.1
-            st.session_state.preset_celo = 0.1
-            st.session_state.preset_gelo = 0.4
-            st.session_state.preset_yelo = 0.1
-            st.session_state.preset_form_k = 0.1
-            st.session_state.preset_form_alpha = 0.7
-            st.rerun()
+        if st.button('Grass Court Focus', on_click=lambda: _apply_preset("Grass Court Focus", set_slider_keys=True)):
+            pass
 
     # Show current weights if available
     if 'global_weights' in st.session_state:
@@ -973,10 +1064,9 @@ def display_elo_weights_config():
             st.metric("Clay Elo", f"{weights.celo_weight:.2f}")
         with col2:
             st.metric("Grass Elo", f"{weights.gelo_weight:.2f}")
-            st.metric("Year-to-date Elo", f"{weights.yelo_weight:.2f}")
         with col3:
-            st.metric("Form Steepness (k)", f"{weights.form_k:.3f}")
-            st.metric("Form Weight (α)", f"{weights.form_alpha:.2f}")
+            st.metric("Form Elo Scale", f"{weights.form_elo_scale:.1f}")
+            st.metric("Form Elo Cap", f"{weights.form_elo_cap:.1f}")
 
 
 def display_explorer():
@@ -986,6 +1076,9 @@ def display_explorer():
 
     gender = st.selectbox("Select Gender:", options=["men", "women"], format_func=lambda x: x.title(), key="explorer_gender")
     tour = "atp" if gender == "men" else "wta"
+    weights = _weights_selector("Preset (Explorer):", key=f"preset_explorer_{gender}")
+    # Ensure downstream tournament sims use the selected weights without touching slider widget keys.
+    _apply_weights(weights, set_slider_keys=False)
 
     sources = list_draw_sources(tour)
     if not sources:
@@ -1069,7 +1162,8 @@ def display_single_tournament():
     if df_players.empty:
         st.error("No player data available (Postgres).")
         return
-    match_simulator = create_match_simulator()
+    weights = _weights_selector("Preset (Single Tournament):", key=f"preset_single_tournament_{gender}")
+    match_simulator = EloMatchSimulator(weights=weights)
 
     tour = "atp" if gender == "men" else "wta"
     sources = list_draw_sources(tour)
@@ -1084,24 +1178,12 @@ def display_single_tournament():
         st.error("No successful draw snapshot found for this tournament.")
         return
     
-    # Add global weights option
-    if 'global_weights' in st.session_state:
-        weights = st.session_state.global_weights
-        st.info(f"Global Elo weights are available and will be used. Form parameters: k={weights.form_k:.3f}, α={weights.form_alpha:.2f}")
-    
     if st.button('Run Single Tournament Simulation'):
-        # Apply global weights if available
-        if 'global_weights' in st.session_state:
-            try:
-                match_simulator = EloMatchSimulator(weights=st.session_state.global_weights)
-            except Exception as e:
-                st.warning(f"Could not apply global weights: {e}. Using default weights.")
-
         winner, bracket_tree, _ = _simulate_draw_tree_once(
             df_players=df_players,
             gender=gender,
             snapshot_id=snapshot_id,
-            simulator=match_simulator if isinstance(match_simulator, EloMatchSimulator) else create_match_simulator(),
+            simulator=match_simulator,
             track_rounds=False,
         )
         st.success(f'Winner: {winner or "?"}')
@@ -1135,7 +1217,6 @@ def display_custom_weights():
             st.metric("Clay Elo", f"{weights.celo_weight:.2f}")
         with col2:
             st.metric("Grass Elo", f"{weights.gelo_weight:.2f}")
-            st.metric("Year-to-date Elo", f"{weights.yelo_weight:.2f}")
 
 
 def display_bracket_view():
@@ -1239,10 +1320,8 @@ def display_scorito_game_analysis():
 
     if st.button('Run Scorito Analysis'):
         with st.spinner(f'Running {num_simulations} simulations for Scorito analysis...'):
-            if 'global_weights' in st.session_state:
-                match_sim = EloMatchSimulator(weights=st.session_state.global_weights)
-            else:
-                match_sim = create_match_simulator()
+            weights = _weights_selector("Preset (Scorito):", key=f"preset_scorito_{gender}")
+            match_sim = EloMatchSimulator(weights=weights)
 
             # Tier lookup from df_players (already includes active tier)
             tier_by_name = {r["name"]: r.get("tier", "D") for r in df_players.to_dict(orient="records")}
@@ -1256,7 +1335,7 @@ def display_scorito_game_analysis():
                     df_players=df_players,
                     gender=gender,
                     snapshot_id=snapshot_id,
-                    simulator=match_sim if isinstance(match_sim, EloMatchSimulator) else create_match_simulator(),
+                    simulator=match_sim,
                     track_rounds=True,
                 )
 
@@ -1510,8 +1589,32 @@ def main():
         if df.empty:
             st.error("Failed to load database.")
             return
-        # Adapt to existing search component expectations (columns Name/Tier)
-        df2 = df.rename(columns={"name": "Name", "tier": "Tier", "elo": "Elo", "helo": "hElo", "celo": "cElo", "gelo": "gElo", "yelo": "yElo", "ranking": "Ranking"})
+        # Adapt to search component expectations, and include form + rank columns.
+        df2 = df.rename(
+            columns={
+                "name": "Name",
+                "tier": "Tier",
+                "elo": "Elo",
+                "helo": "hElo",
+                "celo": "cElo",
+                "gelo": "gElo",
+                "ranking": "Ranking",
+                "form": "Form",
+                "elo_rank": "Elo Rank",
+                "as_of": "As Of",
+            }
+        )
+
+        # Compute ranks for rating columns (1 = best). Missing values remain NaN.
+        for col, out_col in [
+            ("Elo", "Elo Value Rank"),
+            ("hElo", "hElo Value Rank"),
+            ("cElo", "cElo Value Rank"),
+            ("gElo", "gElo Value Rank"),
+            ("Form", "Form Rank"),
+        ]:
+            if col in df2.columns:
+                df2[out_col] = df2[col].rank(ascending=False, method="min")
         display_player_search(df2)
     
     elif page == 'Match Simulation':

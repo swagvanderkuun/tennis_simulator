@@ -6,12 +6,16 @@ Test script to verify that the final match is being simulated correctly.
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+from pathlib import Path
+import pytest
 
 from tennis_simulator.simulators.fixed_draw_elo_simulator import FixedDrawEloSimulator
 from tennis_simulator.core.models import Round
 
 def test_final_simulation():
     """Test that the final match is being simulated."""
+    if not Path("data/elo/importdata_men.txt").exists() or not Path("data/elo/importdata_women.txt").exists():
+        pytest.skip("Fixed-draw import files not present (data/elo/importdata_*.txt). Skipping fixed-draw tournament test.")
     print("Testing final match simulation...")
     
     # Create simulator

@@ -127,7 +127,7 @@ def test_surface_specific_weights():
         # Show weights
         weights = simulator.weights
         print(f"Weights: Elo={weights.elo_weight}, hElo={weights.helo_weight}, "
-              f"cElo={weights.celo_weight}, gElo={weights.gelo_weight}, yElo={weights.yelo_weight}")
+              f"cElo={weights.celo_weight}, gElo={weights.gelo_weight}")
         
         # Test Alcaraz vs Sinner
         winner, loser, details = simulator.simulate_match(alcaraz, sinner)
@@ -147,10 +147,11 @@ def test_custom_weights():
     
     # Test different weight configurations
     weight_configs = [
-        ("Overall Elo Focus", EloWeights(elo_weight=0.8, helo_weight=0.05, celo_weight=0.05, gelo_weight=0.05, yelo_weight=0.05)),
-        ("Hard Court Specialist", EloWeights(elo_weight=0.2, helo_weight=0.6, celo_weight=0.1, gelo_weight=0.05, yelo_weight=0.05)),
-        ("Clay Court Specialist", EloWeights(elo_weight=0.2, helo_weight=0.05, celo_weight=0.6, gelo_weight=0.1, yelo_weight=0.05)),
-        ("Recent Form Focus", EloWeights(elo_weight=0.3, helo_weight=0.2, celo_weight=0.2, gelo_weight=0.1, yelo_weight=0.2)),
+        ("Overall Elo Focus", EloWeights(elo_weight=0.8, helo_weight=0.1, celo_weight=0.05, gelo_weight=0.05)),
+        ("Hard Court Specialist", EloWeights(elo_weight=0.2, helo_weight=0.6, celo_weight=0.15, gelo_weight=0.05)),
+        ("Clay Court Specialist", EloWeights(elo_weight=0.2, helo_weight=0.1, celo_weight=0.6, gelo_weight=0.1)),
+        # yElo removed; mimic "more reactive" behavior by increasing form cap.
+        ("Higher Form Impact", EloWeights(elo_weight=0.45, helo_weight=0.25, celo_weight=0.20, gelo_weight=0.10, form_elo_cap=120.0)),
     ]
     
     for name, weights in weight_configs:

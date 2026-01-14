@@ -6,6 +6,8 @@ Test script for Scorito point calculation
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+from pathlib import Path
+import pytest
 
 from tennis_simulator.simulators.fixed_draw_elo_simulator import FixedDrawEloSimulator
 from tennis_simulator.core.models import Round
@@ -27,6 +29,8 @@ def get_player_tier(player):
 
 def test_scorito_calculation():
     print("Testing Scorito point calculation...")
+    if not Path("data/elo/importdata_men.txt").exists() or not Path("data/elo/importdata_women.txt").exists():
+        pytest.skip("Fixed-draw import files not present (data/elo/importdata_*.txt). Skipping Scorito fixed-draw test.")
     
     # Parse scoring
     scoring, header = parse_scorito_scoring()

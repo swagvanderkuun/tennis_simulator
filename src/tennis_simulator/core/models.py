@@ -63,7 +63,9 @@ class Player:
     
     def get_best_elo(self) -> Optional[float]:
         """Get the best available Elo rating."""
-        return self.yelo or self.elo or self.helo or self.celo or self.gelo
+        # yElo is intentionally ignored in simulations (sparse early season and
+        # conceptually different from 52-week Elo).
+        return self.elo or self.helo or self.celo or self.gelo
     
     def get_grass_elo(self) -> Optional[float]:
         """Get grass court Elo rating, fallback to general Elo."""

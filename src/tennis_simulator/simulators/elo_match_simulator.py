@@ -12,7 +12,7 @@ import numpy
 from typing import Dict, Optional, Tuple
 from dataclasses import dataclass
 
-from ..core.models import Player, Match
+from ..core.models import Player
 
 
 def five_set_probability(p3: float) -> float:
@@ -54,26 +54,29 @@ def five_set_probability(p3: float) -> float:
 @dataclass
 class EloWeights:
     """Configuration for Elo rating weights in match simulation"""
-    elo_weight: float = 0.4      # Overall Elo weight
-    helo_weight: float = 0.2     # Hard court Elo weight
-    celo_weight: float = 0.2     # Clay court Elo weight
-    gelo_weight: float = 0.1     # Grass court Elo weight
-    yelo_weight: float = 0.1     # Year-to-date Elo weight
-    form_k: float = 0.1          # Form steepness parameter (k)
-    form_alpha: float = 0.7      # Form weight parameter (α) - weight for standard vs form probability
+    # Rating blend (must sum to 1.0)
+    elo_weight: float = 0.45      # Overall Elo weight
+    helo_weight: float = 0.25     # Hard court Elo weight
+    celo_weight: float = 0.20     # Clay court Elo weight
+    gelo_weight: float = 0.10     # Grass court Elo weight
+
+    # Form -> Elo adjustment
+    # `player.form` is expected to be an Elo-point adjustment derived from Elo movement
+    # over time (e.g. 4w/12w delta blend). We optionally scale and clamp it here.
+    form_elo_scale: float = 1.0
+    form_elo_cap: float = 80.0
     
     def __post_init__(self):
         """Validate that weights sum to 1.0"""
-        total_weight = (self.elo_weight + self.helo_weight + 
-                       self.celo_weight + self.gelo_weight + self.yelo_weight)
+        total_weight = (self.elo_weight + self.helo_weight +
+                        self.celo_weight + self.gelo_weight)
         if abs(total_weight - 1.0) > 0.001:
             raise ValueError(f"Elo weights must sum to 1.0, got {total_weight}")
-        
-        # Validate form parameters
-        if self.form_k <= 0:
-            raise ValueError(f"Form steepness (k) must be positive, got {self.form_k}")
-        if not 0 <= self.form_alpha <= 1:
-            raise ValueError(f"Form weight (α) must be between 0 and 1, got {self.form_alpha}")
+
+        if self.form_elo_scale < 0:
+            raise ValueError(f"form_elo_scale must be >= 0, got {self.form_elo_scale}")
+        if self.form_elo_cap < 0:
+            raise ValueError(f"form_elo_cap must be >= 0, got {self.form_elo_cap}")
 
 
 class EloMatchSimulator:
@@ -102,49 +105,51 @@ class EloMatchSimulator:
         Returns:
             Weighted Elo rating
         """
-        weighted_sum = 0.0
-        
-        # Add weighted contributions from each Elo type
-        if player.elo is not None:
-            weighted_sum += self.weights.elo_weight * player.elo
-        
-        if player.helo is not None:
-            weighted_sum += self.weights.helo_weight * player.helo
-            
-        if player.celo is not None:
-            weighted_sum += self.weights.celo_weight * player.celo
-            
-        if player.gelo is not None:
-            weighted_sum += self.weights.gelo_weight * player.gelo
-            
-        if player.yelo is not None:
-            weighted_sum += self.weights.yelo_weight * player.yelo
-        
-        return weighted_sum
-    
-    def calculate_form_probability(self, player1: Player, player2: Player) -> float:
+        # IMPORTANT: Do not bias probabilities due to missing surface components.
+        # If a component is missing, fall back to a reasonable "base" rating rather than
+        # dropping its weight from the sum. This keeps the total weight consistent and
+        # avoids systematic under/over-rating players with NULL columns.
+
+        base = (
+            player.elo
+            if player.elo is not None
+            else (player.helo if player.helo is not None else (player.celo if player.celo is not None else player.gelo))
+        )
+        if base is None:
+            # Neutral baseline; absolute value cancels in Elo diffs if both are missing,
+            # but provides sane behavior when only one player is missing all ratings.
+            base = 1500.0
+
+        elo = player.elo if player.elo is not None else base
+        helo = player.helo if player.helo is not None else base
+        celo = player.celo if player.celo is not None else base
+        gelo = player.gelo if player.gelo is not None else base
+
+        return (
+            self.weights.elo_weight * float(elo)
+            + self.weights.helo_weight * float(helo)
+            + self.weights.celo_weight * float(celo)
+            + self.weights.gelo_weight * float(gelo)
+        )
+
+    def calculate_form_elo_adjustment(self, player: Player) -> float:
         """
-        Calculate form-based win probability using the formula:
-        P_form = 1 / (1 + e^(-k * (form_player1 - form_player2)))
-        
-        Args:
-            player1: First player
-            player2: Second player
-            
-        Returns:
-            Form-based probability that player1 wins (0.0 to 1.0)
+        Convert rank-based `player.form` to an Elo-point adjustment (clamped).
+
+        `player.form` should be derived from weekly Elo movement (Elo points).
+        Positive means improving, negative means declining.
         """
-        # Get form values, default to 0 if not available
-        form1 = getattr(player1, 'form', 0.0) or 0.0
-        form2 = getattr(player2, 'form', 0.0) or 0.0
-        
-        # Calculate form difference
-        form_diff = form1 - form2
-        
-        # Apply form formula: P_form = 1 / (1 + e^(-k * form_diff))
-        form_probability = 1 / (1 + math.exp(-self.weights.form_k * form_diff))
-        
-        return form_probability
+        raw = getattr(player, "form", 0.0) or 0.0
+        try:
+            raw_f = float(raw)
+        except Exception:
+            raw_f = 0.0
+
+        adj = raw_f * float(self.weights.form_elo_scale)
+        cap = float(self.weights.form_elo_cap)
+        if cap > 0:
+            adj = max(-cap, min(cap, adj))
+        return adj
     
     def _calculate_standard_probability(self, player1: Player, player2: Player) -> float:
         """
@@ -164,10 +169,10 @@ class EloMatchSimulator:
     
     def calculate_win_probability(self, player1: Player, player2: Player, gender: str = 'women') -> float:
         """
-        Calculate the probability that player1 beats player2 using blended Elo and form probabilities.
-        
-        Formula: P_new = α * P_standard + (1-α) * P_form
-        For men: Apply five-set probability adjustment after blending
+        Calculate win probability using *effective* Elo:
+          Elo* = weighted_surface_elo + form_elo_adjustment
+
+        For men: apply five-set probability adjustment to the final probability.
         
         Args:
             player1: First player
@@ -175,26 +180,17 @@ class EloMatchSimulator:
             gender: 'men' or 'women' to determine if five-set adjustment is applied
             
         Returns:
-            Blended probability that player1 wins (0.0 to 1.0)
+            Probability that player1 wins (0.0 to 1.0)
         """
-        # Calculate standard Elo-based probability
-        rating1 = self.calculate_weighted_rating(player1)
-        rating2 = self.calculate_weighted_rating(player2)
+        rating1 = self.calculate_weighted_rating(player1) + self.calculate_form_elo_adjustment(player1)
+        rating2 = self.calculate_weighted_rating(player2) + self.calculate_form_elo_adjustment(player2)
         rating_diff = rating2 - rating1
-        p_standard = 1 / (1 + math.pow(10, rating_diff / 400))
-        
-        # Calculate form-based probability
-        p_form = self.calculate_form_probability(player1, player2)
-        
-        # Blend probabilities: P_new = α * P_standard + (1-α) * P_form
-        p_blended = (self.weights.form_alpha * p_standard + 
-                    (1 - self.weights.form_alpha) * p_form)
-        
-        # Apply five-set adjustment for men only
+        p = 1 / (1 + math.pow(10, rating_diff / 400))
+
         if gender.lower() == 'men':
-            p_blended = five_set_probability(p_blended)
-        
-        return p_blended
+            p = five_set_probability(p)
+
+        return p
     
     def simulate_match(self, player1: Player, player2: Player, gender: str = 'women') -> Tuple[Player, Player, Dict]:
         """
@@ -212,15 +208,16 @@ class EloMatchSimulator:
         p1_win_prob = self.calculate_win_probability(player1, player2, gender)
         p2_win_prob = 1 - p1_win_prob
         
-        # Calculate individual components for match details
+        # Components for match details
         p1_standard = self._calculate_standard_probability(player1, player2)
-        p1_form = self.calculate_form_probability(player1, player2)
         p2_standard = 1 - p1_standard
-        p2_form = 1 - p1_form
-        
-        # Calculate blended probability before five-set adjustment (for details)
-        p1_blended_before = (self.weights.form_alpha * p1_standard + 
-                           (1 - self.weights.form_alpha) * p1_form)
+
+        base1 = self.calculate_weighted_rating(player1)
+        base2 = self.calculate_weighted_rating(player2)
+        form_adj1 = self.calculate_form_elo_adjustment(player1)
+        form_adj2 = self.calculate_form_elo_adjustment(player2)
+        eff1 = base1 + form_adj1
+        eff2 = base2 + form_adj2
         
         # Determine winner based on probabilities
         if random.random() < p1_win_prob:
@@ -235,20 +232,20 @@ class EloMatchSimulator:
             'player1_win_probability': p1_win_prob,
             'player2_win_probability': p2_win_prob,
             'winner_probability': winner_prob,
-            'rating_difference': self.calculate_weighted_rating(player2) - self.calculate_weighted_rating(player1),
-            'weighted_rating_player1': self.calculate_weighted_rating(player1),
-            'weighted_rating_player2': self.calculate_weighted_rating(player2),
+            'rating_difference': eff2 - eff1,
+            'weighted_rating_player1': base1,
+            'weighted_rating_player2': base2,
+            'effective_rating_player1': eff1,
+            'effective_rating_player2': eff2,
             # Form-related details
             'player1_standard_probability': p1_standard,
             'player2_standard_probability': p2_standard,
-            'player1_form_probability': p1_form,
-            'player2_form_probability': p2_form,
-            'player1_blended_before_five_set': p1_blended_before,
-            'player1_form': getattr(player1, 'form', None),
-            'player2_form': getattr(player2, 'form', None),
-            'form_difference': (getattr(player1, 'form', 0.0) or 0.0) - (getattr(player2, 'form', 0.0) or 0.0),
-            'form_weight_alpha': self.weights.form_alpha,
-            'form_steepness_k': self.weights.form_k,
+            'player1_form_raw': getattr(player1, 'form', None),
+            'player2_form_raw': getattr(player2, 'form', None),
+            'player1_form_elo_adjustment': form_adj1,
+            'player2_form_elo_adjustment': form_adj2,
+            'form_elo_scale': self.weights.form_elo_scale,
+            'form_elo_cap': self.weights.form_elo_cap,
             'gender': gender,
             'five_set_adjusted': gender.lower() == 'men'
         }
@@ -267,40 +264,36 @@ class EloMatchSimulator:
         """
         surface_weights = {
             'hard': EloWeights(
-                elo_weight=0.3,
-                helo_weight=0.4,  # Higher weight for hard court
-                celo_weight=0.1,
-                gelo_weight=0.1,
-                yelo_weight=0.1,
-                form_k=0.1,
-                form_alpha=0.7
+                elo_weight=0.30,
+                helo_weight=0.45,  # Higher weight for hard court
+                celo_weight=0.15,
+                gelo_weight=0.10,
+                form_elo_scale=self.weights.form_elo_scale,
+                form_elo_cap=self.weights.form_elo_cap
             ),
             'clay': EloWeights(
-                elo_weight=0.3,
-                helo_weight=0.1,
-                celo_weight=0.4,  # Higher weight for clay court
-                gelo_weight=0.1,
-                yelo_weight=0.1,
-                form_k=0.1,
-                form_alpha=0.7
+                elo_weight=0.30,
+                helo_weight=0.15,
+                celo_weight=0.45,  # Higher weight for clay court
+                gelo_weight=0.10,
+                form_elo_scale=self.weights.form_elo_scale,
+                form_elo_cap=self.weights.form_elo_cap
             ),
             'grass': EloWeights(
-                elo_weight=0.3,
-                helo_weight=0.1,
-                celo_weight=0.1,
-                gelo_weight=0.4,  # Higher weight for grass court
-                yelo_weight=0.1,
-                form_k=0.1,
-                form_alpha=0.7
+                elo_weight=0.30,
+                helo_weight=0.15,
+                celo_weight=0.10,
+                gelo_weight=0.45,  # Higher weight for grass court
+                form_elo_scale=self.weights.form_elo_scale,
+                form_elo_cap=self.weights.form_elo_cap
             ),
             'overall': EloWeights(
-                elo_weight=0.4,
-                helo_weight=0.2,
-                celo_weight=0.2,
-                gelo_weight=0.1,
-                yelo_weight=0.1,
-                form_k=0.1,
-                form_alpha=0.7
+                elo_weight=0.45,
+                helo_weight=0.25,
+                celo_weight=0.20,
+                gelo_weight=0.10,
+                form_elo_scale=self.weights.form_elo_scale,
+                form_elo_cap=self.weights.form_elo_cap
             )
         }
         

@@ -120,9 +120,9 @@ def test_custom_weights():
     
     # Test different weight configurations
     weight_configs = [
-        ("Overall Focus", EloWeights(elo_weight=0.6, helo_weight=0.15, celo_weight=0.15, gelo_weight=0.05, yelo_weight=0.05)),
-        ("Grass Specialist", EloWeights(elo_weight=0.2, helo_weight=0.1, celo_weight=0.1, gelo_weight=0.5, yelo_weight=0.1)),
-        ("Recent Form", EloWeights(elo_weight=0.2, helo_weight=0.2, celo_weight=0.2, gelo_weight=0.2, yelo_weight=0.2)),
+        ("Overall Focus", EloWeights(elo_weight=0.6, helo_weight=0.2, celo_weight=0.15, gelo_weight=0.05)),
+        ("Grass Specialist", EloWeights(elo_weight=0.2, helo_weight=0.1, celo_weight=0.1, gelo_weight=0.6)),
+        ("Higher Form Impact", EloWeights(elo_weight=0.45, helo_weight=0.25, celo_weight=0.20, gelo_weight=0.10, form_elo_cap=120.0)),
     ]
     
     for name, weights in weight_configs:

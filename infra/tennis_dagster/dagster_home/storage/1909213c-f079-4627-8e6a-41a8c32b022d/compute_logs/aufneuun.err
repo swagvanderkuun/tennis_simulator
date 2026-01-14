@@ -1,0 +1,6 @@
+2026-01-14 20:11:12 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - 3094509 - LOGS_CAPTURED - Started capturing logs in process (pid: 3094509).
+2026-01-14 20:11:12 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - 3094509 - backfill_elo_snapshot_op - STEP_START - Started execution of step "backfill_elo_snapshot_op".
+2026-01-14 20:11:13 +0000 - dagster - INFO - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - backfill_elo_snapshot_op - Backfill women elo from /opt/dagster/app/backfills/wta_elo_2015-09-04.htm (as_of=2025-09-04) update_current=False
+2026-01-14 20:11:13 +0000 - dagster - INFO - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - backfill_elo_snapshot_op - Backfill stored snapshot_id=33 rows=513
+2026-01-14 20:11:13 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - 3094509 - backfill_elo_snapshot_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-14 20:11:13 +0000 - dagster - DEBUG - backfill_elo_snapshot_job - 1909213c-f079-4627-8e6a-41a8c32b022d - 3094509 - backfill_elo_snapshot_op - STEP_SUCCESS - Finished execution of step "backfill_elo_snapshot_op" in 987ms.

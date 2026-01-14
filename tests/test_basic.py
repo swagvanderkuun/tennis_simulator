@@ -9,10 +9,9 @@ import pytest
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from tennis_simulator import (
-    Player, Match, Tournament, Round, Gender, Tier, ScoritoGame,
-    player_db, TournamentSimulator, PlayerSelector
-)
+from tennis_simulator.core.models import Player, Match, Tournament, Round, Gender, Tier, ScoritoGame
+from tennis_simulator.data.player_database import player_db
+from tennis_simulator.utils.player_selector import PlayerSelector
 
 
 def test_imports():
@@ -25,7 +24,6 @@ def test_imports():
     assert Tier is not None
     assert ScoritoGame is not None
     assert player_db is not None
-    assert TournamentSimulator is not None
     assert PlayerSelector is not None
 
 
@@ -87,7 +85,7 @@ def test_match_simulation():
     player1 = Player("Player 1", "USA", 1, Tier.A, elo=2000)
     player2 = Player("Player 2", "ESP", 2, Tier.A, elo=1900)
     
-    match = Match(player1, player2, Round.R64)
+    match = Match(player1, player2, Round.R1)
     
     # Simulate match
     winner = match.simulate()
@@ -132,9 +130,10 @@ def test_enum_values():
     assert Tier.C.value == "C"
     assert Tier.D.value == "D"
     
-    assert Round.R64.value == "R64"
-    assert Round.R32.value == "R32"
-    assert Round.R16.value == "R16"
+    assert Round.R1.value == "R1"
+    assert Round.R2.value == "R2"
+    assert Round.R3.value == "R3"
+    assert Round.R4.value == "R4"
     assert Round.QF.value == "QF"
     assert Round.SF.value == "SF"
     assert Round.F.value == "F"
@@ -158,7 +157,8 @@ def test_player_methods():
     
     assert player.get_clean_name() == "Test Player"
     assert player.get_primary_rank() == 5
-    assert player.get_best_elo() == 2100  # Should return yelo as highest
+    # yElo is intentionally ignored for simulation (sparse early season).
+    assert player.get_best_elo() == 2000
     assert player.get_grass_elo() == 2050  # Should return gelo
     assert player.is_seeded() is True
 
