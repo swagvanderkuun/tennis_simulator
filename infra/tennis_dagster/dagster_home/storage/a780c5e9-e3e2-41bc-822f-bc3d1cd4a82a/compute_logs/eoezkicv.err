@@ -1,0 +1,7 @@
+2026-01-15 18:52:33 +0000 - dagster - DEBUG - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - 295 - LOGS_CAPTURED - Started capturing logs in process (pid: 295).
+2026-01-15 18:52:33 +0000 - dagster - DEBUG - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - 295 - scrape_draw_op - STEP_START - Started execution of step "scrape_draw_op".
+2026-01-15 18:52:34 +0000 - dagster - INFO - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - scrape_draw_op - scrape_draw_op fetching https://www.tennisabstract.com/current/2026AustralianOpenWomenForecast.html
+2026-01-15 18:52:34 +0000 - dagster - INFO - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - scrape_draw_op - Parsed draw: 2026 WTA Australian Open Womens' entries=128
+2026-01-15 18:52:37 +0000 - dagster - INFO - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - scrape_draw_op - Stored draw snapshot_id=5 source_id=5
+2026-01-15 18:52:37 +0000 - dagster - DEBUG - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - 295 - scrape_draw_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-15 18:52:37 +0000 - dagster - DEBUG - scrape_draw_job - a780c5e9-e3e2-41bc-822f-bc3d1cd4a82a - 295 - scrape_draw_op - STEP_SUCCESS - Finished execution of step "scrape_draw_op" in 4.33s.

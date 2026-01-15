@@ -1,0 +1,7 @@
+2026-01-15 19:10:25 +0000 - dagster - DEBUG - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - 479 - LOGS_CAPTURED - Started capturing logs in process (pid: 479).
+2026-01-15 19:10:25 +0000 - dagster - DEBUG - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - 479 - scrape_draw_op - STEP_START - Started execution of step "scrape_draw_op".
+2026-01-15 19:10:26 +0000 - dagster - INFO - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - scrape_draw_op - scrape_draw_op fetching https://www.tennisabstract.com/current/2026AustralianOpenMenForecast.html
+2026-01-15 19:10:26 +0000 - dagster - INFO - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - scrape_draw_op - Parsed draw: 2026 ATP Australian Open Men's entries=128
+2026-01-15 19:10:29 +0000 - dagster - INFO - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - scrape_draw_op - Stored draw snapshot_id=8 source_id=6
+2026-01-15 19:10:29 +0000 - dagster - DEBUG - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - 479 - scrape_draw_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-15 19:10:29 +0000 - dagster - DEBUG - scrape_draw_job - 83811ad2-1347-4582-8161-95814c6bbefc - 479 - scrape_draw_op - STEP_SUCCESS - Finished execution of step "scrape_draw_op" in 3.99s.

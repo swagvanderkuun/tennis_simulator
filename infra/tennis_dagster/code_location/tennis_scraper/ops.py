@@ -512,7 +512,10 @@ def backfill_elo_snapshot_op(context) -> None:
 
 @op(
     config_schema={
-        "source_url": str,
+        # Default is intentionally empty so Dagster Launchpad shows the config shape,
+        # but users can paste a URL to run. If empty at runtime, we fall back to
+        # TA_DRAW_EXAMPLE_URL (optional) or raise.
+        "source_url": Field(str, is_required=False, default_value=""),
     }
 )
 def scrape_draw_op(context) -> None:

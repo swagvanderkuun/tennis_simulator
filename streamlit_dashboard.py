@@ -77,6 +77,14 @@ st.markdown("""
 WEIGHT_PRESETS: dict[str, EloWeights] = {
     "Custom (use sliders)": EloWeights(),  # placeholder; actual value comes from sliders/global_weights
     "Overall (default)": EloWeights(elo_weight=0.45, helo_weight=0.25, celo_weight=0.20, gelo_weight=0.10),
+    "Elo only": EloWeights(
+        elo_weight=1.0,
+        helo_weight=0.0,
+        celo_weight=0.0,
+        gelo_weight=0.0,
+        form_elo_scale=0.0,
+        form_elo_cap=0.0,
+    ),
     "Hard Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.50, celo_weight=0.15, gelo_weight=0.10),
     "Clay Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.15, celo_weight=0.50, gelo_weight=0.10),
     "Grass Court Focus": EloWeights(elo_weight=0.25, helo_weight=0.15, celo_weight=0.10, gelo_weight=0.50),
@@ -1318,9 +1326,12 @@ def display_scorito_game_analysis():
     scoring_df = st.data_editor(scoring_df, num_rows="fixed", use_container_width=True, key=f"scorito_scoring_{gender}")
     scoring = {row["Tier"]: [int(row[c]) for c in round_labels] for _, row in scoring_df.iterrows()}
 
+    # Preset selector must be rendered unconditionally; otherwise changing it triggers a rerun
+    # where the widget disappears (button returns False) and the selection can't persist.
+    weights = _weights_selector("Preset (Scorito):", key=f"preset_scorito_{gender}")
+
     if st.button('Run Scorito Analysis'):
         with st.spinner(f'Running {num_simulations} simulations for Scorito analysis...'):
-            weights = _weights_selector("Preset (Scorito):", key=f"preset_scorito_{gender}")
             match_sim = EloMatchSimulator(weights=weights)
 
             # Tier lookup from df_players (already includes active tier)
@@ -1354,12 +1365,12 @@ def display_scorito_game_analysis():
             avg_points = {name: (sum(pts) / len(pts) if pts else 0) for name, pts in player_points.items()}
 
             for tier in ['A', 'B', 'C', 'D']:
-                st.subheader(f'Top 6 Players - Tier {tier}')
+                st.subheader(f'Top 20 Players - Tier {tier}')
                 tier_players = [(name, avg_points.get(name, 0)) for name, t in tier_by_name.items() if str(t).upper() == tier and name in avg_points]
                 if tier_players:
                     tier_players.sort(key=lambda x: x[1], reverse=True)
-                    top_6 = tier_players[:6]
-                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in top_6]
+                    top_20 = tier_players[:20]
+                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in top_20]
                     st.table(pd.DataFrame(data))
                 else:
                     st.info(f'No players found in Tier {tier}')
