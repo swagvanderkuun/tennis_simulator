@@ -7,6 +7,7 @@ Fast version using static database
 import streamlit as st
 import pandas as pd
 import numpy as np
+import re
 import sys
 import os
 from typing import Dict, List, Optional
@@ -389,7 +390,7 @@ def display_database_overview_from_df(df: pd.DataFrame, gender: str):
             hist_data = bins.value_counts().sort_index()
             hist_data.index = [str(interval) for interval in hist_data.index]
             st.bar_chart(hist_data)
-
+    
     return df
 
 
@@ -754,7 +755,8 @@ def _simulate_draw_tree_once(
 ):
     """
     Simulate a full bracket from draw_matches tree.
-    Returns (winner_name, bracket_tree, reached_stage_by_player).
+    Returns (winner_name, bracket_tree, reached_stage_by_player, match_results).
+    `match_results` is a list of dicts: {"stage": "R1"/.../"F", "round": "R128"/.../"F", "winner": str, "loser": str}
     """
     nodes = load_draw_match_nodes(snapshot_id)
     if not nodes:
@@ -774,6 +776,7 @@ def _simulate_draw_tree_once(
     row_map = {r["name"]: r for r in df_players.to_dict(orient="records")}
 
     reached_stage: dict[str, str] = {}
+    match_results: list[dict] = []
 
     def note_reached(player_name: str, match_round: str):
         if not track_rounds:
@@ -819,6 +822,18 @@ def _simulate_draw_tree_once(
         pl1 = create_player_from_row(get_player_row(p1_name), gender)
         pl2 = create_player_from_row(get_player_row(p2_name), gender)
         winner, _, _ = simulator.simulate_match(pl1, pl2, gender)
+        if track_rounds:
+            stage = stage_map.get(match_round)
+            if stage:
+                loser_name = pl2.name if winner.name == pl1.name else pl1.name
+                match_results.append(
+                    {
+                        "stage": stage,
+                        "round": match_round,
+                        "winner": winner.name,
+                        "loser": loser_name,
+                    }
+                )
         tree = {"name": match_round, "children": [{"name": p1_name, "children": []}, {"name": p2_name, "children": []}], "winner": winner.name}
         return winner.name, tree
 
@@ -845,13 +860,25 @@ def _simulate_draw_tree_once(
         pl1 = create_player_from_row(get_player_row(w1), gender)
         pl2 = create_player_from_row(get_player_row(w2), gender)
         winner, _, _ = simulator.simulate_match(pl1, pl2, gender)
+        if track_rounds:
+            stage = stage_map.get(rnd)
+            if stage:
+                loser_name = pl2.name if winner.name == pl1.name else pl1.name
+                match_results.append(
+                    {
+                        "stage": stage,
+                        "round": rnd,
+                        "winner": winner.name,
+                        "loser": loser_name,
+                    }
+                )
         tree = {"name": f"{rnd} #{n['match_index']}", "children": [t1, t2], "winner": winner.name}
         return winner.name, tree
 
     winner_name, bracket_tree = dfs(int(root["id"]))
     if track_rounds and winner_name:
         reached_stage[winner_name] = "F"  # at least final reached
-    return winner_name, bracket_tree, reached_stage
+    return winner_name, bracket_tree, reached_stage, match_results
 
 
 def simulate_draw_multiple(df_players: pd.DataFrame, entries: list[dict], gender: str, num_simulations: int) -> dict:
@@ -938,7 +965,7 @@ def display_elo_weights_config():
     """Display Elo weights configuration interface."""
     st.header('⚖️ Elo Weights Configuration')
     st.write('Configure the weights for different Elo rating types in match simulation.')
-
+    
     # Ensure sliders reflect current global weights when arriving on this page.
     base_w = st.session_state.global_weights if "global_weights" in st.session_state else WEIGHT_PRESETS["Overall (default)"]
     sig = _weights_sig(base_w)
@@ -1102,7 +1129,7 @@ def display_explorer():
         return
 
     num_simulations = st.slider("Number of tournament simulations:", 10, 1000, 100, 10, key="explorer_sims")
-
+    
     if st.button("Run Tournament Explorer", type="primary", key="explorer_btn"):
         with st.spinner("Running tournament explorer..."):
             df_players = load_database_df(gender)
@@ -1187,7 +1214,7 @@ def display_single_tournament():
         return
     
     if st.button('Run Single Tournament Simulation'):
-        winner, bracket_tree, _ = _simulate_draw_tree_once(
+        winner, bracket_tree, _, _ = _simulate_draw_tree_once(
             df_players=df_players,
             gender=gender,
             snapshot_id=snapshot_id,
@@ -1311,6 +1338,73 @@ def display_scorito_game_analysis():
         st.error("No successful draw snapshot found for this tournament.")
         return
 
+    # Limit opponent stats to opponents the player can actually face in this bracket.
+    # For each player, compute the set of possible opponents along their draw path
+    # (union of sibling subtrees up to the final).
+    _nodes = load_draw_match_nodes(snapshot_id)
+    _by_id = {int(n["id"]): n for n in _nodes}
+    _parent_of: dict[int, int] = {}
+    for n in _nodes:
+        pid = int(n["id"])
+        c1 = n.get("child_match1_id")
+        c2 = n.get("child_match2_id")
+        if c1 is not None:
+            _parent_of[int(c1)] = pid
+        if c2 is not None:
+            _parent_of[int(c2)] = pid
+
+    _leaf_match_by_player: dict[str, int] = {}
+    _leaf_set_cache: dict[int, set[str]] = {}
+
+    def _leaf_players(match_id: int) -> set[str]:
+        if match_id in _leaf_set_cache:
+            return _leaf_set_cache[match_id]
+        n = _by_id[match_id]
+        c1 = n.get("child_match1_id")
+        c2 = n.get("child_match2_id")
+        if c1 is None and c2 is None:
+            out: set[str] = set()
+            for key_name, key_bye in (("p1_name", "p1_bye"), ("p2_name", "p2_bye")):
+                nm = (n.get(key_name) or "").strip()
+                if not nm:
+                    continue
+                is_bye = bool(n.get(key_bye)) if n.get(key_bye) is not None else (nm.upper() == "BYE")
+                if is_bye or nm.upper() == "BYE":
+                    continue
+                out.add(nm)
+                _leaf_match_by_player.setdefault(nm, match_id)
+            _leaf_set_cache[match_id] = out
+            return out
+        out = set()
+        if c1 is not None:
+            out |= _leaf_players(int(c1))
+        if c2 is not None:
+            out |= _leaf_players(int(c2))
+        _leaf_set_cache[match_id] = out
+        return out
+
+    _finals = [n for n in _nodes if str(n.get("round")) == "F"]
+    _root_id = int(sorted(_finals, key=lambda x: x["match_index"])[0]["id"]) if _finals else int(_nodes[0]["id"])
+    _leaf_players(_root_id)  # populate caches / leaf mapping
+
+    possible_opponents_by_player: dict[str, set[str]] = {}
+    for player_name, leaf_id in _leaf_match_by_player.items():
+        poss: set[str] = set()
+        cur = leaf_id
+        while cur in _parent_of:
+            parent = _parent_of[cur]
+            pn = _by_id[parent]
+            sib = None
+            if pn.get("child_match1_id") is not None and int(pn["child_match1_id"]) == cur:
+                sib = pn.get("child_match2_id")
+            else:
+                sib = pn.get("child_match1_id")
+            if sib is not None:
+                poss |= _leaf_players(int(sib))
+            cur = parent
+        poss.discard(player_name)
+        possible_opponents_by_player[player_name] = poss
+
     # Scoring config: prefer file if present, otherwise editable default table
     scoring = None
     round_labels = None
@@ -1340,9 +1434,19 @@ def display_scorito_game_analysis():
             # Points aggregation
             player_points: dict[str, list[int]] = defaultdict(list)
             stage_to_index = {lab: i for i, lab in enumerate(round_labels)}
+            # Extra stats: elimination + most common opponents (eliminator / beaten)
+            from collections import Counter as _Counter
+
+            elim_idxs_by_player = defaultdict(list)  # name -> list[int] (elimination stage per simulation)
+            elim_pair_by_player = defaultdict(_Counter)  # name -> Counter[(stage, eliminator)]
+            beat_by_player = defaultdict(_Counter)  # name -> Counter[beaten_opponent]
+            faced_by_player = defaultdict(_Counter)  # name -> Counter[opponent] (matches actually played)
+            wins_by_player = defaultdict(_Counter)  # name -> Counter[opponent] (wins in matches played)
+            faced_by_player_stage = defaultdict(lambda: defaultdict(_Counter))  # name -> stage -> Counter[opponent]
+            wins_by_player_stage = defaultdict(lambda: defaultdict(_Counter))  # name -> stage -> Counter[opponent]
 
             for _ in range(num_simulations):
-                winner, _, reached = _simulate_draw_tree_once(
+                winner, _, reached, match_results = _simulate_draw_tree_once(
                     df_players=df_players,
                     gender=gender,
                     snapshot_id=snapshot_id,
@@ -1362,6 +1466,39 @@ def display_scorito_game_analysis():
                     total_points = sum(tier_scoring[: round_index + 1]) if round_index >= 0 else 0
                     player_points[name].append(total_points)
 
+                elim_stage_by_player: dict[str, str] = {}
+                # match_results entries exist only for non-BYE matches
+                for mr in match_results:
+                    w_name = mr.get("winner")
+                    l_name = mr.get("loser")
+                    stage = mr.get("stage")
+                    if not w_name or not l_name or not stage:
+                        continue
+                    beat_by_player[w_name][l_name] += 1
+                    elim_pair_by_player[l_name][(stage, w_name)] += 1
+                    elim_stage_by_player[l_name] = stage
+                    # Track actual opponents played (symmetric) + wins
+                    faced_by_player[w_name][l_name] += 1
+                    faced_by_player[l_name][w_name] += 1
+                    wins_by_player[w_name][l_name] += 1
+                    faced_by_player_stage[w_name][stage][l_name] += 1
+                    faced_by_player_stage[l_name][stage][w_name] += 1
+                    wins_by_player_stage[w_name][stage][l_name] += 1
+
+                # Ensure every reached player gets an elimination-stage entry for this simulation.
+                # Winner: treat as reaching final.
+                all_names = set(reached.keys())
+                if winner:
+                    all_names.add(winner)
+
+                for name in all_names:
+                    if winner and name == winner:
+                        elim_stage = "F"
+                    else:
+                        elim_stage = elim_stage_by_player.get(name) or reached.get(name) or "R1"
+                    elim_idx = int(stage_to_index.get(elim_stage, 0))
+                    elim_idxs_by_player[name].append(elim_idx)
+
             avg_points = {name: (sum(pts) / len(pts) if pts else 0) for name, pts in player_points.items()}
 
             for tier in ['A', 'B', 'C', 'D']:
@@ -1370,7 +1507,93 @@ def display_scorito_game_analysis():
                 if tier_players:
                     tier_players.sort(key=lambda x: x[1], reverse=True)
                     top_20 = tier_players[:20]
-                    data = [{'Player': name, 'Avg Points': f"{points:.2f}"} for name, points in top_20]
+                    # Name -> Elo lookup for opponent columns
+                    elo_by_name = {r["name"]: r.get("elo") for r in df_players.to_dict(orient="records")}
+
+                    def _round_label_from_idx(idx: int) -> str:
+                        idx_i = int(idx)
+                        idx_i = max(0, min(idx_i, len(round_labels) - 1))
+                        return str(round_labels[idx_i])
+
+                    data = []
+                    from collections import Counter as _Counter
+                    import numpy as _np
+
+                    for name, points in top_20:
+                        # Display name with current Elo rating (if known)
+                        p_elo = elo_by_name.get(name)
+                        if p_elo is not None and pd.notna(p_elo):
+                            player_label = f"{name} ({float(p_elo):.0f})"
+                        else:
+                            player_label = name
+
+                        # Elimination round stats
+                        idxs = elim_idxs_by_player.get(name, [])
+                        if idxs:
+                            mean_idx = float(sum(idxs)) / float(len(idxs))
+                            med_idx = int(_np.median(_np.array(idxs, dtype=float)))
+                            mode_idx = int(_Counter(idxs).most_common(1)[0][0])
+                            avg_elim = f"{_round_label_from_idx(int(round(mean_idx)))} ({mean_idx:.2f})"
+                            median_elim = _round_label_from_idx(med_idx)
+                            mode_elim = _round_label_from_idx(mode_idx)
+                        else:
+                            avg_elim = ""
+                            median_elim = ""
+                            mode_elim = ""
+
+                        # Most common eliminator (joint with round)
+                        elim_pair_counter = elim_pair_by_player.get(name)
+                        if elim_pair_counter:
+                            (elim_stage, eliminator), elim_times = elim_pair_counter.most_common(1)[0]
+                            elim_rate = elim_times / float(num_simulations)
+                            elim_stage_label = str(elim_stage)
+                            eliminator_name = str(eliminator)
+                        else:
+                            elim_stage_label = ""
+                            eliminator_name = ""
+                            elim_rate = 0.0
+
+                        # Opponents the player is likely to beat (based on simulated head-to-head when they actually face)
+                        # win% = wins / matches_faced, where "matches faced" are only opponents the player
+                        # actually played in the simulations (derived from match_results).
+                        likely_beats_parts: list[str] = []
+                        # We want <= 7 opponents (one per round). So for each stage, pick the opponent
+                        # the player most often BEATS in that stage (across all simulations).
+                        stage_order = list(round_labels)  # expected ["R1","R2","R3","R4","QF","SF","F"]
+                        per_stage_faced = faced_by_player_stage.get(name) or {}
+                        per_stage_wins = wins_by_player_stage.get(name) or {}
+
+                        for stg in stage_order:
+                            faced_ctr = per_stage_faced.get(stg) or _Counter()
+                            if not faced_ctr:
+                                continue
+                            opp, faced = faced_ctr.most_common(1)[0]
+                            faced_i = int(faced)
+                            if not opp or faced_i <= 0:
+                                continue
+
+                            wins = int((per_stage_wins.get(stg) or _Counter()).get(opp, 0))
+                            win_pct = wins / float(faced_i) if faced_i > 0 else 0.0
+
+                            opp_elo = elo_by_name.get(opp)
+                            opp_elo_str = f"{float(opp_elo):.0f}" if opp_elo is not None and pd.notna(opp_elo) else ""
+                            label = f"{stg}: {opp} ({opp_elo_str}, {win_pct:.0%})" if opp_elo_str else f"{stg}: {opp} ({win_pct:.0%})"
+                            likely_beats_parts.append(label)
+                        likely_beats_str = ", ".join(likely_beats_parts)
+
+                        data.append(
+                            {
+                                "Player": player_label,
+                                "Avg Points": f"{points:.2f}",
+                                "Avg Elim Round": avg_elim,
+                                "Median Elim Round": median_elim,
+                                "Mode Elim Round": mode_elim,
+                                "Eliminated In": elim_stage_label,
+                                "Eliminated By": eliminator_name,
+                                "Elim Rate": f"{elim_rate:.1%}" if elim_rate else "0.0%",
+                                "Likely Beats": likely_beats_str,
+                            }
+                        )
                     st.table(pd.DataFrame(data))
                 else:
                     st.info(f'No players found in Tier {tier}')
