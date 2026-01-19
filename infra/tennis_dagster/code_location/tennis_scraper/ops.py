@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import os
+import time
 from datetime import datetime, timezone
 from typing import Optional
 
 from dagster import Field, op, get_dagster_logger
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.exc import OperationalError
 
 from .db import create_app_tables, create_db_engine
 from .draw_persist import insert_draw_snapshot, store_draw_snapshot, upsert_draw_source
@@ -230,6 +232,142 @@ def scrape_elo_op() -> None:
         raise RuntimeError("Elo scrape completed with failures: " + " | ".join(errors))
 
     log.info("scrape_elo_op done")
+
+
+@op
+def refresh_elo_current_form_op() -> None:
+    """
+    Precompute "form" columns on tennis.elo_current to avoid expensive per-player LATERAL joins
+    in dashboard/API queries.
+
+    The form definition matches the dashboard:
+      - elo_4w  := last known Elo at/before (max(as_of) - 28 days)
+      - elo_12w := last known Elo at/before (max(as_of) - 84 days)
+      - form_4w := (elo_now - elo_4w) else 0
+      - form_12w := (elo_now - elo_12w) else 0
+      - form := 0.75*form_4w + 0.25*form_12w
+    """
+    log = get_dagster_logger()
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set")
+
+    engine = create_db_engine(database_url)
+    create_app_tables(engine)
+
+    refresh_sql = text(
+        """
+        WITH current AS (
+          SELECT player_id, player_name, as_of, elo
+          FROM tennis.elo_current
+          WHERE gender = :gender
+        ),
+        anchor AS (
+          SELECT max(as_of) AS as_of
+          FROM current
+        ),
+        targets AS (
+          SELECT
+            (as_of - interval '28 days') AS t4w,
+            (as_of - interval '84 days') AS t12w
+          FROM anchor
+        ),
+        e4 AS (
+          SELECT DISTINCT ON (c.player_id)
+            c.player_id,
+            r.elo AS elo_4w
+          FROM current c
+          JOIN tennis.elo_ratings r
+            ON r.player_name = c.player_name
+           AND r.elo IS NOT NULL
+          JOIN tennis.elo_snapshots s
+            ON s.id = r.snapshot_id
+          WHERE s.gender = :gender
+            AND s.scraped_at <= (SELECT t4w FROM targets)
+          ORDER BY c.player_id, s.scraped_at DESC, r.id DESC
+        ),
+        e12 AS (
+          SELECT DISTINCT ON (c.player_id)
+            c.player_id,
+            r.elo AS elo_12w
+          FROM current c
+          JOIN tennis.elo_ratings r
+            ON r.player_name = c.player_name
+           AND r.elo IS NOT NULL
+          JOIN tennis.elo_snapshots s
+            ON s.id = r.snapshot_id
+          WHERE s.gender = :gender
+            AND s.scraped_at <= (SELECT t12w FROM targets)
+          ORDER BY c.player_id, s.scraped_at DESC, r.id DESC
+        ),
+        e AS (
+          SELECT
+            c.player_id,
+            e4.elo_4w,
+            e12.elo_12w
+          FROM current c
+          LEFT JOIN e4 ON e4.player_id = c.player_id
+          LEFT JOIN e12 ON e12.player_id = c.player_id
+        )
+        UPDATE tennis.elo_current c
+        SET
+          elo_4w = e.elo_4w,
+          elo_12w = e.elo_12w,
+          form_4w = CASE WHEN c.elo IS NOT NULL AND e.elo_4w IS NOT NULL THEN (c.elo - e.elo_4w) ELSE 0.0 END,
+          form_12w = CASE WHEN c.elo IS NOT NULL AND e.elo_12w IS NOT NULL THEN (c.elo - e.elo_12w) ELSE 0.0 END,
+          form = (
+            0.75 * (CASE WHEN c.elo IS NOT NULL AND e.elo_4w IS NOT NULL THEN (c.elo - e.elo_4w) ELSE 0.0 END)
+            +
+            0.25 * (CASE WHEN c.elo IS NOT NULL AND e.elo_12w IS NOT NULL THEN (c.elo - e.elo_12w) ELSE 0.0 END)
+          )
+        FROM e
+        WHERE c.gender = :gender
+          AND c.player_id = e.player_id
+        """
+    )
+
+    with engine.begin() as conn:
+        for gender in ("men", "women"):
+            # Deadlock safety:
+            # - Ensure consistent lock acquisition order with scrape_elo_op (snapshots -> ratings -> current)
+            # - Add a small retry loop for occasional scheduler overlap / concurrent runs.
+            attempts = 0
+            while True:
+                attempts += 1
+                try:
+                    # Fail fast rather than hanging forever under contention.
+                    conn.execute(text("SET LOCAL lock_timeout = '5s'"))
+                    conn.execute(text("SET LOCAL statement_timeout = '120s'"))
+
+                    conn.execute(text("LOCK TABLE tennis.elo_snapshots IN ACCESS SHARE MODE"))
+                    conn.execute(text("LOCK TABLE tennis.elo_ratings IN ACCESS SHARE MODE"))
+                    conn.execute(text("LOCK TABLE tennis.elo_current IN ROW EXCLUSIVE MODE"))
+
+                    res = conn.execute(refresh_sql, {"gender": gender})
+                    log.info(
+                        "refresh_elo_current_form_op updated gender=%s (rowcount=%s, attempts=%s)",
+                        gender,
+                        res.rowcount,
+                        attempts,
+                    )
+                    break
+                except OperationalError as e:
+                    msg = str(getattr(e, "orig", e)).lower()
+                    is_deadlock = "deadlock detected" in msg
+                    is_lock_timeout = "lock timeout" in msg
+                    if (is_deadlock or is_lock_timeout) and attempts < 6:
+                        # Simple backoff to avoid immediately re-deadlocking.
+                        sleep_s = 0.5 * attempts
+                        log.warning(
+                            "refresh_elo_current_form_op contention (%s) gender=%s attempt=%s; sleeping %.1fs",
+                            "deadlock" if is_deadlock else "lock_timeout",
+                            gender,
+                            attempts,
+                            sleep_s,
+                        )
+                        time.sleep(sleep_s)
+                        continue
+                    raise
 
 
 @op(

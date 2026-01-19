@@ -1,0 +1,135 @@
+2026-01-19 23:33:09 +0000 - dagster - DEBUG - scrape_elo_job - cff68f64-6b81-40a4-88f6-46fc1007afe0 - 224648 - LOGS_CAPTURED - Started capturing logs in process (pid: 224648).
+2026-01-19 23:33:09 +0000 - dagster - DEBUG - scrape_elo_job - cff68f64-6b81-40a4-88f6-46fc1007afe0 - 224648 - refresh_elo_current_form_op - STEP_START - Started execution of step "refresh_elo_current_form_op".
+2026-01-19 23:33:11 +0000 - dagster - ERROR - scrape_elo_job - cff68f64-6b81-40a4-88f6-46fc1007afe0 - 224648 - refresh_elo_current_form_op - STEP_FAILURE - Execution of step "refresh_elo_current_form_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "refresh_elo_current_form_op"::
+
+sqlalchemy.exc.OperationalError: (psycopg2.errors.DeadlockDetected) deadlock detected
+LINE 22:           JOIN tennis.elo_ratings r
+                        ^
+DETAIL:  Process 41782 waits for AccessShareLock on relation 16723 of database 16384; blocked by process 41788.
+Process 41788 waits for AccessExclusiveLock on relation 16771 of database 16384; blocked by process 41782.
+HINT:  See server log for query details.
+
+[SQL: 
+        WITH current AS (
+          SELECT player_id, player_name, as_of, elo
+          FROM tennis.elo_current
+          WHERE gender = %(gender)s
+        ),
+        anchor AS (
+          SELECT max(as_of) AS as_of
+          FROM current
+        ),
+        targets AS (
+          SELECT
+            (as_of - interval '28 days') AS t4w,
+            (as_of - interval '84 days') AS t12w
+          FROM anchor
+        ),
+        e4 AS (
+          SELECT DISTINCT ON (c.player_id)
+            c.player_id,
+            r.elo AS elo_4w
+          FROM current c
+          JOIN tennis.elo_ratings r
+            ON r.player_name = c.player_name
+           AND r.elo IS NOT NULL
+          JOIN tennis.elo_snapshots s
+            ON s.id = r.snapshot_id
+          WHERE s.gender = %(gender)s
+            AND s.scraped_at <= (SELECT t4w FROM targets)
+          ORDER BY c.player_id, s.scraped_at DESC, r.id DESC
+        ),
+        e12 AS (
+          SELECT DISTINCT ON (c.player_id)
+            c.player_id,
+            r.elo AS elo_12w
+          FROM current c
+          JOIN tennis.elo_ratings r
+            ON r.player_name = c.player_name
+           AND r.elo IS NOT NULL
+          JOIN tennis.elo_snapshots s
+            ON s.id = r.snapshot_id
+          WHERE s.gender = %(gender)s
+            AND s.scraped_at <= (SELECT t12w FROM targets)
+          ORDER BY c.player_id, s.scraped_at DESC, r.id DESC
+        ),
+        e AS (
+          SELECT
+            c.player_id,
+            e4.elo_4w,
+            e12.elo_12w
+          FROM current c
+          LEFT JOIN e4 ON e4.player_id = c.player_id
+          LEFT JOIN e12 ON e12.player_id = c.player_id
+        )
+        UPDATE tennis.elo_current c
+        SET
+          elo_4w = e.elo_4w,
+          elo_12w = e.elo_12w,
+          form_4w = CASE WHEN c.elo IS NOT NULL AND e.elo_4w IS NOT NULL THEN (c.elo - e.elo_4w) ELSE 0.0 END,
+          form_12w = CASE WHEN c.elo IS NOT NULL AND e.elo_12w IS NOT NULL THEN (c.elo - e.elo_12w) ELSE 0.0 END,
+          form = (
+            0.75 * (CASE WHEN c.elo IS NOT NULL AND e.elo_4w IS NOT NULL THEN (c.elo - e.elo_4w) ELSE 0.0 END)
+            +
+            0.25 * (CASE WHEN c.elo IS NOT NULL AND e.elo_12w IS NOT NULL THEN (c.elo - e.elo_12w) ELSE 0.0 END)
+          )
+        FROM e
+        WHERE c.gender = %(gender)s
+          AND c.player_id = e.player_id
+        ]
+[parameters: {'gender': 'men'}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/opt/dagster/app/code_location/tennis_scraper/ops.py", line 329, in refresh_elo_current_form_op
+    res = conn.execute(refresh_sql, {"gender": gender})
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+
+The above exception was caused by the following exception:
+psycopg2.errors.DeadlockDetected: deadlock detected
+LINE 22:           JOIN tennis.elo_ratings r
+                        ^
+DETAIL:  Process 41782 waits for AccessShareLock on relation 16723 of database 16384; blocked by process 41788.
+Process 41788 waits for AccessExclusiveLock on relation 16771 of database 16384; blocked by process 41782.
+HINT:  See server log for query details.
+
+
+Stack Trace:
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+

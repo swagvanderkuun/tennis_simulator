@@ -1,0 +1,99 @@
+version: "3.8"
+
+services:
+  # Frontend - Next.js
+  # Port 3003 to avoid conflicts with:
+  # - 3000: nba_stats_nextjs_dashboard
+  # - 3001: tennis_dagster_webserver
+  # - 3002: nba_stats_grafana
+  web:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+    container_name: tennis_studio_web
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=production
+      # API URL is determined dynamically in the client based on browser location
+    depends_on:
+      - api
+    networks:
+      - tennis-studio-network
+    restart: unless-stopped
+
+  # Backend - FastAPI
+  # Port 8001 to avoid potential conflicts (8000 is common, 8080 used by nba_stats_api)
+  api:
+    build:
+      context: ../../services/api
+      dockerfile: Dockerfile
+    container_name: tennis_studio_api
+    ports:
+      - "8001:8000"
+    environment:
+      # Connect to existing tennis_dagster_postgres database with actual tennis data
+      - DATABASE_URL=postgresql://tennis:tennis@tennis_dagster_postgres:5432/tennis_simulator
+      - REDIS_URL=redis://cache:6379/0
+      - CORS_ORIGINS=["*"]
+      - DEBUG=true
+    depends_on:
+      cache:
+        condition: service_started
+    networks:
+      - tennis-studio-network
+      - tennis_dagster_default  # Connect to existing tennis network for database access
+    restart: unless-stopped
+
+  # Database - PostgreSQL
+  # Port 5435 to avoid conflicts with:
+  # - 5432: dagster-project-postgres
+  # - 5433: nba_stats_mlflow_postgres
+  # - 5434: tennis_dagster_postgres
+  db:
+    image: postgres:16-alpine
+    container_name: tennis_studio_postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=tennis_studio
+      - POSTGRES_PASSWORD=tennis_studio
+      - POSTGRES_DB=tennis_studio
+    volumes:
+      - tennis_studio_postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tennis_studio -d tennis_studio"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tennis-studio-network
+    restart: unless-stopped
+
+  # Cache - Redis
+  # Port 6380 to avoid conflict with:
+  # - 6379: nba_stats_redis
+  cache:
+    image: redis:7-alpine
+    container_name: tennis_studio_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - tennis_studio_redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - tennis-studio-network
+    restart: unless-stopped
+
+networks:
+  tennis-studio-network:
+    driver: bridge
+    name: tennis_studio_network
+  tennis_dagster_default:
+    external: true  # Connect to existing tennis_dagster network
+
+volumes:
+  tennis_studio_postgres_data:
+  tennis_studio_redis_data:
+

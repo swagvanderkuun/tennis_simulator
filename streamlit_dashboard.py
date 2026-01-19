@@ -160,6 +160,20 @@ def get_cached_engine():
     return get_engine()
 
 
+def ensure_elo_current_form_columns(engine) -> None:
+    """
+    Safety migration for the dashboard container: ensure the precomputed form columns exist.
+    Dagster also runs similar additive migrations, but the dashboard may start up before Dagster.
+    """
+    with engine.begin() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS tennis"))
+        conn.execute(text("ALTER TABLE tennis.elo_current ADD COLUMN IF NOT EXISTS elo_4w double precision"))
+        conn.execute(text("ALTER TABLE tennis.elo_current ADD COLUMN IF NOT EXISTS elo_12w double precision"))
+        conn.execute(text("ALTER TABLE tennis.elo_current ADD COLUMN IF NOT EXISTS form_4w double precision"))
+        conn.execute(text("ALTER TABLE tennis.elo_current ADD COLUMN IF NOT EXISTS form_12w double precision"))
+        conn.execute(text("ALTER TABLE tennis.elo_current ADD COLUMN IF NOT EXISTS form double precision"))
+
+
 @st.cache_data(ttl=300)
 def load_postgres_players_df(gender: str) -> pd.DataFrame:
     """
@@ -171,7 +185,10 @@ def load_postgres_players_df(gender: str) -> pd.DataFrame:
     """
     engine = get_cached_engine()
     ensure_tier_tables(engine)
+    ensure_elo_current_form_columns(engine)
 
+    # NOTE: form is precomputed in Postgres (tennis.elo_current.form*) by the ETL pipeline.
+    # This avoids per-player LATERAL joins and makes the dashboard much faster.
     sql = text(
         """
         WITH active_set AS (
@@ -180,30 +197,10 @@ def load_postgres_players_df(gender: str) -> pd.DataFrame:
           WHERE gender = :gender AND active = 1
           ORDER BY created_at DESC, id DESC
           LIMIT 1
-        ),
-        current AS (
-          SELECT
-            c.*,
-            COALESCE(ta.tier, 'D') AS tier
-          FROM tennis.elo_current c
-          LEFT JOIN active_set s ON true
-          LEFT JOIN tennis.tier_assignments ta
-            ON ta.tier_set_id = s.id AND ta.player_id = c.player_id
-          WHERE c.gender = :gender
-        ),
-        anchor AS (
-          SELECT max(as_of) AS as_of
-          FROM current
-        ),
-        targets AS (
-          SELECT
-            (as_of - interval '28 days') AS t4w,
-            (as_of - interval '84 days') AS t12w
-          FROM anchor
         )
         SELECT
           c.player_name AS name,
-          c.tier AS tier,
+          COALESCE(ta.tier, 'D') AS tier,
           c.elo,
           c.helo,
           c.celo,
@@ -211,36 +208,18 @@ def load_postgres_players_df(gender: str) -> pd.DataFrame:
           c.rank AS ranking,
           c.elo_rank,
           c.as_of,
-
-          e4.elo AS elo_4w,
-          e12.elo AS elo_12w,
-
-          (
-            0.75 * (CASE WHEN c.elo IS NOT NULL AND e4.elo IS NOT NULL THEN (c.elo - e4.elo) ELSE 0.0 END)
-            +
-            0.25 * (CASE WHEN c.elo IS NOT NULL AND e12.elo IS NOT NULL THEN (c.elo - e12.elo) ELSE 0.0 END)
+          c.elo_4w,
+          c.elo_12w,
+          COALESCE(
+            c.form,
+            0.75 * COALESCE(c.form_4w, 0.0) + 0.25 * COALESCE(c.form_12w, 0.0),
+            0.0
           ) AS form
-        FROM current c
-        LEFT JOIN LATERAL (
-          SELECT r.elo
-          FROM tennis.elo_ratings r
-          JOIN tennis.elo_snapshots s ON s.id = r.snapshot_id
-          WHERE r.player_name = c.player_name
-            AND s.gender = :gender
-            AND s.scraped_at <= (SELECT t4w FROM targets)
-          ORDER BY s.scraped_at DESC, r.id DESC
-          LIMIT 1
-        ) e4 ON true
-        LEFT JOIN LATERAL (
-          SELECT r.elo
-          FROM tennis.elo_ratings r
-          JOIN tennis.elo_snapshots s ON s.id = r.snapshot_id
-          WHERE r.player_name = c.player_name
-            AND s.gender = :gender
-            AND s.scraped_at <= (SELECT t12w FROM targets)
-          ORDER BY s.scraped_at DESC, r.id DESC
-          LIMIT 1
-        ) e12 ON true
+        FROM tennis.elo_current c
+        LEFT JOIN active_set s ON true
+        LEFT JOIN tennis.tier_assignments ta
+          ON ta.tier_set_id = s.id AND ta.player_id = c.player_id
+        WHERE c.gender = :gender
         ORDER BY c.elo_rank NULLS LAST, c.player_name
         """
     )

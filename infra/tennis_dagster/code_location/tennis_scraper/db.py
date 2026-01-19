@@ -116,6 +116,12 @@ def define_tables(metadata: MetaData) -> dict[str, Table]:
         Column("yelo_raw", Float, nullable=True),
         Column("yelo_imputed", Integer, nullable=False, server_default=text("0")),
         Column("rank", Integer, nullable=True),
+        # Precomputed form deltas (refreshed by ETL) to avoid per-player LATERAL joins in queries.
+        Column("elo_4w", Float, nullable=True),
+        Column("elo_12w", Float, nullable=True),
+        Column("form_4w", Float, nullable=True),
+        Column("form_12w", Float, nullable=True),
+        Column("form", Float, nullable=True),
         UniqueConstraint("gender", "player_id", name="uq_elo_current_gender_player"),
     )
 
@@ -240,6 +246,23 @@ def create_app_tables(engine: Engine) -> dict[str, Table]:
         conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_rank integer"))
         conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_raw double precision"))
         conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS yelo_imputed integer DEFAULT 0"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS elo_4w double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS elo_12w double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS form_4w double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS form_12w double precision"))
+        conn.execute(text(f"ALTER TABLE {APP_SCHEMA}.elo_current ADD COLUMN IF NOT EXISTS form double precision"))
+
+        # Helpful indexes for set-based form refresh queries.
+        conn.execute(
+            text(
+                f"CREATE INDEX IF NOT EXISTS idx_elo_snapshots_gender_scraped_at ON {APP_SCHEMA}.elo_snapshots (gender, scraped_at)"
+            )
+        )
+        conn.execute(
+            text(
+                f"CREATE INDEX IF NOT EXISTS idx_elo_ratings_player_name_snapshot ON {APP_SCHEMA}.elo_ratings (player_name, snapshot_id)"
+            )
+        )
         # Backfill for existing rows (safe + idempotent)
         conn.execute(
             text(

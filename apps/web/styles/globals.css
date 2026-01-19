@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   DESIGN SYSTEM: Tournament Studio + Scorito Pro
+   Broadcast-grade dark theme with fantasy accents
+   ============================================ */
+
+@layer base {
+  :root {
+    /* Font families */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* Dark theme (default) */
+    --background: 220 20% 4%;           /* #0B0F14 */
+    --foreground: 210 25% 93%;          /* #E6EDF3 */
+    
+    --surface: 215 25% 10%;             /* #111923 */
+    --elevated: 215 22% 13%;            /* #161F2B */
+    
+    --primary: 147 75% 55%;             /* #38E07C - court green */
+    --primary-foreground: 220 20% 4%;
+    
+    --secondary: 193 85% 62%;           /* #4CC9F0 - broadcast cyan */
+    --secondary-foreground: 220 20% 4%;
+    
+    --accent: 43 93% 64%;               /* #F9C74F - fantasy gold */
+    --accent-foreground: 220 20% 4%;
+    
+    --danger: 332 92% 56%;              /* #F72585 - risk magenta */
+    --danger-foreground: 0 0% 100%;
+    
+    --muted: 210 20% 60%;               /* #9FB0C0 */
+    --muted-foreground: 210 20% 70%;
+    
+    --card: 215 25% 10%;
+    --card-foreground: 210 25% 93%;
+    
+    --border: 215 20% 18%;
+    --input: 215 20% 15%;
+    --ring: 147 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Glass card effect for hero sections */
+  .glass-card {
+    @apply bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl;
+  }
+
+  /* Metric card with left accent */
+  .metric-card {
+    @apply bg-surface rounded-lg border-l-4 border-primary p-4;
+  }
+
+  /* Value highlight for fantasy picks */
+  .value-highlight {
+    @apply relative;
+  }
+  .value-highlight::after {
+    content: '';
+    @apply absolute inset-0 rounded-lg;
+    box-shadow: 0 0 20px rgba(249, 199, 79, 0.3);
+  }
+
+  /* Risk indicator */
+  .risk-indicator {
+    @apply relative;
+  }
+  .risk-indicator::after {
+    content: '';
+    @apply absolute inset-0 rounded-lg;
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.3);
+  }
+
+  /* Navigation item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground transition-all duration-200;
+  }
+  .nav-item:hover {
+    @apply bg-elevated text-foreground;
+  }
+  .nav-item.active {
+    @apply bg-primary/10 text-primary border-l-2 border-primary;
+  }
+
+  /* KPI strip */
+  .kpi-item {
+    @apply flex flex-col items-center px-4 py-2 border-r border-border last:border-r-0;
+  }
+  .kpi-label {
+    @apply text-xs text-muted-foreground uppercase tracking-wider;
+  }
+  .kpi-value {
+    @apply text-lg font-mono font-semibold text-foreground;
+  }
+  .kpi-delta {
+    @apply text-xs font-mono;
+  }
+  .kpi-delta.positive {
+    @apply text-primary;
+  }
+  .kpi-delta.negative {
+    @apply text-danger;
+  }
+
+  /* Player card */
+  .player-card {
+    @apply bg-surface rounded-xl border border-border p-4 transition-all duration-200;
+  }
+  .player-card:hover {
+    @apply border-primary/50 shadow-lg shadow-primary/10;
+  }
+
+  /* Bracket node */
+  .bracket-node {
+    @apply bg-elevated rounded-lg px-3 py-2 border border-border text-sm;
+  }
+  .bracket-node.winner {
+    @apply border-primary bg-primary/10 text-primary;
+  }
+
+  /* Probability bar */
+  .prob-bar {
+    @apply h-2 rounded-full bg-elevated overflow-hidden;
+  }
+  .prob-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+
+  /* Slider track */
+  .slider-track {
+    @apply relative h-2 w-full rounded-full bg-elevated;
+  }
+  .slider-range {
+    @apply absolute h-full rounded-full bg-primary;
+  }
+  .slider-thumb {
+    @apply block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-lg;
+  }
+
+  /* Table styling */
+  .data-table {
+    @apply w-full border-collapse;
+  }
+  .data-table th {
+    @apply text-left px-4 py-3 text-xs uppercase tracking-wider text-muted-foreground bg-elevated border-b border-border;
+  }
+  .data-table td {
+    @apply px-4 py-3 border-b border-border;
+  }
+  .data-table tr:hover td {
+    @apply bg-elevated/50;
+  }
+
+  /* Chip/tag */
+  .chip {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .chip-primary {
+    @apply bg-primary/20 text-primary;
+  }
+  .chip-secondary {
+    @apply bg-secondary/20 text-secondary;
+  }
+  .chip-accent {
+    @apply bg-accent/20 text-accent;
+  }
+  .chip-danger {
+    @apply bg-danger/20 text-danger;
+  }
+  .chip-muted {
+    @apply bg-muted/20 text-muted-foreground;
+  }
+
+  /* Tier badges */
+  .tier-badge {
+    @apply inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold;
+  }
+  .tier-a {
+    @apply bg-accent/20 text-accent border border-accent/40;
+  }
+  .tier-b {
+    @apply bg-primary/20 text-primary border border-primary/40;
+  }
+  .tier-c {
+    @apply bg-secondary/20 text-secondary border border-secondary/40;
+  }
+  .tier-d {
+    @apply bg-muted/20 text-muted-foreground border border-muted/40;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-elevated rounded;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 30px rgba(56, 224, 124, 0.4);
+  }
+  .glow-accent {
+    box-shadow: 0 0 30px rgba(249, 199, 79, 0.4);
+  }
+  .glow-danger {
+    box-shadow: 0 0 30px rgba(247, 37, 133, 0.4);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-elevated rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted/50;
+}
+
+/* Focus ring */
+*:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+/* Transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+
