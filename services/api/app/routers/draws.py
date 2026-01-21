@@ -9,9 +9,15 @@ from sqlalchemy import text
 from app.db.session import get_db
 from app.db.cache import cache_get, cache_set
 from app.schemas.tournament import DrawSnapshot, DrawMatch, TournamentProbabilities, DrawEntry
+from app.schemas.simulation import EloWeights
+from pydantic import BaseModel
 from app.services.match_simulator import EloMatchSimulator, PlayerLite, EloWeights
 
 router = APIRouter()
+
+
+class MostLikelyRequest(BaseModel):
+    weights: EloWeights | None = None
 
 
 @router.get("/{tournament_id}/latest", response_model=Optional[DrawSnapshot])
@@ -249,6 +255,171 @@ async def get_draw_probabilities(
         probabilities.sort(key=lambda x: x.win_prob, reverse=True)
         cache_set(cache_key, [p.model_dump() for p in probabilities], ttl=300)
         return probabilities
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{snapshot_id}/most_likely", response_model=List[DrawMatch])
+async def get_draw_most_likely(
+    snapshot_id: int,
+    request: MostLikelyRequest,
+    db: Session = Depends(get_db),
+):
+    """Compute the most likely bracket outcome based on match win probabilities."""
+    # Load gender/tour from draw source
+    gender_sql = """
+        SELECT ds.tour
+        FROM tennis.draw_snapshots snap
+        JOIN tennis.draw_sources ds ON ds.id = snap.source_id
+        WHERE snap.id = :snapshot_id
+        LIMIT 1
+    """
+    nodes_sql = """
+        SELECT
+            m.id,
+            m.round,
+            m.match_index,
+            m.child_match1_id,
+            m.child_match2_id,
+            e1.player_name as player1_name,
+            COALESCE(e1.is_bye::boolean, false) as player1_bye,
+            e2.player_name as player2_name,
+            COALESCE(e2.is_bye::boolean, false) as player2_bye
+        FROM tennis.draw_matches m
+        LEFT JOIN tennis.draw_entries e1 ON e1.id = m.entry1_id
+        LEFT JOIN tennis.draw_entries e2 ON e2.id = m.entry2_id
+        WHERE m.snapshot_id = :snapshot_id
+        ORDER BY m.round, m.match_index
+    """
+    try:
+        tour_row = db.execute(text(gender_sql), {"snapshot_id": snapshot_id}).mappings().first()
+        if not tour_row:
+            raise HTTPException(status_code=404, detail="Draw snapshot not found")
+        gender = "men" if tour_row["tour"] == "atp" else "women"
+
+        nodes = db.execute(text(nodes_sql), {"snapshot_id": snapshot_id}).mappings().all()
+        if not nodes:
+            return []
+
+        # Collect names
+        names = []
+        for n in nodes:
+            for key, bye_key in (("player1_name", "player1_bye"), ("player2_name", "player2_bye")):
+                nm = n.get(key)
+                is_bye = n.get(bye_key)
+                if nm and not is_bye and str(nm).upper() != "BYE":
+                    names.append(nm)
+        names = list(set(names))
+        if not names:
+            return []
+
+        player_sql = """
+            SELECT
+              c.player_name as name,
+              c.elo, c.helo, c.celo, c.gelo,
+              COALESCE(
+                c.form,
+                0.75 * COALESCE(c.form_4w, 0) + 0.25 * COALESCE(c.form_12w, 0),
+                0
+              ) AS form
+            FROM tennis.elo_current c
+            WHERE c.gender = :gender AND c.player_name = ANY(:names)
+        """
+        rows = db.execute(text(player_sql), {"gender": gender, "names": names}).mappings().all()
+        player_map = {
+            r["name"]: PlayerLite(
+                name=r["name"],
+                tier="D",
+                elo=r.get("elo"),
+                helo=r.get("helo"),
+                celo=r.get("celo"),
+                gelo=r.get("gelo"),
+                form=r.get("form") or 0.0,
+            )
+            for r in rows
+        }
+
+        simulator = EloMatchSimulator(weights=request.weights or EloWeights())
+        by_id = {int(n["id"]): dict(n) for n in nodes}
+        results: dict[int, dict] = {}
+
+        def resolve(match_id: int) -> tuple[str, float, float]:
+            node = by_id[match_id]
+            if node["child_match1_id"] is None and node["child_match2_id"] is None:
+                p1_name = node.get("player1_name") or ""
+                p2_name = node.get("player2_name") or ""
+                p1_bye = bool(node.get("player1_bye"))
+                p2_bye = bool(node.get("player2_bye"))
+                if p1_bye and not p2_bye:
+                    winner = p2_name
+                    p1_prob, p2_prob = 0.0, 1.0
+                elif p2_bye and not p1_bye:
+                    winner = p1_name
+                    p1_prob, p2_prob = 1.0, 0.0
+                elif p1_bye and p2_bye:
+                    winner = ""
+                    p1_prob, p2_prob = 0.0, 0.0
+                else:
+                    pl1 = player_map.get(p1_name, PlayerLite(name=p1_name, tier="D"))
+                    pl2 = player_map.get(p2_name, PlayerLite(name=p2_name, tier="D"))
+                    p1_prob = simulator.calculate_win_probability(pl1, pl2, gender)
+                    p2_prob = 1.0 - p1_prob
+                    winner = p1_name if p1_prob >= p2_prob else p2_name
+                results[match_id] = {
+                    "id": node["id"],
+                    "round": node["round"],
+                    "match_index": node["match_index"],
+                    "child_match1_id": node["child_match1_id"],
+                    "child_match2_id": node["child_match2_id"],
+                    "player1_name": p1_name,
+                    "player2_name": p2_name,
+                    "player1_bye": node.get("player1_bye") or False,
+                    "player2_bye": node.get("player2_bye") or False,
+                    "player1_prob": p1_prob,
+                    "player2_prob": p2_prob,
+                    "winner": winner,
+                }
+                return winner, p1_prob, p2_prob
+
+            w1, _, _ = resolve(int(node["child_match1_id"]))
+            w2, _, _ = resolve(int(node["child_match2_id"]))
+            p1_name = w1 or ""
+            p2_name = w2 or ""
+            if not p1_name or not p2_name:
+                winner = p1_name or p2_name
+                p1_prob = 1.0 if p1_name else 0.0
+                p2_prob = 1.0 if p2_name else 0.0
+            else:
+                pl1 = player_map.get(p1_name, PlayerLite(name=p1_name, tier="D"))
+                pl2 = player_map.get(p2_name, PlayerLite(name=p2_name, tier="D"))
+                p1_prob = simulator.calculate_win_probability(pl1, pl2, gender)
+                p2_prob = 1.0 - p1_prob
+                winner = p1_name if p1_prob >= p2_prob else p2_name
+
+            results[match_id] = {
+                "id": node["id"],
+                "round": node["round"],
+                "match_index": node["match_index"],
+                "child_match1_id": node["child_match1_id"],
+                "child_match2_id": node["child_match2_id"],
+                "player1_name": p1_name,
+                "player2_name": p2_name,
+                "player1_bye": False,
+                "player2_bye": False,
+                "player1_prob": p1_prob,
+                "player2_prob": p2_prob,
+                "winner": winner,
+            }
+            return winner, p1_prob, p2_prob
+
+        finals = [n for n in nodes if str(n.get("round")) == "F"]
+        root_id = int(sorted(finals, key=lambda x: x["match_index"])[0]["id"]) if finals else int(nodes[0]["id"])
+        resolve(root_id)
+
+        ordered = sorted(results.values(), key=lambda r: (r["round"], r["match_index"]))
+        return [DrawMatch(**row) for row in ordered]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

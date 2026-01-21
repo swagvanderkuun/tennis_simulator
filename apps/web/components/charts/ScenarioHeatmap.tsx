@@ -125,3 +125,4 @@ export function ScenarioHeatmap({ data, title, height = 400 }: ScenarioHeatmapPr
 }
 
 
+

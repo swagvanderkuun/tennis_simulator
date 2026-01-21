@@ -3,46 +3,22 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeftRight, Play, Info, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Button, TierBadge } from '@/components/ui';
-import { WinProbabilityGauge, RadarChart, DistributionChart } from '@/components/charts';
+import { WinProbabilityGauge, RadarChart } from '@/components/charts';
 import { cn, formatElo } from '@/lib/utils';
 import { getPlayers, simulateMatch, Player, MatchSimResult } from '@/lib/api';
 import { useAppStore } from '@/lib/store';
 
-// Mock players for selector
-const mockPlayers = [
-  { id: 1, name: 'Jannik Sinner', tier: 'A', elo: 2150, helo: 2180, celo: 2020, gelo: 2080, form: 45 },
-  { id: 2, name: 'Carlos Alcaraz', tier: 'A', elo: 2120, helo: 2090, celo: 2180, gelo: 2150, form: 38 },
-  { id: 3, name: 'Novak Djokovic', tier: 'A', elo: 2080, helo: 2100, celo: 2050, gelo: 2120, form: -12 },
-  { id: 4, name: 'Daniil Medvedev', tier: 'A', elo: 1980, helo: 2020, celo: 1890, gelo: 1920, form: 15 },
-];
-
-// Mock explainability factors
-const mockFactors = [
-  { name: 'Overall Elo', p1: 2150, p2: 2120, weight: 0.45, contribution: 0.013 },
-  { name: 'Hard Court Elo', p1: 2180, p2: 2090, weight: 0.25, contribution: 0.022 },
-  { name: 'Clay Court Elo', p1: 2020, p2: 2180, weight: 0.20, contribution: -0.032 },
-  { name: 'Grass Court Elo', p1: 2080, p2: 2150, weight: 0.10, contribution: -0.007 },
-  { name: 'Form Adjustment', p1: 45, p2: 38, weight: 1.0, contribution: 0.008 },
-];
-
-// Mock score distribution
-const mockScoreDistribution = [
-  { label: '3-0', value: 28 },
-  { label: '3-1', value: 35 },
-  { label: '3-2', value: 22 },
-  { label: '2-3', value: 8 },
-  { label: '1-3', value: 5 },
-  { label: '0-3', value: 2 },
-];
+const FORM_PRESETS = ['elo-only', 'default-form', 'form-heavy'] as const;
+type FormPreset = (typeof FORM_PRESETS)[number];
 
 export function MatchupsPage() {
-  const { tour, playersByTour, playersLoadedAt, setPlayersForTour } = useAppStore();
+  const { tour, surface, setSurface, playersByTour, playersLoadedAt, setPlayersForTour } = useAppStore();
   const [players, setPlayers] = useState<Player[]>([]);
   const [player1, setPlayer1] = useState<Player | null>(null);
   const [player2, setPlayer2] = useState<Player | null>(null);
-  const [surface, setSurface] = useState<'hard' | 'clay' | 'grass'>('hard');
   const [isSimulating, setIsSimulating] = useState(false);
   const [simResult, setSimResult] = useState<MatchSimResult | null>(null);
+  const [formPreset, setFormPreset] = useState<FormPreset>('default-form');
 
   useEffect(() => {
     let mounted = true;
@@ -71,9 +47,9 @@ export function MatchupsPage() {
         }
         setPlayersForTour(tour, data);
       } catch (err) {
-        setPlayers(mockPlayers as unknown as Player[]);
-        setPlayer1(mockPlayers[0] as unknown as Player);
-        setPlayer2(mockPlayers[1] as unknown as Player);
+        setPlayers([]);
+        setPlayer1(null);
+        setPlayer2(null);
       }
     };
     loadPlayers();
@@ -85,7 +61,21 @@ export function MatchupsPage() {
   const handleSimulate = () => {
     if (!player1 || !player2) return;
     setIsSimulating(true);
-    simulateMatch(player1.name, player2.name, tour)
+    const baseWeights =
+      surface === 'hard'
+        ? { elo_weight: 0.25, helo_weight: 0.5, celo_weight: 0.15, gelo_weight: 0.1 }
+        : surface === 'clay'
+        ? { elo_weight: 0.25, helo_weight: 0.15, celo_weight: 0.5, gelo_weight: 0.1 }
+        : surface === 'grass'
+        ? { elo_weight: 0.25, helo_weight: 0.15, celo_weight: 0.1, gelo_weight: 0.5 }
+        : { elo_weight: 0.45, helo_weight: 0.25, celo_weight: 0.2, gelo_weight: 0.1 };
+    const formWeights =
+      formPreset === 'elo-only'
+        ? { form_elo_scale: 0, form_elo_cap: 0 }
+        : formPreset === 'form-heavy'
+        ? { form_elo_scale: 1.5, form_elo_cap: 120 }
+        : { form_elo_scale: 1.0, form_elo_cap: 80 };
+    simulateMatch(player1.name, player2.name, tour, { ...baseWeights, ...formWeights })
       .then((result) => setSimResult(result))
       .catch(() => setSimResult(null))
       .finally(() => setIsSimulating(false));
@@ -96,7 +86,7 @@ export function MatchupsPage() {
     if (player1 && player2) {
       handleSimulate();
     }
-  }, [player1?.id, player2?.id, tour]);
+  }, [player1?.id, player2?.id, tour, surface, formPreset]);
 
   const swapPlayers = () => {
     if (!player1 || !player2) return;
@@ -111,11 +101,11 @@ export function MatchupsPage() {
       <div className="flex items-center justify-between">
         <h1 className="font-display text-3xl font-bold text-foreground">Match Simulation</h1>
         <div className="flex items-center gap-2">
-          {['hard', 'clay', 'grass'].map((s) => (
+          {(['overall', 'hard', 'clay', 'grass'] as const).map((s) => (
             <button
               key={s}
               onClick={() => {
-                setSurface(s as typeof surface);
+                setSurface(s);
                 setSimResult(null);
               }}
               className={cn(
@@ -128,6 +118,23 @@ export function MatchupsPage() {
               {s}
             </button>
           ))}
+          {FORM_PRESETS.map((p) => (
+            <button
+              key={p}
+              onClick={() => {
+                setFormPreset(p);
+                setSimResult(null);
+              }}
+              className={cn(
+                'px-3 py-2 rounded-lg text-xs font-medium transition-colors',
+                formPreset === p
+                  ? 'bg-secondary/20 text-secondary'
+                  : 'bg-elevated text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {p === 'elo-only' ? 'Elo‑only' : p === 'form-heavy' ? 'Form‑heavy' : 'Default form'}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -136,6 +143,9 @@ export function MatchupsPage() {
         {/* Player 1 */}
         <Card className="col-span-5">
           <CardContent className="pt-6">
+            {players.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No players loaded.</div>
+            ) : (
             <select
               value={player1?.id || ''}
               onChange={(e) => {
@@ -153,6 +163,7 @@ export function MatchupsPage() {
                 </option>
               ))}
             </select>
+            )}
             <div className="mt-4 grid grid-cols-4 gap-2">
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Tier</p>
@@ -177,7 +188,7 @@ export function MatchupsPage() {
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Form</p>
                 <p className={cn('font-mono', (player1?.form || 0) > 0 ? 'text-primary' : 'text-danger')}>
-                  {(player1?.form || 0) > 0 ? '+' : ''}{player1?.form || 0}
+                  {(player1?.form || 0) > 0 ? '+' : ''}{(player1?.form || 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -194,6 +205,9 @@ export function MatchupsPage() {
         {/* Player 2 */}
         <Card className="col-span-5">
           <CardContent className="pt-6">
+            {players.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No players loaded.</div>
+            ) : (
             <select
               value={player2?.id || ''}
               onChange={(e) => {
@@ -211,6 +225,7 @@ export function MatchupsPage() {
                 </option>
               ))}
             </select>
+            )}
             <div className="mt-4 grid grid-cols-4 gap-2">
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Tier</p>
@@ -235,7 +250,7 @@ export function MatchupsPage() {
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Form</p>
                 <p className={cn('font-mono', (player2?.form || 0) > 0 ? 'text-primary' : 'text-danger')}>
-                  {(player2?.form || 0) > 0 ? '+' : ''}{player2?.form || 0}
+                  {(player2?.form || 0) > 0 ? '+' : ''}{(player2?.form || 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -284,11 +299,9 @@ export function MatchupsPage() {
             <CardTitle className="text-sm">Score Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <DistributionChart
-              data={mockScoreDistribution}
-              height={220}
-              color="#4CC9F0"
-            />
+            <div className="text-sm text-muted-foreground">
+              Distribution requires actual set-level simulation data.
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -302,18 +315,19 @@ export function MatchupsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {!simResult?.factors?.length && (
+            <div className="text-sm text-muted-foreground">
+              Run a simulation to see factor breakdown.
+            </div>
+          )}
           <div className="grid grid-cols-5 gap-4">
-            {(simResult?.factors?.length ? simResult.factors : mockFactors).map((factor) => (
+            {(simResult?.factors || []).map((factor) => (
               <div key={factor.name} className="p-4 rounded-lg bg-elevated">
                 <p className="text-sm font-medium text-foreground mb-2">{factor.name}</p>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-primary font-mono">
-                    {'player1_value' in factor ? factor.player1_value : factor.p1}
-                  </span>
+                  <span className="text-xs text-primary font-mono">{factor.player1_value}</span>
                   <span className="text-xs text-muted-foreground">vs</span>
-                  <span className="text-xs text-secondary font-mono">
-                    {'player2_value' in factor ? factor.player2_value : factor.p2}
-                  </span>
+                  <span className="text-xs text-secondary font-mono">{factor.player2_value}</span>
                 </div>
                 <div className="h-2 rounded-full bg-surface overflow-hidden">
                   <div

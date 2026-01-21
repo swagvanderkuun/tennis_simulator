@@ -9,3 +9,4 @@ docker compose down
 echo "✅ Tournament Studio stopped."
 
 
+
