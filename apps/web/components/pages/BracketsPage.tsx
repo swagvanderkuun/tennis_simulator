@@ -175,13 +175,13 @@ export function BracketsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-foreground">Bracket View</h1>
           <p className="text-muted-foreground">{selectedTournament}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {(['overall', 'hard', 'clay', 'grass'] as const).map((s) => (
               <button
                 key={s}
@@ -199,7 +199,7 @@ export function BracketsPage() {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {(['elo-only', 'default-form', 'form-heavy'] as const).map((p) => (
               <button
                 key={p}
@@ -222,9 +222,9 @@ export function BracketsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Bracket Tree */}
-        <div className="col-span-3">
+        <div className="lg:col-span-3">
             {isLoading && (
               <div className="p-6">
                 <div className="skeleton h-6 w-48 mb-4" />

@@ -225,9 +225,9 @@ export function PlayersPage() {
       )}
 
       {/* Main content */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Player Table */}
-        <Card className="col-span-2">
+        <Card className="lg:col-span-2">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="p-6">
@@ -239,17 +239,17 @@ export function PlayersPage() {
                 </div>
               </div>
             ) : (
-              <div>
-                <table className="data-table">
+              <div className="w-full overflow-x-auto">
+                <table className="data-table min-w-[720px]">
                   <thead>
                     <tr>
                       <th>Rank</th>
                       <th>Player</th>
                       <th>Tier</th>
                       <th>Elo</th>
-                      <th>Hard</th>
-                      <th>Clay</th>
-                      <th>Grass</th>
+                      <th className="hidden md:table-cell">Hard</th>
+                      <th className="hidden md:table-cell">Clay</th>
+                      <th className="hidden md:table-cell">Grass</th>
                       <th>Form</th>
                     </tr>
                   </thead>
@@ -280,13 +280,13 @@ export function PlayersPage() {
                           <TierBadge tier={player.tier} />
                         </td>
                         <td className="font-mono">{formatElo(player.elo)}</td>
-                        <td className="font-mono text-secondary">
+                        <td className="hidden md:table-cell font-mono text-secondary">
                           {formatElo(player.helo)}
                         </td>
-                        <td className="font-mono text-accent">
+                        <td className="hidden md:table-cell font-mono text-accent">
                           {formatElo(player.celo)}
                         </td>
-                        <td className="font-mono text-primary">
+                        <td className="hidden md:table-cell font-mono text-primary">
                           {formatElo(player.gelo)}
                         </td>
                         <td>

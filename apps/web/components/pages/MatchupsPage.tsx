@@ -96,11 +96,14 @@ export function MatchupsPage() {
     setSimResult(null);
   };
 
+  const player1Prob = simResult?.player1_win_prob ?? 0.5;
+  const player2Prob = simResult?.player2_win_prob ?? 0.5;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <h1 className="font-display text-3xl font-bold text-foreground">Match Simulation</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {(['overall', 'hard', 'clay', 'grass'] as const).map((s) => (
             <button
               key={s}
@@ -139,9 +142,9 @@ export function MatchupsPage() {
       </div>
 
       {/* Player Selection */}
-      <div className="grid grid-cols-11 gap-4 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
         {/* Player 1 */}
-        <Card className="col-span-5">
+        <Card className="lg:col-span-5">
           <CardContent className="pt-6">
             {players.length === 0 ? (
               <div className="text-sm text-muted-foreground">No players loaded.</div>
@@ -164,7 +167,7 @@ export function MatchupsPage() {
               ))}
             </select>
             )}
-            <div className="mt-4 grid grid-cols-4 gap-2">
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Tier</p>
                 <TierBadge tier={player1?.tier || 'D'} className="mt-1" />
@@ -196,14 +199,14 @@ export function MatchupsPage() {
         </Card>
 
         {/* Swap button */}
-        <div className="col-span-1 flex justify-center">
+        <div className="lg:col-span-1 flex justify-center">
           <Button variant="outline" size="icon" onClick={swapPlayers}>
             <ArrowLeftRight className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Player 2 */}
-        <Card className="col-span-5">
+        <Card className="lg:col-span-5">
           <CardContent className="pt-6">
             {players.length === 0 ? (
               <div className="text-sm text-muted-foreground">No players loaded.</div>
@@ -226,7 +229,7 @@ export function MatchupsPage() {
               ))}
             </select>
             )}
-            <div className="mt-4 grid grid-cols-4 gap-2">
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="text-center p-2 rounded bg-elevated">
                 <p className="text-xs text-muted-foreground">Tier</p>
                 <TierBadge tier={player2?.tier || 'D'} className="mt-1" />
@@ -259,8 +262,8 @@ export function MatchupsPage() {
       </div>
 
       {/* Win Probability & Simulate */}
-      <div className="grid grid-cols-3 gap-6">
-        <Card className="col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Win Probability</CardTitle>
           </CardHeader>
@@ -299,8 +302,30 @@ export function MatchupsPage() {
             <CardTitle className="text-sm">Score Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-muted-foreground">
-              Distribution requires actual set-level simulation data.
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{player1?.name || 'Player 1'}</span>
+                <span className="font-mono text-primary">{(player1Prob * 100).toFixed(1)}%</span>
+              </div>
+              <div className="h-2 rounded-full bg-elevated overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500"
+                  style={{ width: `${Math.min(100, player1Prob * 100)}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-sm pt-1">
+                <span className="text-muted-foreground">{player2?.name || 'Player 2'}</span>
+                <span className="font-mono text-secondary">{(player2Prob * 100).toFixed(1)}%</span>
+              </div>
+              <div className="h-2 rounded-full bg-elevated overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-secondary transition-all duration-500"
+                  style={{ width: `${Math.min(100, player2Prob * 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground pt-1">
+                Match win split based on current simulation settings.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -320,7 +345,7 @@ export function MatchupsPage() {
               Run a simulation to see factor breakdown.
             </div>
           )}
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {(simResult?.factors || []).map((factor) => (
               <div key={factor.name} className="p-4 rounded-lg bg-elevated">
                 <p className="text-sm font-medium text-foreground mb-2">{factor.name}</p>
@@ -389,7 +414,7 @@ export function MatchupsPage() {
               { name: 'Grass', max: 2500 },
               { name: 'Form', max: 2000 },
             ]}
-            height={350}
+            height={280}
           />
         </CardContent>
       </Card>

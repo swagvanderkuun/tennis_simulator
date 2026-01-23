@@ -170,6 +170,17 @@
     @apply bg-elevated/50;
   }
 
+  @media (max-width: 768px) {
+    .data-table {
+      font-size: 0.75rem;
+    }
+    .data-table th,
+    .data-table td {
+      @apply px-3 py-2;
+      white-space: nowrap;
+    }
+  }
+
   /* Chip/tag */
   .chip {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
@@ -188,6 +199,17 @@
   }
   .chip-muted {
     @apply bg-muted/20 text-muted-foreground;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 600ms ease, transform 600ms ease;
+  }
+  .reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   /* Tier badges */
@@ -221,6 +243,14 @@
   }
   .glow-danger {
     box-shadow: 0 0 30px rgba(247, 37, 133, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

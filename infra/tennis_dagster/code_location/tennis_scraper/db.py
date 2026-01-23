@@ -7,6 +7,7 @@ from typing import Optional
 from sqlalchemy import (
     BigInteger,
     Column,
+    Date,
     DateTime,
     Float,
     ForeignKey,
@@ -213,6 +214,50 @@ def define_tables(metadata: MetaData) -> dict[str, Table]:
         UniqueConstraint("snapshot_id", "round", "match_index", name="uq_draw_match_round_index"),
     )
 
+    injury_reports = Table(
+        "injury_reports",
+        metadata,
+        Column("id", BigInteger, primary_key=True),
+        Column("scraped_at", DateTime(timezone=True), nullable=False),
+        Column("status", String(20), nullable=False),  # injured | returning
+        Column("start_date", Date, nullable=True),
+        Column("player_name", Text, nullable=False),
+        Column("player_name_norm", Text, nullable=False),
+        Column("player_profile_url", Text, nullable=True),
+        Column("tournament", Text, nullable=True),
+        Column("reason", Text, nullable=True),
+        Column("source_url", Text, nullable=False),
+        UniqueConstraint(
+            "status",
+            "start_date",
+            "player_name_norm",
+            "tournament",
+            "reason",
+            name="uq_injury_reports_identity",
+        ),
+    )
+
+    injury_matches = Table(
+        "injury_matches",
+        metadata,
+        Column("id", BigInteger, primary_key=True),
+        Column(
+            "injury_report_id",
+            BigInteger,
+            ForeignKey(f"{APP_SCHEMA}.injury_reports.id"),
+            nullable=False,
+        ),
+        Column("matched_at", DateTime(timezone=True), nullable=False),
+        Column("matched_player_id", BigInteger, ForeignKey(f"{APP_SCHEMA}.players.id"), nullable=True),
+        Column("matched_gender", String(10), nullable=True),
+        Column("match_method", String(30), nullable=False),  # exact | alias | fuzzy | none
+        Column("match_score", Float, nullable=True),         # 0..1 for fuzzy
+        Column("candidate_count", Integer, nullable=False, server_default=text("0")),
+        Column("ambiguous", Integer, nullable=False, server_default=text("0")),
+        Column("notes", Text, nullable=True),
+        UniqueConstraint("injury_report_id", name="uq_injury_matches_report"),
+    )
+
     return {
         "players": players,
         "player_aliases": player_aliases,
@@ -226,6 +271,8 @@ def define_tables(metadata: MetaData) -> dict[str, Table]:
         "draw_snapshots": draw_snapshots,
         "draw_entries": draw_entries,
         "draw_matches": draw_matches,
+        "injury_reports": injury_reports,
+        "injury_matches": injury_matches,
     }
 
 
@@ -261,6 +308,18 @@ def create_app_tables(engine: Engine) -> dict[str, Table]:
         conn.execute(
             text(
                 f"CREATE INDEX IF NOT EXISTS idx_elo_ratings_player_name_snapshot ON {APP_SCHEMA}.elo_ratings (player_name, snapshot_id)"
+            )
+        )
+
+        # TennisExplorer injury scrape indexes (for daily upserts + matching).
+        conn.execute(
+            text(
+                f"CREATE INDEX IF NOT EXISTS idx_injury_reports_player_norm ON {APP_SCHEMA}.injury_reports (player_name_norm)"
+            )
+        )
+        conn.execute(
+            text(
+                f"CREATE INDEX IF NOT EXISTS idx_injury_reports_scraped_at ON {APP_SCHEMA}.injury_reports (scraped_at DESC)"
             )
         )
         # Backfill for existing rows (safe + idempotent)

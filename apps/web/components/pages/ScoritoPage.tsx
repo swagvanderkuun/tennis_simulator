@@ -246,13 +246,13 @@ export function ScoritoPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-foreground">Scorito Optimizer</h1>
           <p className="text-muted-foreground">Find the best value picks for your fantasy team</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-1">
             {FORM_PRESETS.map((p) => (
               <button
                 key={p}
@@ -279,11 +279,11 @@ export function ScoritoPage() {
         {/* Optimizer Results */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <CardTitle>
                 Optimizer Results {totalPlayers ? `(All ${totalPlayers} players)` : ''}
               </CardTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {['A', 'B', 'C', 'D'].map((tier) => (
                   <button
                     key={tier}
@@ -304,7 +304,8 @@ export function ScoritoPage() {
             {errorMessage && (
               <div className="mb-3 text-sm text-danger">{errorMessage}</div>
             )}
-            <table className="data-table">
+            <div className="w-full overflow-x-auto">
+              <table className="data-table min-w-[900px]">
               <thead>
                 <tr>
                   <th className="cursor-pointer" onClick={() => toggleSort('player_name')}>
@@ -313,7 +314,7 @@ export function ScoritoPage() {
                   <th className="cursor-pointer" onClick={() => toggleSort('simulation_strength')}>
                     Sim Strength
                   </th>
-                  <th className="cursor-pointer" onClick={() => toggleSort('path_strength')}>
+                  <th className="cursor-pointer hidden md:table-cell" onClick={() => toggleSort('path_strength')}>
                     Path Strength
                   </th>
                   <th className="cursor-pointer" onClick={() => toggleSort('form_trend')}>
@@ -325,13 +326,13 @@ export function ScoritoPage() {
                   <th className="cursor-pointer" onClick={() => toggleSort('expected_points')}>
                     Exp. Points
                   </th>
-                  <th className="cursor-pointer" onClick={() => toggleSort('risk_adj_value')}>
+                  <th className="cursor-pointer hidden lg:table-cell" onClick={() => toggleSort('risk_adj_value')}>
                     <div>
                       <div>Risk‑Adj</div>
                       <div className="text-[10px] text-muted-foreground">pts / std dev</div>
                     </div>
                   </th>
-                  <th className="cursor-pointer" onClick={() => toggleSort('robustness')}>
+                  <th className="cursor-pointer hidden lg:table-cell" onClick={() => toggleSort('robustness')}>
                     <div>
                       <div>Consistency</div>
                       <div className="text-[10px] text-muted-foreground">robustness</div>
@@ -340,7 +341,7 @@ export function ScoritoPage() {
                   <th className="cursor-pointer" onClick={() => toggleSort('avg_round')}>
                     Avg Round
                   </th>
-                  <th>Eliminator</th>
+                  <th className="hidden md:table-cell">Eliminator</th>
                 </tr>
               </thead>
               <tbody>
@@ -387,7 +388,7 @@ export function ScoritoPage() {
                     <td className="font-mono text-muted-foreground">
                       {(player.simulation_strength ?? 0).toFixed(0)}
                     </td>
-                    <td className="font-mono text-muted-foreground">
+                    <td className="hidden md:table-cell font-mono text-muted-foreground">
                       {(player.path_strength ?? 0).toFixed(0)}
                     </td>
                     <td className={cn('font-mono', (player.form_trend ?? 0) >= 0 ? 'text-primary' : 'text-danger')}>
@@ -398,14 +399,14 @@ export function ScoritoPage() {
                       <TierBadge tier={player.tier} />
                     </td>
                     <td className="font-mono text-primary">{player.expected_points.toFixed(1)}</td>
-                    <td className="font-mono text-muted-foreground">
+                    <td className="hidden lg:table-cell font-mono text-muted-foreground">
                       {(player.risk_adj_value ?? 0).toFixed(2)}
                     </td>
-                    <td className="font-mono text-muted-foreground">
+                    <td className="hidden lg:table-cell font-mono text-muted-foreground">
                       {(100 / Math.max((player.points_std ?? 0) + 1, 1)).toFixed(1)}
                     </td>
                     <td className="font-mono">{player.avg_round.toFixed(1)}</td>
-                    <td className="text-sm text-muted-foreground">
+                    <td className="hidden md:table-cell text-sm text-muted-foreground">
                       {player.eliminator ? (
                         <span>
                           {player.eliminator}
@@ -421,7 +422,7 @@ export function ScoritoPage() {
                   {expandedPlayer === name && (
                     <tr>
                       <td colSpan={10} className="bg-elevated/60">
-                        <div className="p-4 grid grid-cols-2 gap-6">
+                        <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                           <div>
                             <p className="text-xs text-muted-foreground mb-2">Path Map (avg opp Elo + elim%)</p>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -476,7 +477,8 @@ export function ScoritoPage() {
                   </>
                 );})}
               </tbody>
-            </table>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </div>

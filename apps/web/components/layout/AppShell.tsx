@@ -3,6 +3,7 @@
 import { useEffect, ReactNode } from 'react';
 import { SideNav } from './SideNav';
 import { TopBar } from './TopBar';
+import { MobileNav } from './MobileNav';
 import { getActiveTournament, getPlayers, getScoritoScoringRules, getTournaments } from '@/lib/api';
 import { useAppStore } from '@/lib/store';
 
@@ -63,6 +64,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen bg-background">
       <SideNav />
+      <MobileNav />
       <TopBar
         tour={tour}
         onTourChange={setTour}
@@ -72,8 +74,8 @@ export function AppShell({ children }: AppShellProps) {
         selectedTournament={selectedTournamentId ?? undefined}
         onTournamentChange={(id) => setSelectedTournamentId(id)}
       />
-      <main className="ml-64 pt-16 min-h-screen">
-        <div className="p-6">{children}</div>
+      <main className="ml-0 md:ml-64 pt-0 md:pt-16 pb-28 md:pb-0 min-h-screen">
+        <div className="p-4 md:p-6">{children}</div>
       </main>
     </div>
   );

@@ -14,6 +14,8 @@ from sqlalchemy.exc import OperationalError
 from .db import create_app_tables, create_db_engine
 from .draw_persist import insert_draw_snapshot, store_draw_snapshot, upsert_draw_source
 from .draws_tennisabstract import fetch_page, parse_singles_forecast_draw
+from .injury_matching import match_and_store_injuries
+from .tennisexplorer_injuries import scrape_injuries
 from .tennisabstract import fetch_html, parse_elo_table, parse_yelo_table, normalize_player_name
 
 
@@ -703,5 +705,40 @@ def scrape_draw_op(context) -> None:
         source_id = upsert_draw_source(engine, parsed, draw_url)
         insert_draw_snapshot(engine, source_id, status="failed", error=str(e))
         raise
+
+
+@op
+def scrape_injuries_op() -> None:
+    """
+    Scrape TennisExplorer injury lists and store them in Postgres, along with a best-effort match
+    to tennis.players (and a quality summary for monitoring).
+    """
+    log = get_dagster_logger()
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set")
+
+    enrich = (os.getenv("TE_ENRICH_PLAYER_PROFILES") or "1").strip().lower() not in ("0", "false", "no")
+    max_profiles = int(os.getenv("TE_MAX_PROFILE_FETCHES") or "300")
+    per_profile_sleep = float(os.getenv("TE_PER_PROFILE_SLEEP_SECONDS") or "0.2")
+    fuzzy_threshold = float(os.getenv("TE_FUZZY_THRESHOLD") or "0.86")
+
+    engine = create_db_engine(database_url)
+    tables = create_app_tables(engine)
+
+    rows = scrape_injuries(
+        enrich_player_names_from_profiles=enrich,
+        max_profile_fetches=max_profiles,
+        per_profile_sleep_seconds=per_profile_sleep,
+    )
+    eval_ = match_and_store_injuries(engine, tables=tables, rows=rows, fuzzy_threshold=fuzzy_threshold)
+    log.info(
+        "scrape_injuries_op done: total=%s matched=%s ambiguous=%s unmatched=%s avg_score=%.3f",
+        eval_.total,
+        eval_.matched,
+        eval_.ambiguous,
+        eval_.unmatched,
+        eval_.avg_score,
+    )
 
 

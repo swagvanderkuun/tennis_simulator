@@ -1,0 +1,6 @@
+2026-01-22 03:15:06 +0000 - dagster - DEBUG - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - 484860 - LOGS_CAPTURED - Started capturing logs in process (pid: 484860).
+2026-01-22 03:15:06 +0000 - dagster - DEBUG - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - 484860 - refresh_elo_current_form_op - STEP_START - Started execution of step "refresh_elo_current_form_op".
+2026-01-22 03:15:09 +0000 - dagster - INFO - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - refresh_elo_current_form_op - refresh_elo_current_form_op updated gender=men (rowcount=504, attempts=1)
+2026-01-22 03:15:09 +0000 - dagster - INFO - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - refresh_elo_current_form_op - refresh_elo_current_form_op updated gender=women (rowcount=530, attempts=1)
+2026-01-22 03:15:09 +0000 - dagster - DEBUG - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - 484860 - refresh_elo_current_form_op - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+2026-01-22 03:15:09 +0000 - dagster - DEBUG - scrape_elo_job - 1188709c-9998-4d79-91b0-a42ba3ac7b5e - 484860 - refresh_elo_current_form_op - STEP_SUCCESS - Finished execution of step "refresh_elo_current_form_op" in 3.12s.

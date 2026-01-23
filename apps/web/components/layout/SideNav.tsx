@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -12,6 +13,8 @@ import {
   Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getActiveTournament, getDrawSnapshot } from '@/lib/api';
+import { useAppStore } from '@/lib/store';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -24,19 +27,57 @@ const navItems = [
 
 export function SideNav() {
   const pathname = usePathname();
+  const { tour, selectedTournamentId } = useAppStore();
+  const [dataAsOf, setDataAsOf] = useState('—');
+
+  useEffect(() => {
+    let mounted = true;
+    const loadUpdatedAt = async () => {
+      try {
+        const active = await getActiveTournament(tour);
+        if (!mounted) return;
+        const targetId = selectedTournamentId || active?.id;
+        if (!targetId) {
+          setDataAsOf('—');
+          return;
+        }
+        const snapshot = await getDrawSnapshot(targetId);
+        if (!mounted) return;
+        if (snapshot?.scraped_at) {
+          const date = new Date(snapshot.scraped_at);
+          setDataAsOf(
+            date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          );
+        } else {
+          setDataAsOf('—');
+        }
+      } catch {
+        if (mounted) setDataAsOf('—');
+      }
+    };
+
+    loadUpdatedAt();
+    return () => {
+      mounted = false;
+    };
+  }, [tour, selectedTournamentId]);
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-surface border-r border-border">
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 bg-surface border-r border-border md:block">
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-6 border-b border-border">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20">
-          <span className="text-xl">🎾</span>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+          <img
+            src="/racketroute-logo.png"
+            alt="RacketRoute logo"
+            className="h-7 w-7 object-contain"
+          />
         </div>
         <div>
           <h1 className="font-display text-lg font-bold text-foreground">
-            Tournament
+            RacketRoute
           </h1>
-          <p className="text-xs text-primary font-medium">Studio</p>
+          <p className="text-xs text-primary font-medium">Tennis Analytics</p>
         </div>
       </div>
 
@@ -68,7 +109,7 @@ export function SideNav() {
         </Link>
         <div className="mt-4 px-4">
           <p className="text-xs text-muted-foreground">
-            Data as of <span className="font-mono text-foreground">Jan 16, 2026</span>
+            Data as of <span className="font-mono text-foreground">{dataAsOf}</span>
           </p>
         </div>
       </div>

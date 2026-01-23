@@ -1,0 +1,82 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+    container_name: racketroute_web
+    ports:
+      - "3006:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_PORT=8002
+    depends_on:
+      - api
+    networks:
+      - racketroute_network
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../../services/api
+      dockerfile: Dockerfile
+    container_name: racketroute_api
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql://tennis:tennis@tennis_dagster_postgres:5432/tennis_simulator
+      - REDIS_URL=redis://cache:6379/0
+      - CORS_ORIGINS=["*"]
+      - DEBUG=true
+    depends_on:
+      cache:
+        condition: service_started
+    networks:
+      - racketroute_network
+      - tennis_dagster_default
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: racketroute_postgres
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_USER=racketroute
+      - POSTGRES_PASSWORD=racketroute
+      - POSTGRES_DB=racketroute
+    volumes:
+      - racketroute_postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U racketroute -d racketroute"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - racketroute_network
+    restart: unless-stopped
+
+  cache:
+    image: redis:7-alpine
+    container_name: racketroute_redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - racketroute_redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - racketroute_network
+    restart: unless-stopped
+
+networks:
+  racketroute_network:
+    driver: bridge
+  tennis_dagster_default:
+    external: true
+
+volumes:
+  racketroute_postgres_data:
+  racketroute_redis_data:
+
